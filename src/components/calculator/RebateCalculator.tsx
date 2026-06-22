@@ -225,7 +225,17 @@ export default function RebateCalculator({
   const t = useTranslations(lang);
 
   // Input states
-  const [zipCode, setZipCode] = useState('90210');
+  const [zipCode, setZipCode] = useState(() => {
+    const c = city ? city.toLowerCase().trim() : '';
+    if (c.includes('houston')) return '77001';
+    if (c.includes('los angeles')) return '90001';
+    if (c.includes('new york')) return '10001';
+    if (c.includes('london')) return 'SW1A 1AA';
+    if (c.includes('berlin')) return '10115';
+    if (c.includes('sydney')) return '2000';
+    if (c.includes('toronto')) return 'M5V 1J2';
+    return '90210'; // Default fallback
+  });
   const [monthlyBill, setMonthlyBill] = useState(250);
   const [roofArea, setRoofArea] = useState(1200);
   const [batteryEnabled, setBatteryEnabled] = useState(false);
