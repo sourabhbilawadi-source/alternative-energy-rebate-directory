@@ -13,6 +13,15 @@ import {
   Building
 } from 'lucide-react';
 
+export interface DbRebate {
+  id: string;
+  authority_name: string;
+  technology_category: string;
+  incentive_value: number;
+  incentive_type: string; // 'fixed', 'percentage', 'per_watt'
+  max_limit: number | null;
+}
+
 interface RebateCalculatorProps {
   defaultGridRate: number;
   defaultSunHours: number;
@@ -23,6 +32,7 @@ interface RebateCalculatorProps {
   utilityRebate: number;
   city: string;
   state: string;
+  dbRebates?: DbRebate[];
 }
 
 // Custom animated counter using requestAnimationFrame for high performance
@@ -69,7 +79,8 @@ export default function RebateCalculator({
   stateRebate,
   utilityRebate,
   city,
-  state
+  state,
+  dbRebates
 }: RebateCalculatorProps) {
   // Input states
   const [zipCode, setZipCode] = useState('90210');
@@ -140,9 +151,52 @@ export default function RebateCalculator({
   // System capital cost: kW * WattsPerkW * CostPerWatt
   const capitalCost = systemSizeCapped * 1000 * costPerWatt;
   
-  // Total localized incentives
-  const fedTaxCredit = capitalCost * federalTaxCreditPct;
-  const totalIncentives = Math.min(capitalCost, fedTaxCredit + stateRebate + utilityRebate);
+  // Total localized incentives (from database or fallback static presets)
+  const calculateIncentives = () => {
+    if (dbRebates && dbRebates.length > 0) {
+      let fedCreditVal = 0;
+      let otherIncentivesVal = 0;
+
+      dbRebates.forEach((rebate) => {
+        let value = 0;
+        if (rebate.incentive_type === 'percentage') {
+          value = capitalCost * (Number(rebate.incentive_value) / 100);
+        } else if (rebate.incentive_type === 'per_watt') {
+          value = systemSizeCapped * 1000 * Number(rebate.incentive_value);
+        } else if (rebate.incentive_type === 'fixed') {
+          value = Number(rebate.incentive_value);
+        }
+
+        if (rebate.max_limit !== null) {
+          value = Math.min(value, Number(rebate.max_limit));
+        }
+
+        if (
+          rebate.technology_category.toLowerCase().includes('federal') || 
+          rebate.authority_name.toLowerCase().includes('federal')
+        ) {
+          fedCreditVal += value;
+        } else {
+          otherIncentivesVal += value;
+        }
+      });
+
+      const totalApplied = Math.min(capitalCost, fedCreditVal + otherIncentivesVal);
+      return {
+        fedTaxCredit: fedCreditVal,
+        totalIncentives: totalApplied,
+      };
+    }
+
+    const fedCreditVal = capitalCost * federalTaxCreditPct;
+    const totalApplied = Math.min(capitalCost, fedCreditVal + stateRebate + utilityRebate);
+    return {
+      fedTaxCredit: fedCreditVal,
+      totalIncentives: totalApplied,
+    };
+  };
+
+  const { fedTaxCredit, totalIncentives } = calculateIncentives();
   const netSystemCost = capitalCost - totalIncentives;
 
   // Annual Generation (E_annual = P_sz * eta_sun)
@@ -397,17 +451,37 @@ export default function RebateCalculator({
         </div>
 
         {/* Incentives Applied overview */}
-        <div className="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2">
-            <div className="p-1 rounded-md bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
-              <DollarSign className="w-3.5 h-3.5" />
+        <div className="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 flex flex-col gap-2 text-xs">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="p-1 rounded-md bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
+                <DollarSign className="w-3.5 h-3.5" />
+              </div>
+              <span className="text-[var(--text-muted)]">Applied Incentives:</span>
+              <strong className="text-[var(--text-main)]">${Math.round(totalIncentives).toLocaleString()}</strong>
             </div>
-            <span className="text-[var(--text-muted)]">Applied Incentives:</span>
-            <strong className="text-[var(--text-main)]">${Math.round(totalIncentives).toLocaleString()}</strong>
+            <div className="text-[var(--text-muted)] text-right font-medium">
+              {dbRebates && dbRebates.length > 0 ? (
+                <span>{dbRebates.length} Regional Programs</span>
+              ) : (
+                <span>Incl. {federalTaxCreditPct * 100}% Federal Tax Credit</span>
+              )}
+            </div>
           </div>
-          <div className="text-[var(--text-muted)] text-right">
-            <span>Incl. {federalTaxCreditPct * 100}% Federal Tax Credit</span>
-          </div>
+          {dbRebates && dbRebates.length > 0 && (
+            <div className="border-t border-[var(--color-border)] pt-2 mt-1 space-y-1">
+              {dbRebates.map((rebate, index) => (
+                <div key={rebate.id || index} className="flex justify-between text-[var(--text-muted)]">
+                  <span>• {rebate.authority_name} ({rebate.technology_category})</span>
+                  <span>
+                    {rebate.incentive_type === 'percentage' && `${rebate.incentive_value}%`}
+                    {rebate.incentive_type === 'fixed' && `$${rebate.incentive_value}`}
+                    {rebate.incentive_type === 'per_watt' && `$${rebate.incentive_value}/W`}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
       </div>

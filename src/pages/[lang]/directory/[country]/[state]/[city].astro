@@ -2,6 +2,7 @@
 import '../../../../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import RebateCalculator from '../../../../../components/calculator/RebateCalculator';
+import { supabase } from '../../../../../lib/supabase';
 
 // Enable static pre-rendering with pre-configured static paths
 export async function getStaticPaths() {
@@ -65,6 +66,36 @@ const getLocalSpecs = (stateName: string) => {
 };
 
 const localSpecs = getLocalSpecs(state || '');
+
+// Query dynamic regional rebates from Supabase if configured, falling back to local presets
+let dbRebates: any[] = [];
+
+if (supabase) {
+  try {
+    const { data: regionData } = await supabase
+      .from('regions')
+      .select('id')
+      .eq('country_code', country === 'uk' ? 'gb' : (country || 'us').toLowerCase())
+      .ilike('state_province', (state || '').replace(/-/g, ' '))
+      .ilike('city', (city || '').replace(/-/g, ' '))
+      .limit(1)
+      .maybeSingle();
+
+    if (regionData) {
+      const { data: rebatesData } = await supabase
+        .from('rebates')
+        .select('*')
+        .eq('region_id', regionData.id)
+        .eq('is_active', true);
+
+      if (rebatesData) {
+        dbRebates = rebatesData;
+      }
+    }
+  } catch (err) {
+    console.error('Failed to query Supabase database records. Fallback enabled:', err);
+  }
+}
 
 // SEO URLs
 const siteUrl = 'https://cleanenergyrebates.org';
@@ -222,6 +253,7 @@ const websiteSchema = {
           utilityRebate={localSpecs.incentives.utilityRebate}
           city={displayCity}
           state={displayState}
+          dbRebates={dbRebates}
         />
       </div>
     </div>
