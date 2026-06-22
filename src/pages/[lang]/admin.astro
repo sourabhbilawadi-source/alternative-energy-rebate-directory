@@ -1,7 +1,7 @@
 ---
 import '../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
-import ComparisonEngine from '../../components/compare/ComparisonEngine';
+import AdminDashboard from '../../components/admin/AdminDashboard';
 import { useTranslations } from '../../lib/i18n';
 
 export async function getStaticPaths() {
@@ -22,21 +22,8 @@ const t = useTranslations(lang || 'en-us');
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/png" href="/logo.png" />
-  <title>{t.compare.title} | EcoRebates</title>
-  <meta name="description" content="Compare alternative energy utility rates, solar resource coefficients, and rebate payback timelines side by side." />
-
-  <!-- Open Graph / Facebook Preview Metadata -->
-  <meta property="og:title" content={`${t.compare.title} | EcoRebates`} />
-  <meta property="og:description" content="Compare alternative energy utility rates, solar resource coefficients, and rebate payback timelines side by side." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content={`https://ecorebates.org/${lang}/compare`} />
-  <meta property="og:image" content="https://ecorebates.org/og-preview.png" />
-
-  <!-- Twitter Card Metadata -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={`${t.compare.title} | EcoRebates`} />
-  <meta name="twitter:description" content="Compare alternative energy utility rates, solar resource coefficients, and rebate payback timelines side by side." />
-  <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
+  <title>{t.nav.admin} | EcoRebates</title>
+  <meta name="description" content="Manage regions, cities, rates, and active rebate policies dynamically." />
   <ClientRouter />
 </head>
 <body class="min-h-screen flex flex-col justify-between">
@@ -45,12 +32,12 @@ const t = useTranslations(lang || 'en-us');
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <img src="/logo.png" alt="EcoRebates Logo" class="w-8 h-8 object-contain rounded-lg" />
-        <a href="/" class="font-bold text-lg tracking-tight text-[var(--text-main)]">EcoRebates</a>
+        <a href="/" class="font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity">EcoRebates</a>
       </div>
       <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
         <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.directory}</a>
         <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.search}</a>
-        <a href={`/${lang}/compare`} class="text-[var(--text-main)] transition-colors">{t.nav.compare}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compare}</a>
         <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compliance}</a>
       </nav>
       <a href={`/${lang}/directory`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
@@ -60,14 +47,8 @@ const t = useTranslations(lang || 'en-us');
   </header>
 
   <!-- Main Content -->
-  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow" transition:animate="fade">
-    <div class="text-center md:text-left mb-8">
-      <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-[var(--text-main)]">{t.compare.title}</h1>
-      <p class="text-lg text-[var(--text-muted)]">{t.compare.subtitle}</p>
-    </div>
-
-    <!-- Comparison Engine React Island -->
-    <ComparisonEngine client:load lang={lang} />
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow w-full" transition:animate="fade">
+    <AdminDashboard client:load lang={lang} />
   </main>
 
   <!-- Footer -->
@@ -77,9 +58,8 @@ const t = useTranslations(lang || 'en-us');
       <div class="flex gap-4">
         <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)]">{t.footer.directory}</a>
         <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">{t.footer.search}</a>
-        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] font-semibold">{t.footer.compare}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">{t.footer.compare}</a>
         <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">{t.footer.compliance}</a>
-        <a href={`/${lang}/admin`} class="hover:text-[var(--text-main)]">{t.footer.admin || 'Admin'}</a>
       </div>
     </div>
   </footer>

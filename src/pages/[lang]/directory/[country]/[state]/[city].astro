@@ -4,6 +4,7 @@ import { ClientRouter } from 'astro:transitions';
 import RebateCalculator from '../../../../../components/calculator/RebateCalculator';
 import SmeHub from '../../../../../components/calculator/SmeHub';
 import { supabase } from '../../../../../lib/supabase';
+import { useTranslations } from '../../../../../lib/i18n';
 
 // Enable static pre-rendering with dynamic paths from database (with static fallbacks)
 export async function getStaticPaths() {
@@ -46,6 +47,7 @@ export async function getStaticPaths() {
 }
 
 const { lang, country, state, city } = Astro.params;
+const t = useTranslations(lang || 'en-us');
 
 // Format names for display
 const displayCity = city ? city.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
@@ -274,11 +276,11 @@ const websiteSchema = {
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8" transition:animate="slide">
     <!-- Breadcrumbs -->
     <nav class="text-sm text-[var(--text-muted)] mb-4 flex items-center gap-2" aria-label="Breadcrumb">
-      <span class="hover:text-[var(--text-main)] capitalize">Directory</span>
+      <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] capitalize">{t.nav.directory}</a>
       <span>/</span>
-      <span class="hover:text-[var(--text-main)] uppercase">{displayCountry}</span>
+      <a href={`/${lang}/directory/${country}`} class="hover:text-[var(--text-main)] uppercase">{country}</a>
       <span>/</span>
-      <span class="hover:text-[var(--text-main)] capitalize">{displayState}</span>
+      <a href={`/${lang}/directory/${country}/${state}`} class="hover:text-[var(--text-main)] capitalize">{displayState}</a>
       <span>/</span>
       <span class="text-[var(--text-main)] font-semibold capitalize">{displayCity}</span>
     </nav>
@@ -286,10 +288,10 @@ const websiteSchema = {
     <!-- Page Title Header Section -->
     <div class="mb-10 text-center md:text-left">
       <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">
-        Alternative Energy Sizing & Rebate Portal
+        {lang === 'de-de' ? 'Amortisations- & Fördermittelportal für alternative Energien' : lang === 'fr-fr' ? "Portail de dimensionnement et de subventions pour l'énergie alternative" : "Alternative Energy Sizing & Rebate Portal"}
       </h1>
       <p class="text-lg text-[var(--text-muted)] max-w-3xl">
-        Explore local utility incentives, federal tax programs, and sizing tools for residential & enterprise solar setups in <strong class="text-[var(--text-main)]">{displayCity}, {displayState}</strong>.
+        {lang === 'de-de' ? 'Entdecken Sie lokale Versorgungsanreize, bundesstaatliche Steuerprogramme und Größenbestimmungstools für' : lang === 'fr-fr' ? "Découvrez les incitations locales, les programmes fiscaux fédéraux et les outils de dimensionnement pour les" : "Explore local utility incentives, federal tax programs, and sizing tools for"} residential & enterprise solar setups in <strong class="text-[var(--text-main)]">{displayCity}, {displayState}</strong>.
       </p>
     </div>
 
@@ -299,13 +301,13 @@ const websiteSchema = {
         id="btn-residential" 
         class="pb-3 text-lg font-bold border-b-2 border-[var(--color-accent)] text-[var(--text-main)] focus:outline-none"
       >
-        🏡 Residential Calculator
+        🏡 {lang === 'de-de' ? 'Wohnrechner' : lang === 'fr-fr' ? 'Simulateur Résidentiel' : 'Residential Calculator'}
       </button>
       <button 
         id="btn-sme" 
         class="pb-3 text-lg font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] focus:outline-none border-b-2 border-transparent"
       >
-        🏢 SME Decarbonization Hub
+        🏢 {lang === 'de-de' ? 'KMU-Dekarbonisierungszentrum' : lang === 'fr-fr' ? 'Espace Décarbonation PME' : 'SME Decarbonization Hub'}
       </button>
     </div>
 
@@ -325,6 +327,7 @@ const websiteSchema = {
           city={displayCity}
           state={displayState}
           dbRebates={dbRebates}
+          lang={lang}
         >
           <!-- Skeleton Loading Fallback to prevent Cumulative Layout Shift (CLS) -->
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-3xl p-6 md:p-8 shadow-xl animate-pulse min-h-[650px]">
@@ -385,6 +388,7 @@ const websiteSchema = {
         defaultCostPerWatt={localSpecs.costPerWatt}
         state={displayState}
         city={displayCity}
+        lang={lang}
       />
     </div>
   </main>

@@ -2,6 +2,7 @@
 import '../../../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import { supabase } from '../../../../lib/supabase';
+import { useTranslations } from '../../../../lib/i18n';
 
 export async function getStaticPaths() {
   const langs = ['en-us', 'de-de', 'fr-fr'];
@@ -32,6 +33,7 @@ export async function getStaticPaths() {
 }
 
 const { lang, country } = Astro.params;
+const t = useTranslations(lang || 'en-us');
 
 const displayCountry = country === 'uk' ? 'United Kingdom' : country === 'us' ? 'United States' : country === 'de' ? 'Germany' : country === 'ca' ? 'Canada' : country === 'au' ? 'Australia' : (country || '').toUpperCase();
 
@@ -106,13 +108,13 @@ if (supabase) {
         <a href="/" class="font-bold text-lg tracking-tight text-[var(--text-main)]">EcoRebates</a>
       </div>
       <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
-        <a href={`/${lang}/directory`} class="text-[var(--text-main)] transition-colors">Directory</a>
-        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">Search</a>
-        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">Compare Sizing</a>
-        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">Compliance Guide</a>
+        <a href={`/${lang}/directory`} class="text-[var(--text-main)] transition-colors">{t.nav.directory}</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.search}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compare}</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compliance}</a>
       </nav>
       <a href={`/${lang}/search`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
-        Search Portal
+        {t.nav.searchPortal}
       </a>
     </div>
   </header>
@@ -121,14 +123,16 @@ if (supabase) {
   <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow">
     <!-- Breadcrumbs -->
     <nav class="text-sm text-[var(--text-muted)] mb-6 flex items-center gap-2" aria-label="Breadcrumb">
-      <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] capitalize">Directory</a>
+      <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] capitalize">{t.nav.directory}</a>
       <span>/</span>
       <span class="text-[var(--text-main)] font-semibold uppercase">{country}</span>
     </nav>
 
     <div class="text-center md:text-left mb-10">
-      <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-[var(--text-main)]">{displayCountry} Directory</h1>
-      <p class="text-lg text-[var(--text-muted)]">Select your state or province to see active alternative energy incentives, rebates, and ROI tools.</p>
+      <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-[var(--text-main)]">{displayCountry} {t.directory.statesTitle}</h1>
+      <p class="text-lg text-[var(--text-muted)]">
+        {lang === 'de-de' ? 'Wählen Sie Ihr Bundesland oder Ihre Provinz aus, um aktive alternative Energieförderungen, Rabatte und ROI-Tools anzuzeigen.' : lang === 'fr-fr' ? 'Sélectionnez votre État ou votre province pour voir les subventions actives, les rabais et les outils de calcul du ROI.' : 'Select your state or province to see active alternative energy incentives, rebates, and ROI tools.'}
+      </p>
     </div>
 
     <!-- State List -->
@@ -140,7 +144,7 @@ if (supabase) {
         >
           <span class="text-lg font-bold text-[var(--text-main)] group-hover:text-[var(--color-accent)] transition-colors">{stateItem.name}</span>
           <span class="text-xs bg-[var(--bg-primary)] border border-[var(--color-border)] px-2.5 py-1 rounded-full text-[var(--text-muted)]">
-            {stateItem.citiesCount} Cities
+            {stateItem.citiesCount} {t.directory.citiesTitle}
           </span>
         </a>
       ))}
@@ -150,12 +154,13 @@ if (supabase) {
   <!-- Footer -->
   <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
     <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-      <div>&copy; 2026 EcoRebates. All rights reserved.</div>
+      <div>{t.footer.copyright}</div>
       <div class="flex gap-4">
-        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] font-semibold">Directory</a>
-        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">Search</a>
-        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">Compare</a>
-        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">Compliance</a>
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] font-semibold">{t.footer.directory}</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">{t.footer.search}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">{t.footer.compare}</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">{t.footer.compliance}</a>
+        <a href={`/${lang}/admin`} class="hover:text-[var(--text-main)]">{t.footer.admin || 'Admin'}</a>
       </div>
     </div>
   </footer>

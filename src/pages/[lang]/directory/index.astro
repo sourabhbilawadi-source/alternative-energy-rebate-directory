@@ -2,6 +2,7 @@
 import '../../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import { supabase } from '../../../lib/supabase';
+import { useTranslations } from '../../../lib/i18n';
 
 export async function getStaticPaths() {
   return [
@@ -12,6 +13,7 @@ export async function getStaticPaths() {
 }
 
 const { lang } = Astro.params;
+const t = useTranslations(lang || 'en-us');
 
 // Fetch countries from regions database, fallback to presets if Supabase not configured
 let countriesList = [
@@ -65,7 +67,7 @@ if (supabase) {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/png" href="/logo.png" />
-  <title>Alternative Energy Rebate Directory | Countries</title>
+  <title>{t.directory.title} | EcoRebates</title>
   <meta name="description" content="Browse alternative energy rebate directories by country to find local solar incentives and tax credits." />
   <ClientRouter />
 </head>
@@ -78,13 +80,13 @@ if (supabase) {
         <a href="/" class="font-bold text-lg tracking-tight text-[var(--text-main)]">EcoRebates</a>
       </div>
       <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
-        <a href={`/${lang}/directory`} class="text-[var(--text-main)] transition-colors">Directory</a>
-        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">Search</a>
-        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">Compare Sizing</a>
-        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">Compliance Guide</a>
+        <a href={`/${lang}/directory`} class="text-[var(--text-main)] transition-colors">{t.nav.directory}</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.search}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compare}</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compliance}</a>
       </nav>
       <a href={`/${lang}/search`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
-        Search Portal
+        {t.nav.searchPortal}
       </a>
     </div>
   </header>
@@ -92,8 +94,8 @@ if (supabase) {
   <!-- Main Content -->
   <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow">
     <div class="text-center md:text-left mb-10">
-      <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-[var(--text-main)]">Browse Alternative Energy Rebates</h1>
-      <p class="text-lg text-[var(--text-muted)]">Select your country to discover regional tax credits, local utility incentives, and solar sizing calculators.</p>
+      <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-[var(--text-main)]">{t.directory.title}</h1>
+      <p class="text-lg text-[var(--text-muted)]">{t.directory.subtitle}</p>
     </div>
 
     <!-- Country Selector Cards -->
@@ -108,7 +110,7 @@ if (supabase) {
           </div>
           <div>
             <h2 class="text-xl font-bold text-[var(--text-main)] group-hover:text-[var(--color-accent)] transition-colors">{country.name}</h2>
-            <p class="text-xs text-[var(--text-muted)] mt-1">{country.regionsCount} active regional hubs indexed</p>
+            <p class="text-xs text-[var(--text-muted)] mt-1">{country.regionsCount} {t.directory.hubsIndexed}</p>
           </div>
         </a>
       ))}
@@ -118,12 +120,13 @@ if (supabase) {
   <!-- Footer -->
   <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
     <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-      <div>&copy; 2026 EcoRebates. All rights reserved.</div>
+      <div>{t.footer.copyright}</div>
       <div class="flex gap-4">
-        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] font-semibold">Directory</a>
-        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">Search</a>
-        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">Compare</a>
-        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">Compliance</a>
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] font-semibold">{t.footer.directory}</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">{t.footer.search}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">{t.footer.compare}</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">{t.footer.compliance}</a>
+        <a href={`/${lang}/admin`} class="hover:text-[var(--text-main)]">{t.footer.admin || 'Admin'}</a>
       </div>
     </div>
   </footer>

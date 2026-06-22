@@ -14,6 +14,8 @@ import {
   Truck,
   Flame
 } from 'lucide-react';
+import { useTranslations } from '../../lib/i18n';
+import { queryLocationSpecs } from '../../lib/energyApi';
 
 export interface DbRebate {
   id: string;
@@ -35,6 +37,7 @@ interface RebateCalculatorProps {
   city: string;
   state: string;
   dbRebates?: DbRebate[];
+  lang?: string;
 }
 
 // Custom animated counter using requestAnimationFrame for high performance
@@ -73,14 +76,15 @@ function AnimatedNumber({ value, formatter }: { value: number; formatter?: (v: n
 }
 
 // Interactive SVG energy flow simulation to visually engage the user
-function EnergyFlowVisualizer({ batteryEnabled, sunHours, systemSize }: { batteryEnabled: boolean; sunHours: number; systemSize: number }) {
+function EnergyFlowVisualizer({ batteryEnabled, sunHours, systemSize, lang }: { batteryEnabled: boolean; sunHours: number; systemSize: number; lang: string }) {
+  const t = useTranslations(lang);
   // Calculate flow speed (duration of dot animation): higher generation = faster movement (shorter duration)
   const flowSpeed = Math.max(1.2, 8.5 - Math.min(6.5, (sunHours * systemSize) / 400));
 
   return (
     <div className="bg-[var(--bg-primary)]/40 border border-[var(--color-border)] rounded-2xl p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-inner">
       <div className="text-[10px] font-bold text-[var(--text-muted)] mb-3 uppercase tracking-wider">
-        Interactive Sizing flow
+        {t.calculator.simulationTitle}
       </div>
       
       <svg viewBox="0 0 300 120" className="w-full max-w-[280px] h-24">
@@ -215,14 +219,17 @@ export default function RebateCalculator({
   utilityRebate,
   city,
   state,
-  dbRebates
+  dbRebates: initialDbRebates = [],
+  lang = 'en-us'
 }: RebateCalculatorProps) {
+  const t = useTranslations(lang);
+
   // Input states
   const [zipCode, setZipCode] = useState('90210');
   const [monthlyBill, setMonthlyBill] = useState(250);
   const [roofArea, setRoofArea] = useState(1200);
   const [batteryEnabled, setBatteryEnabled] = useState(false);
-  const [batteryCapacity, setBatteryCapacity] = useState(10); // NEW: Storage capacity slider
+  const [batteryCapacity, setBatteryCapacity] = useState(10);
 
   // Dynamic regional specs (updated on ZIP changes)
   const [gridRate, setGridRate] = useState(defaultGridRate);
@@ -231,48 +238,109 @@ export default function RebateCalculator({
   const [costPerWatt, setCostPerWatt] = useState(defaultCostPerWatt);
   const [localCity, setLocalCity] = useState(city);
   const [localState, setLocalState] = useState(state);
+  const [dbRebates, setDbRebates] = useState<DbRebate[]>(initialDbRebates);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Handle dynamic ZIP lookup simulation
+  // Merge database presets with any localStorage overrides (Option B) on mount and city change
   useEffect(() => {
-    if (zipCode.length < 5) return;
+    try {
+      const localRegionsRaw = localStorage.getItem('local_regions');
+      const localRebatesRaw = localStorage.getItem('local_rebates');
+      
+      let matchedRegionId = '';
+      if (localRegionsRaw) {
+        const localRegions = JSON.parse(localRegionsRaw);
+        const matched = localRegions.find((r: any) => 
+          r.city.toLowerCase().replace(/-/g, ' ') === city.toLowerCase().replace(/-/g, ' ')
+        );
+        if (matched) {
+          setGridRate(Number(matched.grid_rate));
+          setSunHours(Number(matched.sun_hours));
+          setGridEmissions(Number(matched.grid_emissions));
+          setCostPerWatt(Number(matched.cost_per_watt));
+          matchedRegionId = String(matched.id);
+        }
+      }
+
+      let mergedRebates = [...initialDbRebates];
+      if (localRebatesRaw && matchedRegionId) {
+        const localRebates = JSON.parse(localRebatesRaw);
+        const filteredLocal = localRebates
+          .filter((r: any) => String(r.region_id) === matchedRegionId && r.is_active !== false)
+          .map((r: any) => ({
+            id: r.id,
+            authority_name: r.authority_name,
+            technology_category: r.technology_category,
+            incentive_value: Number(r.incentive_value),
+            incentive_type: r.incentive_type,
+            max_limit: r.max_limit ? Number(r.max_limit) : null
+          }));
+        
+        // Merge without duplicating IDs
+        const existingIds = new Set(mergedRebates.map(r => r.id));
+        filteredLocal.forEach((r: DbRebate) => {
+          if (!existingIds.has(r.id)) {
+            mergedRebates.push(r);
+          }
+        });
+      }
+      setDbRebates(mergedRebates);
+    } catch (err) {
+      console.error('Failed to parse local overrides in calculator:', err);
+    }
+  }, [city, initialDbRebates]);
+
+  // Handle dynamic ZIP lookup using Nominatim + Open-Meteo (Option C)
+  useEffect(() => {
+    const cleanZip = zipCode.trim();
+    if (cleanZip.length < 3) return;
 
     setIsUpdating(true);
-    const timer = setTimeout(() => {
-      const firstDigit = zipCode.charAt(0);
-      
-      // Simulating database lookup for ZIP codes
-      if (firstDigit === '9') { // California/West
-        setGridRate(0.29);
-        setSunHours(1850);
-        setGridEmissions(0.51);
-        setCostPerWatt(3.15);
-        setLocalCity('Los Angeles');
-        setLocalState('California');
-      } else if (firstDigit === '7') { // Texas/South
-        setGridRate(0.14);
-        setSunHours(1920);
-        setGridEmissions(0.81);
-        setCostPerWatt(2.75);
-        setLocalCity('Austin');
-        setLocalState('Texas');
-      } else if (firstDigit === '0' || firstDigit === '1') { // Northeast
-        setGridRate(0.23);
-        setSunHours(1250);
-        setGridEmissions(0.66);
-        setCostPerWatt(3.25);
-        setLocalCity('Boston');
-        setLocalState('Massachusetts');
-      } else { // Fallback / Mid-west
-        setGridRate(0.19);
-        setSunHours(1480);
-        setGridEmissions(0.72);
-        setCostPerWatt(2.95);
-        setLocalCity('Denver');
-        setLocalState('Colorado');
+    const timer = setTimeout(async () => {
+      const specs = await queryLocationSpecs(cleanZip, 'us');
+      if (specs) {
+        setGridRate(specs.gridRate);
+        setSunHours(specs.sunHours);
+        setGridEmissions(specs.gridEmissions);
+        setCostPerWatt(specs.costPerWatt);
+        setLocalCity(specs.city);
+        setLocalState(specs.state);
+
+        // Check if there are local rebates registered for this postal code in localStorage
+        try {
+          const localRegionsRaw = localStorage.getItem('local_regions');
+          const localRebatesRaw = localStorage.getItem('local_rebates');
+          if (localRegionsRaw && localRebatesRaw) {
+            const localRegions = JSON.parse(localRegionsRaw);
+            const localRebates = JSON.parse(localRebatesRaw);
+            
+            const matchedReg = localRegions.find((r: any) => 
+              r.postal_code.toLowerCase().trim() === cleanZip.toLowerCase().trim()
+            );
+
+            if (matchedReg) {
+              const matchedRebates = localRebates
+                .filter((r: any) => String(r.region_id) === String(matchedReg.id) && r.is_active !== false)
+                .map((r: any) => ({
+                  id: r.id,
+                  authority_name: r.authority_name,
+                  technology_category: r.technology_category,
+                  incentive_value: Number(r.incentive_value),
+                  incentive_type: r.incentive_type,
+                  max_limit: r.max_limit ? Number(r.max_limit) : null
+                }));
+              
+              setDbRebates(matchedRebates);
+            } else {
+              setDbRebates([]);
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
       }
       setIsUpdating(false);
-    }, 400); // Small delay to feel like a real API request
+    }, 600); // Debounce API requests
 
     return () => clearTimeout(timer);
   }, [zipCode]);
@@ -287,7 +355,7 @@ export default function RebateCalculator({
   // System capital cost: kW * WattsPerkW * CostPerWatt
   const capitalCost = systemSizeCapped * 1000 * costPerWatt;
   
-  // Total localized incentives (from database or fallback static presets)
+  // Total localized incentives
   const calculateIncentives = () => {
     if (dbRebates && dbRebates.length > 0) {
       let fedCreditVal = 0;
@@ -357,11 +425,8 @@ export default function RebateCalculator({
 
   // Carbon abatement (CO2_tons = (P_sz * eta_sun * delta_grid) / 2000)
   const carbonAbatementTons = (systemSizeCapped * sunHours * gridEmissions) / 2000;
-  
-  // Trees equivalent = CO2_tons * 25 * 16.5
-  const treesEquivalent = carbonAbatementTons * 25 * 16.5;
 
-  // Carbon equivalents matching SME hub
+  // Carbon equivalents
   const equivalentCars = carbonAbatementTons * 0.22;
   const equivalentCoal = carbonAbatementTons * 0.96;
   const equivalentForest = carbonAbatementTons * 1.2;
@@ -403,7 +468,7 @@ export default function RebateCalculator({
         className="lg:col-span-5 space-y-6"
       >
         <motion.div variants={itemVariants}>
-          <h2 className="text-2xl font-bold text-[var(--text-main)] mb-1">Calculate Sizing & ROI</h2>
+          <h2 className="text-2xl font-bold text-[var(--text-main)] mb-1">{t.common.calculate}</h2>
           <p className="text-sm text-[var(--text-muted)]">Configure parameters to customize the system model.</p>
         </motion.div>
 
@@ -439,9 +504,8 @@ export default function RebateCalculator({
             <motion.input 
               whileFocus={{ scale: 1.01, borderColor: 'var(--color-accent)' }}
               type="text" 
-              maxLength={5}
               value={zipCode}
-              onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
+              onChange={(e) => setZipCode(e.target.value)}
               className="w-full bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] rounded-xl py-3 px-4 pl-11 outline-none focus:border-[var(--color-accent)] transition-all font-semibold"
               placeholder="Enter ZIP code"
             />
@@ -452,7 +516,7 @@ export default function RebateCalculator({
         {/* Monthly Utility Bill Slider */}
         <motion.div variants={itemVariants} className="space-y-3">
           <div className="flex justify-between items-center text-sm font-semibold">
-            <span className="text-[var(--text-main)]">Average Monthly Utility Bill</span>
+            <span className="text-[var(--text-main)]">{t.calculator.monthlyBill}</span>
             <span className="text-[var(--color-accent)] text-lg font-bold">${monthlyBill}</span>
           </div>
           <input 
@@ -474,7 +538,7 @@ export default function RebateCalculator({
         {/* Usable Roof Area Slider */}
         <motion.div variants={itemVariants} className="space-y-3">
           <div className="flex justify-between items-center text-sm font-semibold">
-            <span className="text-[var(--text-main)]">Usable Roof Area</span>
+            <span className="text-[var(--text-main)]">{t.calculator.roofArea}</span>
             <span className="text-[var(--color-accent)] text-lg font-bold">{roofArea} sq ft</span>
           </div>
           <input 
@@ -501,7 +565,7 @@ export default function RebateCalculator({
                 <Battery className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-[var(--text-main)]">Integrate Home Battery</h3>
+                <h3 className="text-sm font-bold text-[var(--text-main)]">{t.calculator.batteryOption}</h3>
                 <p className="text-xs text-[var(--text-muted)]">Model Time-of-Use peak avoidance</p>
               </div>
             </div>
@@ -530,7 +594,7 @@ export default function RebateCalculator({
                 className="overflow-hidden bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 space-y-3 shadow-inner"
               >
                 <div className="flex justify-between items-center text-xs font-semibold text-[var(--text-main)]">
-                  <span>Battery Capacity (kWh)</span>
+                  <span>{t.calculator.batteryCapacity} (kWh)</span>
                   <span className="text-[var(--color-accent)] font-bold">{batteryCapacity} kWh</span>
                 </div>
                 <input 
@@ -557,19 +621,19 @@ export default function RebateCalculator({
         >
           <h4 className="font-bold flex items-center gap-1.5 text-[var(--text-main)]">
             <ShieldCheck className="w-4 h-4 text-[var(--color-accent)]" />
-            Active Regional Sizing Presets
+            {t.calculator.localAveragesTitle}
           </h4>
-          <div className="grid grid-cols-2 gap-2 text-[var(--text-muted)]">
-            <div>Local Utility Rate: <strong className="text-[var(--text-main)]">${gridRate.toFixed(2)}/kWh</strong></div>
-            <div>Solar Resource Coeff: <strong className="text-[var(--text-main)]">{sunHours} hrs/yr</strong></div>
-            <div>Grid Carbon Factor: <strong className="text-[var(--text-main)]">{gridEmissions.toFixed(2)} lbs/kWh</strong></div>
-            <div>Avg Installation Cost: <strong className="text-[var(--text-main)]">${costPerWatt.toFixed(2)}/W</strong></div>
+          <div className="grid grid-cols-2 gap-2 text-[var(--text-muted)] font-semibold">
+            <div>{t.calculator.gridRate}: <strong className="text-[var(--text-main)]">${gridRate.toFixed(2)}/kWh</strong></div>
+            <div>{t.calculator.sunHours}: <strong className="text-[var(--text-main)]">{sunHours} hrs/yr</strong></div>
+            <div>{t.calculator.gridEmissions}: <strong className="text-[var(--text-main)]">{gridEmissions.toFixed(2)} kg/kWh</strong></div>
+            <div>{t.calculator.costPerWatt}: <strong className="text-[var(--text-main)]">${costPerWatt.toFixed(2)}/W</strong></div>
           </div>
         </motion.div>
 
         {/* Dynamic Energy Flow Visualizer */}
         <motion.div variants={itemVariants}>
-          <EnergyFlowVisualizer batteryEnabled={batteryEnabled} sunHours={sunHours} systemSize={systemSizeCapped} />
+          <EnergyFlowVisualizer batteryEnabled={batteryEnabled} sunHours={sunHours} systemSize={systemSizeCapped} lang={lang} />
         </motion.div>
       </motion.div>
 
@@ -581,7 +645,7 @@ export default function RebateCalculator({
         className="lg:col-span-7 flex flex-col justify-between space-y-6"
       >
         <motion.div variants={itemVariants}>
-          <h2 className="text-2xl font-bold text-[var(--text-main)] mb-1">Financial & Ecological ROI</h2>
+          <h2 className="text-2xl font-bold text-[var(--text-main)] mb-1">{t.calculator.roiTitle}</h2>
           <p className="text-sm text-[var(--text-muted)]">Calculated results model your custom solar offsets.</p>
         </motion.div>
 
@@ -597,7 +661,7 @@ export default function RebateCalculator({
           <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 w-40 h-40 bg-[var(--color-accent)]/5 rounded-full blur-xl" />
           
           <div className="flex items-center justify-between">
-            <span className="text-sm font-bold text-[var(--text-muted)] tracking-wider uppercase">Estimated Payback Period</span>
+            <span className="text-sm font-bold text-[var(--text-muted)] tracking-wider uppercase">{t.calculator.paybackPeriod}</span>
             <span className="px-2.5 py-1 text-xs font-bold bg-green-500/10 text-green-500 rounded-full flex items-center gap-1">
               <TrendingUp className="w-3.5 h-3.5" /> High Return
             </span>
@@ -607,7 +671,7 @@ export default function RebateCalculator({
             <span className="text-5xl md:text-6xl font-black tracking-tight text-[var(--text-main)]">
               <AnimatedNumber value={paybackYears} formatter={(v) => v.toFixed(1)} />
             </span>
-            <span className="text-xl font-bold text-[var(--text-muted)]">Years</span>
+            <span className="text-xl font-bold text-[var(--text-muted)]">{t.calculator.years}</span>
           </div>
 
           <div className="text-xs text-[var(--text-muted)] flex items-center gap-1.5 border-t border-[var(--color-border)] pt-3">
@@ -672,10 +736,10 @@ export default function RebateCalculator({
           <div className="flex justify-between items-center">
             <span className="text-xs font-bold text-[var(--text-main)] flex items-center gap-1.5">
               <Leaf className="w-4 h-4 text-green-500" />
-              Scope 2 Emissions Abated
+              {t.calculator.carbonOffset}
             </span>
             <span className="text-sm font-black text-green-500">
-              <AnimatedNumber value={carbonAbatementTons} formatter={(v) => v.toFixed(1)} /> Tons CO₂/yr
+              <AnimatedNumber value={carbonAbatementTons} formatter={(v) => v.toFixed(1)} /> {t.calculator.tons}
             </span>
           </div>
 
@@ -685,21 +749,21 @@ export default function RebateCalculator({
               <div className="font-bold text-[var(--text-main)]">
                 <AnimatedNumber value={equivalentCars} /> Cars
               </div>
-              <div>Passenger cars off road</div>
+              <div>{t.calculator.equivalentCars}</div>
             </div>
             <div className="space-y-1.5 p-2 bg-[var(--bg-secondary)]/50 rounded-xl border border-[var(--color-border)]/40">
               <Flame className="w-4 h-4 text-[var(--text-muted)] mx-auto" />
               <div className="font-bold text-[var(--text-main)]">
                 <AnimatedNumber value={equivalentCoal} /> Tons
               </div>
-              <div>Tons of coal unburned</div>
+              <div>{t.calculator.equivalentCoal}</div>
             </div>
             <div className="space-y-1.5 p-2 bg-[var(--bg-secondary)]/50 rounded-xl border border-[var(--color-border)]/40">
               <Building className="w-4 h-4 text-[var(--text-muted)] mx-auto" />
               <div className="font-bold text-[var(--text-main)]">
                 <AnimatedNumber value={equivalentForest} /> Acres
               </div>
-              <div>Acres of forest saved</div>
+              <div>{t.calculator.equivalentForest}</div>
             </div>
           </div>
         </motion.div>
@@ -714,14 +778,14 @@ export default function RebateCalculator({
               <div className="p-1 rounded-md bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
                 <DollarSign className="w-3.5 h-3.5" />
               </div>
-              <span className="text-[var(--text-muted)]">Applied Incentives:</span>
+              <span className="text-[var(--text-muted)]">{t.calculator.activeRebatesTitle}:</span>
               <strong className="text-[var(--text-main)]">${Math.round(totalIncentives).toLocaleString()}</strong>
             </div>
             <div className="text-[var(--text-muted)] text-right font-medium">
               {dbRebates && dbRebates.length > 0 ? (
                 <span>{dbRebates.length} Regional Programs</span>
               ) : (
-                <span>Incl. {federalTaxCreditPct * 100}% Federal Tax Credit</span>
+                <span>Incl. {federalTaxCreditPct * 100}% {t.calculator.federalIncentive}</span>
               )}
             </div>
           </div>

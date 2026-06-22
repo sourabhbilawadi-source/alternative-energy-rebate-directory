@@ -1,6 +1,7 @@
 ---
 import '../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
+import { useTranslations } from '../../lib/i18n';
 
 export async function getStaticPaths() {
   return [
@@ -11,6 +12,7 @@ export async function getStaticPaths() {
 }
 
 const { lang } = Astro.params;
+const t = useTranslations(lang || 'en-us');
 ---
 
 <!DOCTYPE html>
@@ -19,11 +21,11 @@ const { lang } = Astro.params;
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/png" href="/logo.png" />
-  <title>DSIRE Policy & Compliance Guide | EcoRebates</title>
+  <title>{t.nav.compliance} | EcoRebates</title>
   <meta name="description" content="Access guides on Federal Tax Credits, Net Metering rules (NEM 3.0), MACRS depreciation, and USDA REAP grants." />
 
   <!-- Open Graph / Facebook Preview Metadata -->
-  <meta property="og:title" content="DSIRE Policy & Compliance Guide | EcoRebates" />
+  <meta property="og:title" content={`${t.nav.compliance} | EcoRebates`} />
   <meta property="og:description" content="Access guides on Federal Tax Credits, Net Metering rules (NEM 3.0), MACRS depreciation, and USDA REAP grants." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content={`https://ecorebates.org/${lang}/compliance`} />
@@ -31,7 +33,7 @@ const { lang } = Astro.params;
 
   <!-- Twitter Card Metadata -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="DSIRE Policy & Compliance Guide | EcoRebates" />
+  <meta name="twitter:title" content={`${t.nav.compliance} | EcoRebates`} />
   <meta name="twitter:description" content="Access guides on Federal Tax Credits, Net Metering rules (NEM 3.0), MACRS depreciation, and USDA REAP grants." />
   <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
   <ClientRouter />
@@ -45,13 +47,13 @@ const { lang } = Astro.params;
         <a href="/" class="font-bold text-lg tracking-tight text-[var(--text-main)]">EcoRebates</a>
       </div>
       <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
-        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors">Directory</a>
-        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">Search</a>
-        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">Compare Sizing</a>
-        <a href={`/${lang}/compliance`} class="text-[var(--text-main)] transition-colors">Compliance Guide</a>
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.directory}</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.search}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compare}</a>
+        <a href={`/${lang}/compliance`} class="text-[var(--text-main)] transition-colors">{t.nav.compliance}</a>
       </nav>
       <a href={`/${lang}/directory`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
-        Browse Directory
+        {t.nav.browseDir}
       </a>
     </div>
   </header>
@@ -59,8 +61,8 @@ const { lang } = Astro.params;
   <!-- Main Content -->
   <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow" transition:animate="fade">
     <div class="text-center md:text-left mb-10">
-      <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-[var(--text-main)]">Regulatory Policy & Compliance Guide</h1>
-      <p class="text-lg text-[var(--text-muted)]">A comprehensive guide on federal incentives, state net-metering laws, and SME decarbonization compliance.</p>
+      <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-[var(--text-main)]">{t.compliance.title}</h1>
+      <p class="text-lg text-[var(--text-muted)]">{t.compliance.subtitle}</p>
     </div>
 
     <div class="space-y-8">
@@ -128,12 +130,12 @@ const { lang } = Astro.params;
   <!-- Footer -->
   <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
     <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-      <div>&copy; 2026 EcoRebates. All rights reserved.</div>
+      <div>{t.footer.copyright}</div>
       <div class="flex gap-4">
-        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)]">Directory</a>
-        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">Search</a>
-        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">Compare</a>
-        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] font-semibold">Compliance</a>
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)]">{t.footer.directory}</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">{t.footer.search}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">{t.footer.compare}</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] font-semibold">{t.footer.compliance}</a>
       </div>
     </div>
   </footer>
