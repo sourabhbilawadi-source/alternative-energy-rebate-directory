@@ -43,6 +43,17 @@ export default function ComparisonEngine() {
       incentives: { federalTaxCreditPct: 0.30, stateRebate: 0, utilityRebate: 400 }
     },
     {
+      key: 'nyc',
+      name: 'New York City',
+      state: 'New York',
+      country: 'United States',
+      gridRate: 0.23,
+      sunHours: 1250,
+      gridEmissions: 0.66,
+      costPerWatt: 3.25,
+      incentives: { federalTaxCreditPct: 0.30, stateRebate: 1000, utilityRebate: 500 }
+    },
+    {
       key: 'london',
       name: 'London',
       state: 'England',
@@ -52,6 +63,39 @@ export default function ComparisonEngine() {
       gridEmissions: 0.40,
       costPerWatt: 3.40,
       incentives: { federalTaxCreditPct: 0.0, stateRebate: 1200, utilityRebate: 300 }
+    },
+    {
+      key: 'berlin',
+      name: 'Berlin',
+      state: 'Berlin',
+      country: 'Germany',
+      gridRate: 0.38,
+      sunHours: 1100,
+      gridEmissions: 0.70,
+      costPerWatt: 2.90,
+      incentives: { federalTaxCreditPct: 0.0, stateRebate: 1500, utilityRebate: 400 }
+    },
+    {
+      key: 'sydney',
+      name: 'Sydney',
+      state: 'New South Wales',
+      country: 'Australia',
+      gridRate: 0.26,
+      sunHours: 2100,
+      gridEmissions: 0.75,
+      costPerWatt: 1.80,
+      incentives: { federalTaxCreditPct: 0.0, stateRebate: 2000, utilityRebate: 800 }
+    },
+    {
+      key: 'toronto',
+      name: 'Toronto',
+      state: 'Ontario',
+      country: 'Canada',
+      gridRate: 0.16,
+      sunHours: 1300,
+      gridEmissions: 0.12,
+      costPerWatt: 2.80,
+      incentives: { federalTaxCreditPct: 0.0, stateRebate: 2500, utilityRebate: 600 }
     }
   ];
 

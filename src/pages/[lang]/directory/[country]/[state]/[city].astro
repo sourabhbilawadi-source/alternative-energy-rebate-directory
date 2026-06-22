@@ -6,13 +6,23 @@ import { supabase } from '../../../../../lib/supabase';
 
 // Enable static pre-rendering with pre-configured static paths
 export async function getStaticPaths() {
-  return [
-    { params: { lang: 'en-us', country: 'us', state: 'california', city: 'los-angeles' } },
-    { params: { lang: 'en-us', country: 'us', state: 'texas', city: 'houston' } },
-    { params: { lang: 'en-us', country: 'uk', state: 'england', city: 'london' } },
-    { params: { lang: 'de-de', country: 'us', state: 'california', city: 'los-angeles' } },
-    { params: { lang: 'fr-fr', country: 'us', state: 'california', city: 'los-angeles' } },
+  const paths = [];
+  const langs = ['en-us', 'de-de', 'fr-fr'];
+  const citiesList = [
+    { country: 'us', state: 'california', city: 'los-angeles' },
+    { country: 'us', state: 'texas', city: 'houston' },
+    { country: 'us', state: 'new-york', city: 'new-york-city' },
+    { country: 'uk', state: 'england', city: 'london' },
+    { country: 'de', state: 'berlin', city: 'berlin' },
+    { country: 'au', state: 'new-south-wales', city: 'sydney' },
+    { country: 'ca', state: 'ontario', city: 'toronto' }
   ];
+  for (const lang of langs) {
+    for (const item of citiesList) {
+      paths.push({ params: { lang, ...item } });
+    }
+  }
+  return paths;
 }
 
 const { lang, country, state, city } = Astro.params;
@@ -27,40 +37,60 @@ const getLocalSpecs = (stateName: string) => {
   const s = stateName.toLowerCase();
   if (s === 'california') {
     return {
-      gridRate: 0.28, // California is high cost
-      sunHours: 1800, // Very sunny
-      gridEmissions: 0.52, // Relatively clean grid
+      gridRate: 0.28,
+      sunHours: 1800,
+      gridEmissions: 0.52,
       costPerWatt: 3.10,
-      incentives: {
-        federalTaxCreditPct: 0.30,
-        stateRebate: 1500,
-        utilityRebate: 500,
-      }
+      incentives: { federalTaxCreditPct: 0.30, stateRebate: 1500, utilityRebate: 500 }
     };
   } else if (s === 'texas') {
     return {
-      gridRate: 0.14, // Cheap power
-      sunHours: 1950, // Sunny
-      gridEmissions: 0.82, // Dirtier grid (higher carbon savings)
+      gridRate: 0.14,
+      sunHours: 1950,
+      gridEmissions: 0.82,
       costPerWatt: 2.70,
-      incentives: {
-        federalTaxCreditPct: 0.30,
-        stateRebate: 0,
-        utilityRebate: 400,
-      }
+      incentives: { federalTaxCreditPct: 0.30, stateRebate: 0, utilityRebate: 400 }
+    };
+  } else if (s === 'new-york') {
+    return {
+      gridRate: 0.23,
+      sunHours: 1250,
+      gridEmissions: 0.66,
+      costPerWatt: 3.25,
+      incentives: { federalTaxCreditPct: 0.30, stateRebate: 1000, utilityRebate: 500 }
+    };
+  } else if (s === 'berlin') {
+    return {
+      gridRate: 0.38,
+      sunHours: 1100,
+      gridEmissions: 0.70,
+      costPerWatt: 2.90,
+      incentives: { federalTaxCreditPct: 0.0, stateRebate: 1500, utilityRebate: 400 }
+    };
+  } else if (s === 'new-south-wales') {
+    return {
+      gridRate: 0.26,
+      sunHours: 2100,
+      gridEmissions: 0.75,
+      costPerWatt: 1.80,
+      incentives: { federalTaxCreditPct: 0.0, stateRebate: 2000, utilityRebate: 800 }
+    };
+  } else if (s === 'ontario') {
+    return {
+      gridRate: 0.16,
+      sunHours: 1300,
+      gridEmissions: 0.12,
+      costPerWatt: 2.80,
+      incentives: { federalTaxCreditPct: 0.0, stateRebate: 2500, utilityRebate: 600 }
     };
   } else {
-    // Default (e.g., England / fallback)
+    // Default fallback
     return {
-      gridRate: 0.32, // High cost UK/Europe
-      sunHours: 1050, // Overcast
+      gridRate: 0.32,
+      sunHours: 1050,
       gridEmissions: 0.40,
       costPerWatt: 3.40,
-      incentives: {
-        federalTaxCreditPct: 0.0,
-        stateRebate: 1200, // UK grant
-        utilityRebate: 300,
-      }
+      incentives: { federalTaxCreditPct: 0.0, stateRebate: 1200, utilityRebate: 300 }
     };
   }
 };

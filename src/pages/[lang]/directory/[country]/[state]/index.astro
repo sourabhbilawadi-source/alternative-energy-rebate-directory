@@ -9,7 +9,11 @@ export async function getStaticPaths() {
   const regions = [
     { country: 'us', state: 'california' },
     { country: 'us', state: 'texas' },
-    { country: 'uk', state: 'england' }
+    { country: 'us', state: 'new-york' },
+    { country: 'uk', state: 'england' },
+    { country: 'de', state: 'berlin' },
+    { country: 'au', state: 'new-south-wales' },
+    { country: 'ca', state: 'ontario' }
   ];
   for (const lang of langs) {
     for (const r of regions) {
@@ -31,8 +35,16 @@ const getCitiesPreset = (s: string) => {
     return [{ slug: 'los-angeles', name: 'Los Angeles' }];
   } else if (sLower === 'texas') {
     return [{ slug: 'houston', name: 'Houston' }];
+  } else if (sLower === 'new-york') {
+    return [{ slug: 'new-york-city', name: 'New York City' }];
   } else if (sLower === 'england') {
     return [{ slug: 'london', name: 'London' }];
+  } else if (sLower === 'berlin') {
+    return [{ slug: 'berlin', name: 'Berlin' }];
+  } else if (sLower === 'new-south-wales') {
+    return [{ slug: 'sydney', name: 'Sydney' }];
+  } else if (sLower === 'ontario') {
+    return [{ slug: 'toronto', name: 'Toronto' }];
   }
   return [];
 };

@@ -6,7 +6,7 @@ import { supabase } from '../../../../lib/supabase';
 export async function getStaticPaths() {
   const paths = [];
   const langs = ['en-us', 'de-de', 'fr-fr'];
-  const countries = ['us', 'uk'];
+  const countries = ['us', 'uk', 'de', 'ca', 'au'];
   for (const lang of langs) {
     for (const country of countries) {
       paths.push({ params: { lang, country } });
@@ -17,7 +17,7 @@ export async function getStaticPaths() {
 
 const { lang, country } = Astro.params;
 
-const displayCountry = country === 'uk' ? 'United Kingdom' : country === 'us' ? 'United States' : (country || '').toUpperCase();
+const displayCountry = country === 'uk' ? 'United Kingdom' : country === 'us' ? 'United States' : country === 'de' ? 'Germany' : country === 'ca' ? 'Canada' : country === 'au' ? 'Australia' : (country || '').toUpperCase();
 
 // Fallback presets if Supabase not configured
 const getStatesPreset = (c: string) => {
@@ -25,11 +25,24 @@ const getStatesPreset = (c: string) => {
   if (code === 'us') {
     return [
       { slug: 'california', name: 'California', citiesCount: 1 },
-      { slug: 'texas', name: 'Texas', citiesCount: 1 }
+      { slug: 'texas', name: 'Texas', citiesCount: 1 },
+      { slug: 'new-york', name: 'New York', citiesCount: 1 }
     ];
   } else if (code === 'uk') {
     return [
       { slug: 'england', name: 'England', citiesCount: 1 }
+    ];
+  } else if (code === 'de') {
+    return [
+      { slug: 'berlin', name: 'Berlin', citiesCount: 1 }
+    ];
+  } else if (code === 'au') {
+    return [
+      { slug: 'new-south-wales', name: 'New South Wales', citiesCount: 1 }
+    ];
+  } else if (code === 'ca') {
+    return [
+      { slug: 'ontario', name: 'Ontario', citiesCount: 1 }
     ];
   }
   return [];
