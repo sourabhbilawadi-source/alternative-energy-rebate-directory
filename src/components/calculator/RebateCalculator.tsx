@@ -17,6 +17,7 @@ import {
 import { useTranslations } from '../../lib/i18n';
 import { queryLocationSpecs } from '../../lib/energyApi';
 import type { RegionEntry } from '../../data/regions';
+import LeadCaptureCta from './LeadCaptureCta';
 
 export interface DbRebate {
   id: string;
@@ -747,6 +748,8 @@ export default function RebateCalculator({
             Based on a net system installation cost of <strong className="text-[var(--text-main)]">${Math.round(netSystemCost).toLocaleString()}</strong> after incentives{batteryEnabled && " and battery components"}.
           </div>
         </motion.div>
+
+        <LeadCaptureCta region={`${city}, ${state}`} calculatorType="residential" />
 
         {/* Sizing, Savings and Carbon detail grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

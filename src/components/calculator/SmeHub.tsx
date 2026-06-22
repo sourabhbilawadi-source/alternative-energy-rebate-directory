@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
 import type { RegionEntry } from '../../data/regions';
+import LeadCaptureCta from './LeadCaptureCta';
 
 interface SmeHubProps {
   defaultGridRate: number;
@@ -435,6 +436,8 @@ export default function SmeHub({
             )}
           </div>
         </motion.div>
+
+        <LeadCaptureCta region={`${city}, ${state}`} calculatorType="commercial" />
 
         {/* SME Metrics Details Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
