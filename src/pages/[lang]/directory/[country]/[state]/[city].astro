@@ -172,6 +172,36 @@ const websiteSchema = {
     "query-input": "required name=search_term_string"
   }
 };
+
+// Dynamic SEO Metadata Sizing Calculation
+const standardSize = 6; // kW
+const capCost = standardSize * 1000 * (localSpecs.costPerWatt || 3.40);
+const fedCredit = capCost * (localSpecs.incentives?.federalTaxCreditPct || 0.0);
+const stRebate = localSpecs.incentives?.stateRebate || 0;
+const utRebate = localSpecs.incentives?.utilityRebate || 0;
+const netCost = Math.max(0, capCost - (fedCredit + stRebate + utRebate));
+const annualGen = standardSize * (localSpecs.sunHours || 1050);
+const annualSavings = annualGen * (localSpecs.gridRate || 0.32);
+const estimatedPayback = annualSavings > 0 ? (netCost / annualSavings) : null;
+const paybackText = estimatedPayback ? estimatedPayback.toFixed(1) : 'under 5';
+
+// Localized Title & Description
+let seoTitle = '';
+let seoDescription = '';
+const fedPctText = Math.round((localSpecs.incentives?.federalTaxCreditPct || 0.0) * 100);
+const rateText = (localSpecs.gridRate || 0.32).toFixed(2);
+
+if (lang === 'de-de') {
+  seoTitle = `${displayCity}, ${displayState} Solarförderung 2026 — Berechnen Sie Ihre Amortisationszeit | EcoRebates`;
+  seoDescription = `Sparen Sie bei Solarstrom in ${displayCity}, ${displayState} mit ${fedPctText}% Bundessteuergutschrift und Stromtarifen von $${rateText}/kWh. Geschätzte Amortisation: ${paybackText} Jahre. Berechnen Sie Ihren ROI!`;
+} else if (lang === 'fr-fr') {
+  seoTitle = `Subventions Solaires ${displayCity}, ${displayState} 2026 — Calculez Votre Période d'Amortissement | EcoRebates`;
+  seoDescription = `Économisez sur l'énergie solaire à ${displayCity}, ${displayState} avec un crédit d'impôt fédéral de ${fedPctText}% et des tarifs de $${rateText}/kWh. Période d'amortissement estimée : ${paybackText} ans.`;
+} else {
+  // Default to English
+  seoTitle = `${displayCity}, ${displayState} Solar Rebates 2026 — Calculate Your Payback Period | EcoRebates`;
+  seoDescription = `Save on solar in ${displayCity}, ${displayState} with a ${fedPctText}% federal tax credit and utility rates of $${rateText}/kWh. Estimated payback period: ${paybackText} years. Calculate your solar ROI today!`;
+}
 ---
 
 <!DOCTYPE html>
@@ -180,12 +210,12 @@ const websiteSchema = {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/png" href="/logo.png" />
-  <title>{`Alternative Energy Rebates | ${displayCity}, ${displayState}`}</title>
-  <meta name="description" content={`Comprehensive alternative energy rebates directory for ${displayCity}, ${displayState}. Calculate solar ROI, battery storage yields, and SME carbon offsets.`} />
+  <title>{seoTitle}</title>
+  <meta name="description" content={seoDescription} />
 
   <!-- Open Graph / Facebook Preview Metadata -->
-  <meta property="og:title" content={`Alternative Energy Rebates | ${displayCity}, ${displayState}`} />
-  <meta property="og:description" content={`Comprehensive alternative energy rebates directory for ${displayCity}, ${displayState}. Calculate solar ROI, battery storage yields, and SME carbon offsets.`} />
+  <meta property="og:title" content={seoTitle} />
+  <meta property="og:description" content={seoDescription} />
   <meta property="og:type" content="website" />
   <meta property="og:url" content={canonicalUrl} />
   <meta property="og:image" content="https://ecorebates.org/og-preview.png" />
@@ -193,8 +223,8 @@ const websiteSchema = {
 
   <!-- Twitter Card Metadata -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={`Alternative Energy Rebates | ${displayCity}, ${displayState}`} />
-  <meta name="twitter:description" content={`Comprehensive alternative energy rebates directory for ${displayCity}, ${displayState}. Calculate solar ROI, battery storage yields, and SME carbon offsets.`} />
+  <meta name="twitter:title" content={seoTitle} />
+  <meta name="twitter:description" content={seoDescription} />
   <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
   
   <!-- Canonical & hreflang Alternate Declarations -->
