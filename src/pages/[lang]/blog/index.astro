@@ -1,0 +1,277 @@
+---
+import '../../../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { useTranslations } from '../../../lib/i18n';
+import Analytics from '../../../components/Analytics.astro';
+import { getCollection } from 'astro:content';
+import { regionsData } from '../../../data/regions';
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'en-us' } },
+    { params: { lang: 'de-de' } },
+    { params: { lang: 'fr-fr' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const activeLang = lang || 'en-us';
+const t = useTranslations(activeLang);
+
+// Query all blog posts (including drafts so they compile and render for verification)
+const posts = await getCollection('blog');
+// Sort by publish date descending
+const sortedPosts = posts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+// Local translations for Blog
+const localT = {
+  'en-us': {
+    title: 'EcoRebates Blog',
+    subtitle: 'Stay informed with the latest insights on solar rebates, policy updates, and alternative energy calculations globally.',
+    readMore: 'Read Article &rarr;',
+    publishedOn: 'Published on',
+    relatedRegions: 'Related Regions',
+    backToDirectory: 'Back to Directory',
+    blogBreadcrumb: 'Blog',
+    metaTitle: 'EcoRebates Blog | Alternative Energy Policy & Solar Insights',
+    metaDesc: 'Explore expert guides, policy updates, and financial analysis on solar rebates, battery storage ROI, and feed-in tariffs globally.'
+  },
+  'de-de': {
+    title: 'EcoRebates Blog',
+    subtitle: 'Bleiben Sie informiert über die neuesten Erkenntnisse zu Solarförderungen, Richtlinienänderungen und Berechnungen weltweit.',
+    readMore: 'Artikel lesen &rarr;',
+    publishedOn: 'Veröffentlicht am',
+    relatedRegions: 'Verwandte Regionen',
+    backToDirectory: 'Zurück zum Verzeichnis',
+    blogBreadcrumb: 'Blog',
+    metaTitle: 'EcoRebates Blog | Analysen & Einblicke zur Solarförderung',
+    metaDesc: 'Entdecken Sie Expertenratgeber, Richtlinien-Updates und Finanzanalysen zu Solarförderungen, Batteriespeicher-ROI und Einspeisevergütungen weltweit.'
+  },
+  'fr-fr': {
+    title: 'EcoRebates Blog',
+    subtitle: 'Restez informé des dernières analyses sur les subventions solaires, les politiques énergétiques et les calculs de rendement.',
+    readMore: 'Lire l\'article &rarr;',
+    publishedOn: 'Publié le',
+    relatedRegions: 'Régions associées',
+    backToDirectory: 'Retour à l\'annuaire',
+    blogBreadcrumb: 'Blog',
+    metaTitle: 'EcoRebates Blog | Analyses et conseils sur le solaire',
+    metaDesc: 'Découvrez nos guides d\'experts, actualités réglementaires et analyses financières sur le solaire, le stockage et les tarifs d\'achat.'
+  }
+};
+
+const labels = localT[activeLang as keyof typeof localT] || localT['en-us'];
+
+// Helper function to resolve region tag to a human readable display name
+function resolveRegionName(tag: string) {
+  const parts = tag.split('/');
+  if (parts.length === 1) {
+    return tag.toUpperCase();
+  }
+  if (parts.length === 2) {
+    const [country, state] = parts;
+    const match = regionsData.find(r => r.countryCode === country && r.stateSlug === state);
+    return match ? `${match.stateName}, ${match.countryName}` : state;
+  }
+  if (parts.length === 3) {
+    const [country, state, city] = parts;
+    const match = regionsData.find(r => r.countryCode === country && r.stateSlug === state && r.citySlug === city);
+    return match ? `${match.cityName}, ${match.stateName}` : city;
+  }
+  return tag;
+}
+---
+
+<!DOCTYPE html>
+<html lang={activeLang}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <title>{labels.metaTitle}</title>
+  <meta name="description" content={labels.metaDesc} />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content={labels.metaTitle} />
+  <meta property="og:description" content={labels.metaDesc} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={`https://ecorebates.org/${activeLang}/blog`} />
+  <meta property="og:image" content="https://ecorebates.org/og-preview.png" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={labels.metaTitle} />
+  <meta name="twitter:description" content={labels.metaDesc} />
+  <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
+
+  <ClientRouter />
+  <script is:inline>
+    // 1. Immediately apply saved theme to avoid flashing
+    const savedTheme = localStorage.getItem('theme') || 'sage-minimalist';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    // 2. Re-bind event handlers on Astro page loads (ClientRouter compatibility)
+    document.addEventListener('astro:page-load', () => {
+      const activeTheme = localStorage.getItem('theme') || 'sage-minimalist';
+      document.documentElement.setAttribute('data-theme', activeTheme);
+
+      const themeSelect = document.getElementById('theme-select');
+      if (themeSelect) {
+        themeSelect.value = activeTheme;
+        themeSelect.addEventListener('change', (e) => {
+          const theme = e.target.value;
+          localStorage.setItem('theme', theme);
+          document.documentElement.setAttribute('data-theme', theme);
+        });
+      }
+
+      const langSelect = document.getElementById('lang-select');
+      if (langSelect) {
+        langSelect.addEventListener('change', (e) => {
+          const targetLang = e.target.value;
+          const pathParts = window.location.pathname.split('/').filter(Boolean);
+          
+          if (pathParts.length === 0) {
+            window.location.href = `/${targetLang}/directory`;
+          } else {
+            const supportedLangs = ['en-us', 'de-de', 'fr-fr'];
+            if (supportedLangs.includes(pathParts[0])) {
+              pathParts[0] = targetLang;
+            } else {
+              pathParts.unshift(targetLang);
+            }
+            window.location.href = `/${pathParts.join('/')}${window.location.search}`;
+          }
+        });
+      }
+    });
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Open+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <Analytics />
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+  <!-- Navbar -->
+  <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2 font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity group">
+        <img src="/logo.png" alt="EcoRebates Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" width="36" height="36" />
+        <span>EcoRebates</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
+        <a href={`/${activeLang}/directory`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.directory}</a>
+        <a href={`/${activeLang}/search`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.search}</a>
+        <a href={`/${activeLang}/compare`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compare}</a>
+        <a href={`/${activeLang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compliance}</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <!-- Lang Selector -->
+        <select 
+          id="lang-select" 
+          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
+        >
+          <option value="en-us" selected={activeLang === 'en-us'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">EN-US</option>
+          <option value="de-de" selected={activeLang === 'de-de'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">DE-DE</option>
+          <option value="fr-fr" selected={activeLang === 'fr-fr'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">FR-FR</option>
+        </select>
+
+        <!-- Theme Selector -->
+        <select 
+          id="theme-select"
+          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
+        >
+          <option value="sage-minimalist" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Sage Minimalist</option>
+          <option value="dark-forest" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Dark Forest Luxury</option>
+          <option value="mint-tech" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Mint & Clean Tech</option>
+        </select>
+
+        <a href={`/${activeLang}/directory`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
+          {t.nav.browseDir}
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow w-full">
+    <!-- Breadcrumbs -->
+    <nav class="text-sm text-[var(--text-muted)] mb-6 flex items-center gap-2" aria-label="Breadcrumb">
+      <a href={`/${activeLang}/directory`} class="hover:text-[var(--text-main)]">{t.nav.directory}</a>
+      <span>/</span>
+      <span class="text-[var(--text-main)] font-semibold">{labels.blogBreadcrumb}</span>
+    </nav>
+
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4 text-[var(--text-main)]">{labels.title}</h1>
+      <p class="text-lg text-[var(--text-muted)]">{labels.subtitle}</p>
+    </div>
+
+    <!-- Posts Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {sortedPosts.map(post => (
+        <article class="bg-[var(--bg-secondary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group h-full">
+          <div class="p-6 flex flex-col flex-grow">
+            <!-- Post Meta -->
+            <div class="text-xs text-[var(--text-muted)] mb-3 flex items-center gap-2">
+              <time datetime={post.data.publishDate.toISOString()}>
+                {post.data.publishDate.toLocaleDateString(activeLang, { year: 'numeric', month: 'long', day: 'numeric' })}
+              </time>
+              {post.data.draft && (
+                <span class="bg-[var(--color-border)] text-[var(--text-muted)] text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">
+                  Draft
+                </span>
+              )}
+            </div>
+
+            <!-- Title -->
+            <h2 class="text-xl font-bold mb-3 text-[var(--text-main)] group-hover:text-[var(--color-accent)] transition-colors line-clamp-2">
+              <a href={`/${activeLang}/blog/${post.id}`}>
+                {post.data.title}
+              </a>
+            </h2>
+
+            <!-- Description -->
+            <p class="text-[var(--text-muted)] text-sm mb-6 line-clamp-4 flex-grow">
+              {post.data.description}
+            </p>
+
+            <!-- Tags -->
+            {post.data.relatedRegions.length > 0 && (
+              <div class="mb-6 flex flex-wrap gap-2">
+                {post.data.relatedRegions.map(tag => (
+                  <span class="text-[11px] bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-muted)] px-2.5 py-1 rounded-lg">
+                    {resolveRegionName(tag)}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <!-- Read More Link -->
+            <div class="mt-auto">
+              <a href={`/${activeLang}/blog/${post.id}`} class="text-sm font-bold text-[var(--color-accent)] group-hover:underline flex items-center gap-1">
+                <span set:html={labels.readMore} />
+              </a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>{t.footer.copyright}</div>
+      <div class="flex gap-4 flex-wrap justify-center">
+        <a href={`/${activeLang}/directory`} class="hover:text-[var(--text-main)]">{t.footer.directory}</a>
+        <a href={`/${activeLang}/search`} class="hover:text-[var(--text-main)]">{t.footer.search}</a>
+        <a href={`/${activeLang}/compare`} class="hover:text-[var(--text-main)]">{t.footer.compare}</a>
+        <a href={`/${activeLang}/compliance`} class="hover:text-[var(--text-main)]">{t.footer.compliance}</a>
+        <a href={`/${activeLang}/privacy`} class="hover:text-[var(--text-main)]">{t.footer.privacy}</a>
+        <a href={`/${activeLang}/terms`} class="hover:text-[var(--text-main)]">{t.footer.terms}</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

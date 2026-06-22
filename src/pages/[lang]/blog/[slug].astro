@@ -1,0 +1,363 @@
+---
+import '../../../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { useTranslations } from '../../../lib/i18n';
+import Analytics from '../../../components/Analytics.astro';
+import { getCollection, render } from 'astro:content';
+import { regionsData } from '../../../data/regions';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const langs = ['en-us', 'de-de', 'fr-fr'];
+  
+  const paths = [];
+  for (const lang of langs) {
+    for (const post of posts) {
+      paths.push({
+        params: { lang, slug: post.id },
+        props: { post }
+      });
+    }
+  }
+  return paths;
+}
+
+const { lang, slug } = Astro.params;
+const { post } = Astro.props;
+
+const activeLang = lang || 'en-us';
+const t = useTranslations(activeLang);
+const { Content } = await render(post);
+
+// Local translations for Blog Post detail
+const localT = {
+  'en-us': {
+    backToBlog: '&larr; Back to Blog',
+    publishedOn: 'Published on',
+    draftLabel: 'Draft Post',
+    relatedTitle: 'Related Solar Calculators',
+    relatedDesc: 'Check local utility rates, solar incentives, and calculate your exact payback period using our interactive calculator for these regions:',
+    calcAction: 'Calculate Solar ROI &rarr;',
+    metaTitleSuffix: '| EcoRebates Blog'
+  },
+  'de-de': {
+    backToBlog: '&larr; Zurück zum Blog',
+    publishedOn: 'Veröffentlicht am',
+    draftLabel: 'Entwurf',
+    relatedTitle: 'Passende Solarrechner',
+    relatedDesc: 'Prüfen Sie die Stromtarife, Solarförderungen und berechnen Sie Ihre Amortisationszeit mit unserem interaktiven Rechner für diese Regionen:',
+    calcAction: 'Solar-ROI Berechnen &rarr;',
+    metaTitleSuffix: '| EcoRebates Blog'
+  },
+  'fr-fr': {
+    backToBlog: '&larr; Retour au Blog',
+    publishedOn: 'Publié le',
+    draftLabel: 'Brouillon',
+    relatedTitle: 'Calculateurs Solaires Associés',
+    relatedDesc: 'Vérifiez les tarifs d\'électricité locaux, les subventions solaires et calculez votre retour sur investissement pour ces régions :',
+    calcAction: 'Calculer le ROI Solaire &rarr;',
+    metaTitleSuffix: '| EcoRebates Blog'
+  }
+};
+
+const labels = localT[activeLang as keyof typeof localT] || localT['en-us'];
+const seoTitle = `${post.data.title} ${labels.metaTitleSuffix}`;
+const seoDescription = post.data.description;
+const canonicalUrl = `https://ecorebates.org/${activeLang}/blog/${post.id}`;
+
+// Helper function to resolve region tag data (names & slugs)
+interface ResolvedRegion {
+  name: string;
+  url: string;
+}
+
+function resolveRegionLink(tag: string): ResolvedRegion | null {
+  const parts = tag.split('/');
+  if (parts.length === 1) {
+    const country = parts[0];
+    return {
+      name: country.toUpperCase(),
+      url: `/${activeLang}/directory/${country}`
+    };
+  }
+  if (parts.length === 2) {
+    const [country, state] = parts;
+    const match = regionsData.find(r => r.countryCode === country && r.stateSlug === state);
+    return {
+      name: match ? `${match.stateName}, ${match.countryName}` : state,
+      url: `/${activeLang}/directory/${country}/${state}`
+    };
+  }
+  if (parts.length === 3) {
+    const [country, state, city] = parts;
+    const match = regionsData.find(r => r.countryCode === country && r.stateSlug === state && r.citySlug === city);
+    return {
+      name: match ? `${match.cityName}, ${match.stateName}` : city,
+      url: `/${activeLang}/directory/${country}/${state}/${city}`
+    };
+  }
+  return null;
+}
+
+const resolvedRegions = post.data.relatedRegions
+  .map(tag => resolveRegionLink(tag))
+  .filter((r): r is ResolvedRegion => r !== null);
+---
+
+<!DOCTYPE html>
+<html lang={activeLang}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <title>{seoTitle}</title>
+  <meta name="description" content={seoDescription} />
+
+  <!-- Open Graph / Facebook Preview Metadata -->
+  <meta property="og:title" content={seoTitle} />
+  <meta property="og:description" content={seoDescription} />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:image" content="https://ecorebates.org/og-preview.png" />
+
+  <!-- Twitter Card Metadata -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={seoTitle} />
+  <meta name="twitter:description" content={seoDescription} />
+  <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
+
+  <ClientRouter />
+  <script is:inline>
+    // 1. Immediately apply saved theme to avoid flashing
+    const savedTheme = localStorage.getItem('theme') || 'sage-minimalist';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    // 2. Re-bind event handlers on Astro page loads (ClientRouter compatibility)
+    document.addEventListener('astro:page-load', () => {
+      const activeTheme = localStorage.getItem('theme') || 'sage-minimalist';
+      document.documentElement.setAttribute('data-theme', activeTheme);
+
+      const themeSelect = document.getElementById('theme-select');
+      if (themeSelect) {
+        themeSelect.value = activeTheme;
+        themeSelect.addEventListener('change', (e) => {
+          const theme = e.target.value;
+          localStorage.setItem('theme', theme);
+          document.documentElement.setAttribute('data-theme', theme);
+        });
+      }
+
+      const langSelect = document.getElementById('lang-select');
+      if (langSelect) {
+        langSelect.addEventListener('change', (e) => {
+          const targetLang = e.target.value;
+          const pathParts = window.location.pathname.split('/').filter(Boolean);
+          
+          if (pathParts.length === 0) {
+            window.location.href = `/${targetLang}/directory`;
+          } else {
+            const supportedLangs = ['en-us', 'de-de', 'fr-fr'];
+            if (supportedLangs.includes(pathParts[0])) {
+              pathParts[0] = targetLang;
+            } else {
+              pathParts.unshift(targetLang);
+            }
+            window.location.href = `/${pathParts.join('/')}${window.location.search}`;
+          }
+        });
+      }
+    });
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Open+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <Analytics />
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+  <!-- Navbar -->
+  <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2 font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity group">
+        <img src="/logo.png" alt="EcoRebates Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" width="36" height="36" />
+        <span>EcoRebates</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
+        <a href={`/${activeLang}/directory`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.directory}</a>
+        <a href={`/${activeLang}/search`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.search}</a>
+        <a href={`/${activeLang}/compare`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compare}</a>
+        <a href={`/${activeLang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compliance}</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <!-- Lang Selector -->
+        <select 
+          id="lang-select" 
+          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
+        >
+          <option value="en-us" selected={activeLang === 'en-us'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">EN-US</option>
+          <option value="de-de" selected={activeLang === 'de-de'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">DE-DE</option>
+          <option value="fr-fr" selected={activeLang === 'fr-fr'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">FR-FR</option>
+        </select>
+
+        <!-- Theme Selector -->
+        <select 
+          id="theme-select"
+          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
+        >
+          <option value="sage-minimalist" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Sage Minimalist</option>
+          <option value="dark-forest" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Dark Forest Luxury</option>
+          <option value="mint-tech" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Mint & Clean Tech</option>
+        </select>
+
+        <a href={`/${activeLang}/directory`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
+          {t.nav.browseDir}
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow w-full">
+    <!-- Back Button -->
+    <div class="mb-8">
+      <a href={`/${activeLang}/blog`} class="text-sm font-bold text-[var(--color-accent)] hover:underline flex items-center gap-1">
+        <span set:html={labels.backToBlog} />
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <!-- Article Column -->
+      <article class="lg:col-span-8 bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-6 sm:p-10 shadow-sm">
+        <header class="mb-8 pb-6 border-b border-[var(--color-border)]">
+          <div class="flex items-center gap-3 text-xs text-[var(--text-muted)] mb-4">
+            <time datetime={post.data.publishDate.toISOString()}>
+              {labels.publishedOn} {post.data.publishDate.toLocaleDateString(activeLang, { year: 'numeric', month: 'long', day: 'numeric' })}
+            </time>
+            {post.data.draft && (
+              <span class="bg-[var(--color-border)] text-[var(--text-muted)] text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full">
+                {labels.draftLabel}
+              </span>
+            )}
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text-main)] leading-tight mb-4">
+            {post.data.title}
+          </h1>
+          <p class="text-lg text-[var(--text-muted)] leading-relaxed italic">
+            {post.data.description}
+          </p>
+        </header>
+
+        <!-- Markdown Rendering -->
+        <div class="prose max-w-none">
+          <Content />
+        </div>
+      </article>
+
+      <!-- Sidebar Column -->
+      <aside class="lg:col-span-4 flex flex-col gap-6">
+        {resolvedRegions.length > 0 && (
+          <div class="bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-6 shadow-sm">
+            <h2 class="text-lg font-bold text-[var(--text-main)] mb-3 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              {labels.relatedTitle}
+            </h2>
+            <p class="text-xs text-[var(--text-muted)] mb-6 leading-relaxed">
+              {labels.relatedDesc}
+            </p>
+            <div class="flex flex-col gap-4">
+              {resolvedRegions.map(region => (
+                <div class="bg-[var(--bg-primary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] rounded-xl p-4 transition-all duration-300 group">
+                  <div class="font-semibold text-sm text-[var(--text-main)] mb-3">
+                    {region.name}
+                  </div>
+                  <a href={region.url} class="inline-flex items-center text-xs font-bold text-[var(--color-accent)] hover:underline">
+                    {labels.calcAction}
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </aside>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>{t.footer.copyright}</div>
+      <div class="flex gap-4 flex-wrap justify-center">
+        <a href={`/${activeLang}/directory`} class="hover:text-[var(--text-main)]">{t.footer.directory}</a>
+        <a href={`/${activeLang}/search`} class="hover:text-[var(--text-main)]">{t.footer.search}</a>
+        <a href={`/${activeLang}/compare`} class="hover:text-[var(--text-main)]">{t.footer.compare}</a>
+        <a href={`/${activeLang}/compliance`} class="hover:text-[var(--text-main)]">{t.footer.compliance}</a>
+        <a href={`/${activeLang}/privacy`} class="hover:text-[var(--text-main)]">{t.footer.privacy}</a>
+        <a href={`/${activeLang}/terms`} class="hover:text-[var(--text-main)]">{t.footer.terms}</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
+
+<style is:global>
+  /* Markdown styling for premium typography and layout */
+  .prose {
+    line-height: 1.8;
+    font-size: 1.05rem;
+    color: var(--text-muted);
+  }
+  .prose h1, .prose h2, .prose h3, .prose h4 {
+    color: var(--text-main);
+    font-weight: 800;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+  .prose h2 {
+    font-size: 1.45rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.5rem;
+  }
+  .prose h3 {
+    font-size: 1.2rem;
+  }
+  .prose p {
+    margin-bottom: 1.5rem;
+  }
+  .prose ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .prose li {
+    margin-bottom: 0.5rem;
+  }
+  .prose ol {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .prose a {
+    color: var(--color-accent);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .prose a:hover {
+    text-decoration: underline;
+  }
+  .prose strong {
+    color: var(--text-main);
+    font-weight: 700;
+  }
+  .prose blockquote {
+    border-left: 4px solid var(--color-accent);
+    padding-left: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+    font-style: italic;
+    color: var(--text-main);
+    background-color: var(--bg-primary);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+  }
+</style>
