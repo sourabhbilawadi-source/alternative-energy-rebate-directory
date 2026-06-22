@@ -156,6 +156,47 @@ const currentContent = content[lang as keyof typeof content] || content['en-us']
   <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
   
   <ClientRouter />
+  <script is:inline>
+    // 1. Immediately apply saved theme to avoid flashing
+    const savedTheme = localStorage.getItem('theme') || 'sage-minimalist';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    // 2. Re-bind event handlers on Astro page loads (ClientRouter compatibility)
+    document.addEventListener('astro:page-load', () => {
+      const activeTheme = localStorage.getItem('theme') || 'sage-minimalist';
+      document.documentElement.setAttribute('data-theme', activeTheme);
+
+      const themeSelect = document.getElementById('theme-select');
+      if (themeSelect) {
+        themeSelect.value = activeTheme;
+        themeSelect.addEventListener('change', (e) => {
+          const theme = e.target.value;
+          localStorage.setItem('theme', theme);
+          document.documentElement.setAttribute('data-theme', theme);
+        });
+      }
+
+      const langSelect = document.getElementById('lang-select');
+      if (langSelect) {
+        langSelect.addEventListener('change', (e) => {
+          const targetLang = e.target.value;
+          const pathParts = window.location.pathname.split('/').filter(Boolean);
+          
+          if (pathParts.length === 0) {
+            window.location.href = `/${targetLang}/directory`;
+          } else {
+            const supportedLangs = ['en-us', 'de-de', 'fr-fr'];
+            if (supportedLangs.includes(pathParts[0])) {
+              pathParts[0] = targetLang;
+            } else {
+              pathParts.unshift(targetLang);
+            }
+            window.location.href = `/${pathParts.join('/')}${window.location.search}`;
+          }
+        });
+      }
+    });
+  </script>
   <Analytics />
 </head>
 <body class="min-h-screen flex flex-col justify-between">
@@ -172,9 +213,31 @@ const currentContent = content[lang as keyof typeof content] || content['en-us']
         <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compare}</a>
         <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compliance}</a>
       </nav>
-      <a href={`/${lang}/directory`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
-        {t.nav.browseDir}
-      </a>
+      <div class="flex items-center gap-3">
+        <!-- Lang Selector -->
+        <select 
+          id="lang-select" 
+          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
+        >
+          <option value="en-us" selected={lang === 'en-us'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">EN-US</option>
+          <option value="de-de" selected={lang === 'de-de'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">DE-DE</option>
+          <option value="fr-fr" selected={lang === 'fr-fr'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">FR-FR</option>
+        </select>
+
+        <!-- Theme Selector -->
+        <select 
+          id="theme-select"
+          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
+        >
+          <option value="sage-minimalist" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Sage Minimalist</option>
+          <option value="dark-forest" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Dark Forest Luxury</option>
+          <option value="mint-tech" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Mint & Clean Tech</option>
+        </select>
+
+        <a href={`/${lang}/directory`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
+          {t.nav.browseDir}
+        </a>
+      </div>
     </div>
   </header>
 

@@ -244,6 +244,47 @@ const websiteSchema = {
 
   <!-- Astro View Transitions -->
   <ClientRouter />
+  <script is:inline>
+    // 1. Immediately apply saved theme to avoid flashing
+    const savedTheme = localStorage.getItem('theme') || 'sage-minimalist';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    // 2. Re-bind event handlers on Astro page loads (ClientRouter compatibility)
+    document.addEventListener('astro:page-load', () => {
+      const activeTheme = localStorage.getItem('theme') || 'sage-minimalist';
+      document.documentElement.setAttribute('data-theme', activeTheme);
+
+      const themeSelect = document.getElementById('theme-select');
+      if (themeSelect) {
+        themeSelect.value = activeTheme;
+        themeSelect.addEventListener('change', (e) => {
+          const theme = e.target.value;
+          localStorage.setItem('theme', theme);
+          document.documentElement.setAttribute('data-theme', theme);
+        });
+      }
+
+      const langSelect = document.getElementById('lang-select');
+      if (langSelect) {
+        langSelect.addEventListener('change', (e) => {
+          const targetLang = e.target.value;
+          const pathParts = window.location.pathname.split('/').filter(Boolean);
+          
+          if (pathParts.length === 0) {
+            window.location.href = `/${targetLang}/directory`;
+          } else {
+            const supportedLangs = ['en-us', 'de-de', 'fr-fr'];
+            if (supportedLangs.includes(pathParts[0])) {
+              pathParts[0] = targetLang;
+            } else {
+              pathParts.unshift(targetLang);
+            }
+            window.location.href = `/${pathParts.join('/')}${window.location.search}`;
+          }
+        });
+      }
+    });
+  </script>
   <Analytics />
 </head>
 <body class="min-h-screen pb-16">
@@ -255,29 +296,25 @@ const websiteSchema = {
         <span>EcoRebates</span>
       </a>
       
-      <!-- Top Actions & Selector Controls -->
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
         <!-- Lang Selector -->
         <select 
           id="lang-select" 
-          class="bg-transparent border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded px-2 py-1 outline-none"
-          onchange={`window.location.href = this.value`}
+          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
         >
-          {languages.map(l => (
-            <option value={`${siteUrl}/${l}/directory/${country}/${state}/${city}`} selected={l === lang}>
-              {l.toUpperCase()}
-            </option>
-          ))}
+          <option value="en-us" selected={lang === 'en-us'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">EN-US</option>
+          <option value="de-de" selected={lang === 'de-de'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">DE-DE</option>
+          <option value="fr-fr" selected={lang === 'fr-fr'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">FR-FR</option>
         </select>
 
         <!-- Theme Selector -->
         <select 
           id="theme-select"
-          class="bg-transparent border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded px-2 py-1 outline-none"
+          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
         >
-          <option value="sage-minimalist">Sage Minimalist</option>
-          <option value="dark-forest">Dark Forest Luxury</option>
-          <option value="mint-tech">Mint & Clean Tech</option>
+          <option value="sage-minimalist" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Sage Minimalist</option>
+          <option value="dark-forest" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Dark Forest Luxury</option>
+          <option value="mint-tech" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Mint & Clean Tech</option>
         </select>
       </div>
     </div>
@@ -405,15 +442,6 @@ const websiteSchema = {
   </main>
 
   <script>
-    // Client-side theme switching logic
-    const themeSelect = document.getElementById('theme-select') as HTMLSelectElement;
-    if (themeSelect) {
-      themeSelect.addEventListener('change', (e) => {
-        const theme = (e.target as HTMLSelectElement).value;
-        document.documentElement.setAttribute('data-theme', theme);
-      });
-    }
-
     // Client-side tab navigation logic
     const btnRes = document.getElementById('btn-residential');
     const btnSme = document.getElementById('btn-sme');
