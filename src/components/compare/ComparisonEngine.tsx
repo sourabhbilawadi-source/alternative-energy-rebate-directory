@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRightLeft } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
+import { regionsData } from '../../data/regions';
 
 interface CitySpecs {
   key: string;
@@ -22,88 +23,26 @@ interface CitySpecs {
 export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) {
   const t = useTranslations(lang);
 
-  const initialCities: CitySpecs[] = [
-    {
-      key: 'la',
-      name: 'Los Angeles',
-      state: 'California',
-      country: 'United States',
-      gridRate: 0.28,
-      sunHours: 1800,
-      gridEmissions: 0.52,
-      costPerWatt: 3.10,
-      incentives: { federalTaxCreditPct: 0.30, stateRebate: 1500, utilityRebate: 500 }
-    },
-    {
-      key: 'houston',
-      name: 'Houston',
-      state: 'Texas',
-      country: 'United States',
-      gridRate: 0.14,
-      sunHours: 1950,
-      gridEmissions: 0.82,
-      costPerWatt: 2.70,
-      incentives: { federalTaxCreditPct: 0.30, stateRebate: 0, utilityRebate: 400 }
-    },
-    {
-      key: 'nyc',
-      name: 'New York City',
-      state: 'New York',
-      country: 'United States',
-      gridRate: 0.23,
-      sunHours: 1250,
-      gridEmissions: 0.66,
-      costPerWatt: 3.25,
-      incentives: { federalTaxCreditPct: 0.30, stateRebate: 1000, utilityRebate: 500 }
-    },
-    {
-      key: 'london',
-      name: 'London',
-      state: 'England',
-      country: 'United Kingdom',
-      gridRate: 0.32,
-      sunHours: 1050,
-      gridEmissions: 0.40,
-      costPerWatt: 3.40,
-      incentives: { federalTaxCreditPct: 0.0, stateRebate: 1200, utilityRebate: 300 }
-    },
-    {
-      key: 'berlin',
-      name: 'Berlin',
-      state: 'Berlin',
-      country: 'Germany',
-      gridRate: 0.38,
-      sunHours: 1100,
-      gridEmissions: 0.70,
-      costPerWatt: 2.90,
-      incentives: { federalTaxCreditPct: 0.0, stateRebate: 1500, utilityRebate: 400 }
-    },
-    {
-      key: 'sydney',
-      name: 'Sydney',
-      state: 'New South Wales',
-      country: 'Australia',
-      gridRate: 0.26,
-      sunHours: 2100,
-      gridEmissions: 0.75,
-      costPerWatt: 1.80,
-      incentives: { federalTaxCreditPct: 0.0, stateRebate: 2000, utilityRebate: 800 }
-    },
-    {
-      key: 'toronto',
-      name: 'Toronto',
-      state: 'Ontario',
-      country: 'Canada',
-      gridRate: 0.16,
-      sunHours: 1300,
-      gridEmissions: 0.12,
-      costPerWatt: 2.80,
-      incentives: { federalTaxCreditPct: 0.0, stateRebate: 2500, utilityRebate: 600 }
-    }
-  ];
+  const initialCities: CitySpecs[] = regionsData
+    .filter(r => r.gridRate !== null)
+    .map(r => ({
+      key: r.citySlug,
+      name: r.cityName,
+      state: r.stateName,
+      country: r.countryName,
+      gridRate: r.gridRate!,
+      sunHours: r.sunHours!,
+      gridEmissions: r.gridEmissions!,
+      costPerWatt: r.costPerWatt!,
+      incentives: {
+        federalTaxCreditPct: r.federalTaxCreditPct || 0,
+        stateRebate: r.stateRebate || 0,
+        utilityRebate: r.utilityRebate || 0
+      }
+    }));
 
   const [cities, setCities] = useState<CitySpecs[]>(initialCities);
-  const [cityAKey, setCityAKey] = useState('la');
+  const [cityAKey, setCityAKey] = useState('los-angeles');
   const [cityBKey, setCityBKey] = useState('houston');
   const [monthlyBill, setMonthlyBill] = useState(250);
   const [roofArea, setRoofArea] = useState(1200);

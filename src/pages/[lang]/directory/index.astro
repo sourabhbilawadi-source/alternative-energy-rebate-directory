@@ -4,6 +4,7 @@ import { ClientRouter } from 'astro:transitions';
 import { supabase } from '../../../lib/supabase';
 import { useTranslations } from '../../../lib/i18n';
 import Analytics from '../../../components/Analytics.astro';
+import { regionsData, COUNTRY_METADATA } from '../../../data/regions';
 
 export async function getStaticPaths() {
   return [
@@ -16,14 +17,28 @@ export async function getStaticPaths() {
 const { lang } = Astro.params;
 const t = useTranslations(lang || 'en-us');
 
-// Fetch countries from regions database, fallback to presets if Supabase not configured
-let countriesList = [
-  { code: 'us', name: 'United States', flag: '🇺🇸', regionsCount: 10 },
-  { code: 'uk', name: 'United Kingdom', flag: '🇬🇧', regionsCount: 2 },
-  { code: 'de', name: 'Germany', flag: '🇩🇪', regionsCount: 2 },
-  { code: 'ca', name: 'Canada', flag: '🇨🇦', regionsCount: 2 },
-  { code: 'au', name: 'Australia', flag: '🇦🇺', regionsCount: 2 }
-];
+// Resolve countries list dynamically from regionsData
+const getCountriesPreset = () => {
+  const countryMap = new Map<string, { name: string; flag: string; count: number }>();
+  for (const r of regionsData) {
+    const meta = COUNTRY_METADATA[r.countryCode] || { name: r.countryName, flag: r.flag };
+    const existing = countryMap.get(r.countryCode);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      countryMap.set(r.countryCode, { name: meta.name, flag: meta.flag, count: 1 });
+    }
+  }
+
+  return Array.from(countryMap.entries()).map(([code, info]) => ({
+    code,
+    name: info.name,
+    flag: info.flag,
+    regionsCount: info.count
+  }));
+};
+
+let countriesList = getCountriesPreset();
 
 if (supabase) {
   try {
@@ -34,29 +49,16 @@ if (supabase) {
     if (data && data.length > 0) {
       const uniqueCodes = [...new Set(data.map(r => r.country_code.toLowerCase()))];
       countriesList = uniqueCodes.map(code => {
-        let name = code.toUpperCase();
-        let flag = '🌐';
-        if (code === 'us') {
-          name = 'United States';
-          flag = '🇺🇸';
-        } else if (code === 'gb' || code === 'uk') {
-          name = 'United Kingdom';
-          flag = '🇬🇧';
-        } else if (code === 'de') {
-          name = 'Germany';
-          flag = '🇩🇪';
-        } else if (code === 'ca') {
-          name = 'Canada';
-          flag = '🇨🇦';
-        } else if (code === 'au') {
-          name = 'Australia';
-          flag = '🇦🇺';
-        } else if (code === 'fr') {
-          name = 'France';
-          flag = '🇫🇷';
-        }
-        const count = data.filter(r => r.country_code.toLowerCase() === code).length;
-        return { code: code === 'gb' ? 'uk' : code, name, flag, regionsCount: count };
+        const cleanCode = code === 'gb' ? 'uk' : code;
+        const meta = COUNTRY_METADATA[cleanCode] || { name: cleanCode.toUpperCase(), flag: '🌐' };
+        const dbCount = data.filter(r => r.country_code.toLowerCase() === code).length;
+        const presetCount = regionsData.filter(r => r.countryCode === cleanCode).length;
+        return { 
+          code: cleanCode, 
+          name: meta.name, 
+          flag: meta.flag, 
+          regionsCount: Math.max(dbCount, presetCount) 
+        };
       });
     }
   } catch (err) {

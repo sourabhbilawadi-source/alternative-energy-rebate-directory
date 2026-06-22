@@ -4,10 +4,11 @@ import { ClientRouter } from 'astro:transitions';
 import { supabase } from '../../../../lib/supabase';
 import { useTranslations } from '../../../../lib/i18n';
 import Analytics from '../../../../components/Analytics.astro';
+import { regionsData, COUNTRY_METADATA } from '../../../../data/regions';
 
 export async function getStaticPaths() {
   const langs = ['en-us', 'de-de', 'fr-fr'];
-  let countries = ['us', 'uk', 'de', 'ca', 'au'];
+  let countries = [...new Set(regionsData.map(r => r.countryCode))];
 
   if (supabase) {
     try {
@@ -16,8 +17,8 @@ export async function getStaticPaths() {
         .select('country_code');
       
       if (data && data.length > 0) {
-        const uniqueCodes = [...new Set(data.map(r => r.country_code.toLowerCase()))];
-        countries = uniqueCodes.map(code => code === 'gb' ? 'uk' : code);
+        const dbCodes = data.map(r => r.country_code.toLowerCase() === 'gb' ? 'uk' : r.country_code.toLowerCase());
+        countries = [...new Set([...countries, ...dbCodes])];
       }
     } catch (err) {
       console.error('Failed to query countries for static paths in country index. Using fallbacks:', err);
@@ -36,45 +37,30 @@ export async function getStaticPaths() {
 const { lang, country } = Astro.params;
 const t = useTranslations(lang || 'en-us');
 
-const displayCountry = country === 'uk' ? 'United Kingdom' : country === 'us' ? 'United States' : country === 'de' ? 'Germany' : country === 'ca' ? 'Canada' : country === 'au' ? 'Australia' : (country || '').toUpperCase();
+const displayCountry = (country && COUNTRY_METADATA[country.toLowerCase()]) 
+  ? COUNTRY_METADATA[country.toLowerCase()].name 
+  : (country === 'uk' ? 'United Kingdom' : country === 'us' ? 'United States' : country === 'de' ? 'Germany' : country === 'ca' ? 'Canada' : country === 'au' ? 'Australia' : (country || '').toUpperCase());
 
-// Fallback presets if Supabase not configured
+// Resolve unique states and their city count dynamically
 const getStatesPreset = (c: string) => {
   const code = c.toLowerCase();
-  if (code === 'us') {
-    return [
-      { slug: 'california', name: 'California', citiesCount: 2 },
-      { slug: 'texas', name: 'Texas', citiesCount: 1 },
-      { slug: 'new-york', name: 'New York', citiesCount: 1 },
-      { slug: 'illinois', name: 'Illinois', citiesCount: 1 },
-      { slug: 'arizona', name: 'Arizona', citiesCount: 1 },
-      { slug: 'florida', name: 'Florida', citiesCount: 1 },
-      { slug: 'washington', name: 'Washington', citiesCount: 1 },
-      { slug: 'massachusetts', name: 'Massachusetts', citiesCount: 1 },
-      { slug: 'colorado', name: 'Colorado', citiesCount: 1 }
-    ];
-  } else if (code === 'uk') {
-    return [
-      { slug: 'england', name: 'England', citiesCount: 1 },
-      { slug: 'scotland', name: 'Scotland', citiesCount: 1 }
-    ];
-  } else if (code === 'de') {
-    return [
-      { slug: 'berlin', name: 'Berlin', citiesCount: 1 },
-      { slug: 'bavaria', name: 'Bavaria', citiesCount: 1 }
-    ];
-  } else if (code === 'au') {
-    return [
-      { slug: 'new-south-wales', name: 'New South Wales', citiesCount: 1 },
-      { slug: 'victoria', name: 'Victoria', citiesCount: 1 }
-    ];
-  } else if (code === 'ca') {
-    return [
-      { slug: 'ontario', name: 'Ontario', citiesCount: 1 },
-      { slug: 'british-columbia', name: 'British Columbia', citiesCount: 1 }
-    ];
+  const countryRegions = regionsData.filter(r => r.countryCode === code);
+  
+  const stateMap = new Map<string, { name: string; citiesCount: number }>();
+  for (const r of countryRegions) {
+    const existing = stateMap.get(r.stateSlug);
+    if (existing) {
+      existing.citiesCount += 1;
+    } else {
+      stateMap.set(r.stateSlug, { name: r.stateName, citiesCount: 1 });
+    }
   }
-  return [];
+  
+  return Array.from(stateMap.entries()).map(([slug, info]) => ({
+    slug,
+    name: info.name,
+    citiesCount: info.citiesCount
+  }));
 };
 
 let statesList = getStatesPreset(country || '');

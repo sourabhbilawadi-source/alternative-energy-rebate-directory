@@ -6,30 +6,16 @@ import SmeHub from '../../../../../components/calculator/SmeHub';
 import { supabase } from '../../../../../lib/supabase';
 import { useTranslations } from '../../../../../lib/i18n';
 import Analytics from '../../../../../components/Analytics.astro';
+import { regionsData } from '../../../../../data/regions';
 
 // Enable static pre-rendering with dynamic paths from database (with static fallbacks)
 export async function getStaticPaths() {
   const langs = ['en-us', 'de-de', 'fr-fr'];
-  let citiesList = [
-    { country: 'us', state: 'california', city: 'los-angeles' },
-    { country: 'us', state: 'texas', city: 'houston' },
-    { country: 'us', state: 'new-york', city: 'new-york-city' },
-    { country: 'uk', state: 'england', city: 'london' },
-    { country: 'de', state: 'berlin', city: 'berlin' },
-    { country: 'au', state: 'new-south-wales', city: 'sydney' },
-    { country: 'ca', state: 'ontario', city: 'toronto' },
-    { country: 'us', state: 'illinois', city: 'chicago' },
-    { country: 'us', state: 'arizona', city: 'phoenix' },
-    { country: 'us', state: 'florida', city: 'miami' },
-    { country: 'us', state: 'washington', city: 'seattle' },
-    { country: 'us', state: 'massachusetts', city: 'boston' },
-    { country: 'us', state: 'california', city: 'san-francisco' },
-    { country: 'us', state: 'colorado', city: 'denver' },
-    { country: 'uk', state: 'scotland', city: 'edinburgh' },
-    { country: 'de', state: 'bavaria', city: 'munich' },
-    { country: 'ca', state: 'british-columbia', city: 'vancouver' },
-    { country: 'au', state: 'victoria', city: 'melbourne' }
-  ];
+  let citiesList = regionsData.map(r => ({
+    country: r.countryCode,
+    state: r.stateSlug,
+    city: r.citySlug
+  }));
 
   if (supabase) {
     try {
@@ -38,11 +24,20 @@ export async function getStaticPaths() {
         .select('country_code, state_province, city');
       
       if (data && data.length > 0) {
-        citiesList = data.map(r => ({
+        const dbCities = data.map(r => ({
           country: r.country_code === 'gb' ? 'uk' : r.country_code.toLowerCase(),
           state: r.state_province.toLowerCase().replace(/\s+/g, '-'),
           city: r.city.toLowerCase().replace(/\s+/g, '-')
         }));
+        
+        const seen = new Set(citiesList.map(c => `${c.country}:${c.state}:${c.city}`));
+        for (const dbc of dbCities) {
+          const key = `${dbc.country}:${dbc.state}:${dbc.city}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            citiesList.push(dbc);
+          }
+        }
       }
     } catch (err) {
       console.error('Failed to query regions for static paths. Using fallbacks:', err);
@@ -61,75 +56,45 @@ export async function getStaticPaths() {
 const { lang, country, state, city } = Astro.params;
 const t = useTranslations(lang || 'en-us');
 
+const match = regionsData.find(
+  r => r.countryCode === country && r.stateSlug === state && r.citySlug === city
+);
+
 // Format names for display
-const displayCity = city ? city.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
-const displayState = state ? state.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
-const displayCountry = country ? country.toUpperCase() : '';
+const displayCity = match?.cityName || (city ? city.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '');
+const displayState = match?.stateName || (state ? state.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '');
+const displayCountry = match?.countryName || (country ? country.toUpperCase() : '');
 
 // Localized mock energy rates and solar resources based on state
-const getLocalSpecs = (stateName: string) => {
-  const s = stateName.toLowerCase();
-  if (s === 'california') {
-    return {
-      gridRate: 0.28,
-      sunHours: 1800,
-      gridEmissions: 0.52,
-      costPerWatt: 3.10,
-      incentives: { federalTaxCreditPct: 0.30, stateRebate: 1500, utilityRebate: 500 }
-    };
-  } else if (s === 'texas') {
-    return {
-      gridRate: 0.14,
-      sunHours: 1950,
-      gridEmissions: 0.82,
-      costPerWatt: 2.70,
-      incentives: { federalTaxCreditPct: 0.30, stateRebate: 0, utilityRebate: 400 }
-    };
-  } else if (s === 'new-york') {
-    return {
-      gridRate: 0.23,
-      sunHours: 1250,
-      gridEmissions: 0.66,
-      costPerWatt: 3.25,
-      incentives: { federalTaxCreditPct: 0.30, stateRebate: 1000, utilityRebate: 500 }
-    };
-  } else if (s === 'berlin') {
-    return {
-      gridRate: 0.38,
-      sunHours: 1100,
-      gridEmissions: 0.70,
-      costPerWatt: 2.90,
-      incentives: { federalTaxCreditPct: 0.0, stateRebate: 1500, utilityRebate: 400 }
-    };
-  } else if (s === 'new-south-wales') {
-    return {
-      gridRate: 0.26,
-      sunHours: 2100,
-      gridEmissions: 0.75,
-      costPerWatt: 1.80,
-      incentives: { federalTaxCreditPct: 0.0, stateRebate: 2000, utilityRebate: 800 }
-    };
-  } else if (s === 'ontario') {
-    return {
-      gridRate: 0.16,
-      sunHours: 1300,
-      gridEmissions: 0.12,
-      costPerWatt: 2.80,
-      incentives: { federalTaxCreditPct: 0.0, stateRebate: 2500, utilityRebate: 600 }
-    };
-  } else {
-    // Default fallback
-    return {
-      gridRate: 0.32,
-      sunHours: 1050,
-      gridEmissions: 0.40,
-      costPerWatt: 3.40,
-      incentives: { federalTaxCreditPct: 0.0, stateRebate: 1200, utilityRebate: 300 }
-    };
+const getLocalSpecs = () => {
+  const DEFAULT_FALLBACK = {
+    gridRate: 0.32,
+    sunHours: 1050,
+    gridEmissions: 0.40,
+    costPerWatt: 3.40,
+    federalTaxCreditPct: 0.0,
+    stateRebate: 1200,
+    utilityRebate: 300
+  };
+
+  if (!match) {
+    return DEFAULT_FALLBACK;
   }
+
+  return {
+    gridRate: match.gridRate !== null ? match.gridRate : DEFAULT_FALLBACK.gridRate,
+    sunHours: match.sunHours !== null ? match.sunHours : DEFAULT_FALLBACK.sunHours,
+    gridEmissions: match.gridEmissions !== null ? match.gridEmissions : DEFAULT_FALLBACK.gridEmissions,
+    costPerWatt: match.costPerWatt !== null ? match.costPerWatt : DEFAULT_FALLBACK.costPerWatt,
+    incentives: {
+      federalTaxCreditPct: match.federalTaxCreditPct !== null ? match.federalTaxCreditPct : DEFAULT_FALLBACK.federalTaxCreditPct,
+      stateRebate: match.stateRebate !== null ? match.stateRebate : DEFAULT_FALLBACK.stateRebate,
+      utilityRebate: match.utilityRebate !== null ? match.utilityRebate : DEFAULT_FALLBACK.utilityRebate
+    }
+  };
 };
 
-const presets = getLocalSpecs(state || '');
+const presets = getLocalSpecs();
 let localSpecs = { ...presets };
 
 // Query dynamic regional rebates & energy specifications from Supabase

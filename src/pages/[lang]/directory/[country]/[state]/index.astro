@@ -4,28 +4,21 @@ import { ClientRouter } from 'astro:transitions';
 import { supabase } from '../../../../../lib/supabase';
 import { useTranslations } from '../../../../../lib/i18n';
 import Analytics from '../../../../../components/Analytics.astro';
+import { regionsData } from '../../../../../data/regions';
 
 export async function getStaticPaths() {
   const langs = ['en-us', 'de-de', 'fr-fr'];
-  let regions = [
-    { country: 'us', state: 'california' },
-    { country: 'us', state: 'texas' },
-    { country: 'us', state: 'new-york' },
-    { country: 'uk', state: 'england' },
-    { country: 'de', state: 'berlin' },
-    { country: 'au', state: 'new-south-wales' },
-    { country: 'ca', state: 'ontario' },
-    { country: 'us', state: 'illinois' },
-    { country: 'us', state: 'arizona' },
-    { country: 'us', state: 'florida' },
-    { country: 'us', state: 'washington' },
-    { country: 'us', state: 'massachusetts' },
-    { country: 'us', state: 'colorado' },
-    { country: 'uk', state: 'scotland' },
-    { country: 'de', state: 'bavaria' },
-    { country: 'ca', state: 'british-columbia' },
-    { country: 'au', state: 'victoria' }
-  ];
+  
+  const seen = new Set();
+  const list = [];
+  for (const r of regionsData) {
+    const key = `${r.countryCode}:${r.stateSlug}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      list.push({ country: r.countryCode, state: r.stateSlug });
+    }
+  }
+  let regions = list;
 
   if (supabase) {
     try {
@@ -34,18 +27,16 @@ export async function getStaticPaths() {
         .select('country_code, state_province');
       
       if (data && data.length > 0) {
-        const seen = new Set();
-        const list = [];
+        const seenKeys = new Set(regions.map(r => `${r.country}:${r.state}`));
         for (const r of data) {
           const country = r.country_code === 'gb' ? 'uk' : r.country_code.toLowerCase();
           const state = r.state_province.toLowerCase().replace(/\s+/g, '-');
           const key = `${country}:${state}`;
-          if (!seen.has(key)) {
-            seen.add(key);
-            list.push({ country, state });
+          if (!seenKeys.has(key)) {
+            seenKeys.add(key);
+            regions.push({ country, state });
           }
         }
-        regions = list;
       }
     } catch (err) {
       console.error('Failed to query regions for static paths in state index. Using fallbacks:', err);
@@ -64,51 +55,16 @@ export async function getStaticPaths() {
 const { lang, country, state } = Astro.params;
 const t = useTranslations(lang || 'en-us');
 
-const displayCountry = country?.toUpperCase() || '';
-const displayState = state ? state.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
+const match = regionsData.find(r => r.countryCode === country && r.stateSlug === state);
+const displayCountry = match?.countryName || country?.toUpperCase() || '';
+const displayState = match?.stateName || (state ? state.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '');
 
-// Fallback presets if Supabase not configured
+// Resolve cities from central data file
 const getCitiesPreset = (s: string) => {
   const sLower = s.toLowerCase();
-  if (sLower === 'california') {
-    return [
-      { slug: 'los-angeles', name: 'Los Angeles' },
-      { slug: 'san-francisco', name: 'San Francisco' }
-    ];
-  } else if (sLower === 'texas') {
-    return [{ slug: 'houston', name: 'Houston' }];
-  } else if (sLower === 'new-york') {
-    return [{ slug: 'new-york-city', name: 'New York City' }];
-  } else if (sLower === 'england') {
-    return [{ slug: 'london', name: 'London' }];
-  } else if (sLower === 'berlin') {
-    return [{ slug: 'berlin', name: 'Berlin' }];
-  } else if (sLower === 'new-south-wales') {
-    return [{ slug: 'sydney', name: 'Sydney' }];
-  } else if (sLower === 'ontario') {
-    return [{ slug: 'toronto', name: 'Toronto' }];
-  } else if (sLower === 'illinois') {
-    return [{ slug: 'chicago', name: 'Chicago' }];
-  } else if (sLower === 'arizona') {
-    return [{ slug: 'phoenix', name: 'Phoenix' }];
-  } else if (sLower === 'florida') {
-    return [{ slug: 'miami', name: 'Miami' }];
-  } else if (sLower === 'washington') {
-    return [{ slug: 'seattle', name: 'Seattle' }];
-  } else if (sLower === 'massachusetts') {
-    return [{ slug: 'boston', name: 'Boston' }];
-  } else if (sLower === 'colorado') {
-    return [{ slug: 'denver', name: 'Denver' }];
-  } else if (sLower === 'scotland') {
-    return [{ slug: 'edinburgh', name: 'Edinburgh' }];
-  } else if (sLower === 'bavaria') {
-    return [{ slug: 'munich', name: 'Munich' }];
-  } else if (sLower === 'british-columbia') {
-    return [{ slug: 'vancouver', name: 'Vancouver' }];
-  } else if (sLower === 'victoria') {
-    return [{ slug: 'melbourne', name: 'Melbourne' }];
-  }
-  return [];
+  return regionsData
+    .filter(r => r.countryCode === country && r.stateSlug === sLower)
+    .map(r => ({ slug: r.citySlug, name: r.cityName }));
 };
 
 let citiesList = getCitiesPreset(state || '');
