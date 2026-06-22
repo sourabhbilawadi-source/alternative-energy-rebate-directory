@@ -4,7 +4,7 @@ description: "Understand Germany's Renewable Energy Sources Act (EEG 2026), feed
 publishDate: 2026-06-23
 relatedRegions:
   - "de/berlin/berlin"
-draft: true
+draft: false
 ---
 
 Germany is widely regarded as a global leader in renewable energy transition (Energiewende). For decades, the country has driven clean energy adoption through a combination of forward-thinking national legislation, federal tax incentives, and local municipal mandates.

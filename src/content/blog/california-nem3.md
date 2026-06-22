@@ -5,7 +5,7 @@ publishDate: 2026-06-23
 relatedRegions:
   - "us/california/los-angeles"
   - "us/california/san-francisco"
-draft: true
+draft: false
 ---
 
 California has long been a pioneer in solar energy adoption. For over a decade, Net Energy Metering (NEM) policies enabled homeowners to export excess solar energy back to the grid in exchange for billing credits at or near retail rates. This arrangement created a highly favorable financial ecosystem for residential solar, driving down payback periods to under 5 to 6 years in many sunny parts of the Golden State.

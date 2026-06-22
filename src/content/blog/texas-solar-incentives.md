@@ -5,7 +5,7 @@ publishDate: 2026-06-23
 relatedRegions:
   - "us/texas/houston"
   - "us/texas/dallas"
-draft: true
+draft: false
 ---
 
 Texas is a powerhouse of energy production, and its solar capacity is growing at a rapid pace. Thanks to vast open spaces, high solar irradiance, and a booming population, the Lone Star State is quickly becoming a leader in utility-scale and residential solar power.
