@@ -44,7 +44,30 @@ export const translations = {
     },
     compliance: {
       title: 'Global Compliance & Grid Interconnection Guide',
-      subtitle: 'Analyze grid interconnection codes, net-metering thresholds, and battery permit regulations across international territories.'
+      subtitle: 'Analyze grid interconnection codes, net-metering thresholds, and battery permit regulations across international territories.',
+      faqTitle: 'Frequently Asked Questions (Clean Energy Policy)',
+      faqItems: [
+        {
+          q: 'How do I claim the 30% Federal Clean Energy Credit?',
+          a: 'You claim it by filing IRS Form 5695 (Residential Energy Credits) along with your annual tax return (Form 1040). You will calculate 30% of your total solar, battery, or heat pump project costs and apply it to reduce your federal income taxes.'
+        },
+        {
+          q: 'Is the 30% solar tax credit refundable?',
+          a: 'No, it is a non-refundable tax credit, meaning it cannot reduce your tax liability below zero to give you a cash refund check. However, any unused credits can be carried forward to next year’s taxes, and this roll-over can continue indefinitely.'
+        },
+        {
+          q: 'Does the clean energy credit apply to battery storage systems?',
+          a: 'Yes! Under Section 25D, battery storage systems with a capacity of 3 kWh or larger qualify for the 30% federal tax credit, regardless of whether they are charged by solar panels or directly from the power grid.'
+        },
+        {
+          q: 'How do local utility rebates affect the federal tax credit?',
+          a: 'Utility rebates are generally treated as purchase price reductions. You must subtract the utility rebate amount from your total project cost before calculating the 30% federal tax credit. State tax credits, however, do not reduce your federal tax credit basis.'
+        },
+        {
+          q: 'What installation costs are covered by the tax credit?',
+          a: 'Eligible costs include solar PV panels, inverter systems, mounting hardware, storage batteries (3 kWh+), heat pump equipment, electrical panel upgrades required for the installation, and all assembly and labor costs. General roofing repairs do not qualify.'
+        }
+      ]
     },
     directory: {
       title: 'Browse Alternative Energy Rebates',
@@ -167,7 +190,30 @@ export const translations = {
     },
     compliance: {
       title: 'Globaler Leitfaden für Netzkopplung & Compliance',
-      subtitle: 'Analysieren Sie Netzeinspeisungscodes, Net-Metering-Schwellenwerte und Batterie-Genehmigungsvorschriften in internationalen Gebieten.'
+      subtitle: 'Analysieren Sie Netzeinspeisungscodes, Net-Metering-Schwellenwerte und Batterie-Genehmigungsvorschriften in internationalen Gebieten.',
+      faqTitle: 'Häufig gestellte Fragen (Richtlinien für saubere Energie)',
+      faqItems: [
+        {
+          q: 'Wie beantrage ich die Bundessteuergutschrift von 30 %?',
+          a: 'Sie beantragen dies durch Ausfüllen des IRS-Formulars 5695 (Residential Energy Credits) zusammen mit Ihrer jährlichen Einkommensteuererklärung (Formular 1040). Sie berechnen 30 % der gesamten Solar-, Batterie- oder Wärmepumpenprojektkosten und mindern damit Ihre Steuerschuld.'
+        },
+        {
+          q: 'Ist die Solarsteuergutschrift erstattungsfähig?',
+          a: 'Nein, es handelt sich um eine nicht erstattungsfähige Steuergutschrift. Das bedeutet, sie kann Ihre Steuerschuld nicht unter Null senken, um Ihnen eine Barauszahlung zu bescheren. Ungenutzte Guthaben können jedoch unbegrenzt auf die folgenden Steuerjahre übertragen werden.'
+        },
+        {
+          q: 'Gilt die saubere Energie-Steuergutschrift auch für Batteriespeicher?',
+          a: 'Ja! Gemäß Section 25D qualifizieren sich Batteriespeichersysteme mit einer Kapazität von 3 kWh oder mehr für die 30%ige Bundessteuergutschrift, unabhängig davon, ob sie durch Solarmodule oder direkt aus dem Stromnetz geladen werden.'
+        },
+        {
+          q: 'Wie wirken sich Rabatte von Versorgungsunternehmen auf die Steuergutschrift aus?',
+          a: 'Rabatte von Energieversorgern werden in der Regel als Minderung des Kaufpreises behandelt. Sie müssen den Rabattbetrag von Ihren Gesamtprojektkosten abziehen, bevor Sie die 30%ige Bundessteuergutschrift berechnen. Landessteuergutschriften mindern diese Basis nicht.'
+        },
+        {
+          q: 'Welche Installationskosten werden von der Steuergutschrift abgedeckt?',
+          a: 'Förderfähig sind PV-Module, Wechselrichter, Halterungen, Speicherbatterien (ab 3 kWh), Wärmepumpen, erforderliche Modernisierungen der Hauselektrik für die Installation sowie alle Montage- und Arbeitskosten. Reine Dachsanierungen sind ausgeschlossen.'
+        }
+      ]
     },
     directory: {
       title: 'Alternative Energierabatte Durchsuchen',
@@ -290,7 +336,30 @@ export const translations = {
     },
     compliance: {
       title: 'Guide de conformité mondiale et d\'interconnexion au réseau',
-      subtitle: 'Analysez les codes d\'interconnexion au réseau, les seuils de facturation nette et les réglementations sur les permis de batterie dans les territoires internationaux.'
+      subtitle: 'Analysez les codes d\'interconnexion au réseau, les seuils de facturation nette et les réglementations sur les permis de batterie dans les territoires internationaux.',
+      faqTitle: 'Foire Aux Questions (Politique d\'énergie propre)',
+      faqItems: [
+        {
+          q: 'Comment réclamer le crédit d\'impôt fédéral de 30 % ?',
+          a: 'Vous le réclamez en remplissant le formulaire IRS 5695 (Residential Energy Credits) et en le joignant à votre déclaration de revenus annuelle (formulaire 1040). Vous calculerez 30 % des coûts totaux de votre projet solaire, batterie ou pompe à chaleur.'
+        },
+        {
+          q: 'Le crédit d\'impôt solaire de 30 % est-il remboursable ?',
+          a: 'Non, c\'est un crédit d\'impôt non remboursable, ce qui signifie qu\'il ne peut pas réduire votre impôt en dessous de zéro pour vous donner un chèque. Cependant, tout crédit inutilisé peut être reporté indéfiniment sur les années fiscales suivantes.'
+        },
+        {
+          q: 'Le crédit d\'impôt s\'applique-t-il aux systèmes de stockage par batterie ?',
+          a: 'Oui ! En vertu de la section 25D, les systèmes de stockage par batterie d\'une capacité de 3 kWh ou plus sont éligibles au crédit d\'impôt de 30 %, qu\'ils soient chargés par des panneaux solaires ou directement depuis le réseau électrique.'
+        },
+        {
+          q: 'Comment les subventions locales affectent-elles le crédit d\'impôt fédéral ?',
+          a: 'Les rabais des services publics sont traités comme des réductions de prix. Vous devez soustraire ce montant du coût total de votre projet avant de calculer le crédit d\'impôt fédéral de 30 %. Les crédits d\'impôt locaux de l\'État ne réduisent pas cette base.'
+        },
+        {
+          q: 'Quels coûts d\'installation sont couverts par le crédit d\'impôt ?',
+          a: 'Les coûts éligibles incluent les panneaux solaires, onduleurs, matériel de montage, batteries de stockage (3 kWh+), pompes à chaleur, mises à niveau électriques requises pour l\'installation, et toute la main-d\'œuvre. Les réparations de toiture ordinaires ne sont pas éligibles.'
+        }
+      ]
     },
     directory: {
       title: 'Parcourir les rabais d\'énergie alternative',
