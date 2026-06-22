@@ -71,7 +71,10 @@ const displayState = state ? state.split('-').map(w => w.charAt(0).toUpperCase()
 const getCitiesPreset = (s: string) => {
   const sLower = s.toLowerCase();
   if (sLower === 'california') {
-    return [{ slug: 'los-angeles', name: 'Los Angeles' }];
+    return [
+      { slug: 'los-angeles', name: 'Los Angeles' },
+      { slug: 'san-francisco', name: 'San Francisco' }
+    ];
   } else if (sLower === 'texas') {
     return [{ slug: 'houston', name: 'Houston' }];
   } else if (sLower === 'new-york') {
@@ -84,6 +87,26 @@ const getCitiesPreset = (s: string) => {
     return [{ slug: 'sydney', name: 'Sydney' }];
   } else if (sLower === 'ontario') {
     return [{ slug: 'toronto', name: 'Toronto' }];
+  } else if (sLower === 'illinois') {
+    return [{ slug: 'chicago', name: 'Chicago' }];
+  } else if (sLower === 'arizona') {
+    return [{ slug: 'phoenix', name: 'Phoenix' }];
+  } else if (sLower === 'florida') {
+    return [{ slug: 'miami', name: 'Miami' }];
+  } else if (sLower === 'washington') {
+    return [{ slug: 'seattle', name: 'Seattle' }];
+  } else if (sLower === 'massachusetts') {
+    return [{ slug: 'boston', name: 'Boston' }];
+  } else if (sLower === 'colorado') {
+    return [{ slug: 'denver', name: 'Denver' }];
+  } else if (sLower === 'scotland') {
+    return [{ slug: 'edinburgh', name: 'Edinburgh' }];
+  } else if (sLower === 'bavaria') {
+    return [{ slug: 'munich', name: 'Munich' }];
+  } else if (sLower === 'british-columbia') {
+    return [{ slug: 'vancouver', name: 'Vancouver' }];
+  } else if (sLower === 'victoria') {
+    return [{ slug: 'melbourne', name: 'Melbourne' }];
   }
   return [];
 };

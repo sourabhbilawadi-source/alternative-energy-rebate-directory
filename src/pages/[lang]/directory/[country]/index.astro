@@ -43,25 +43,35 @@ const getStatesPreset = (c: string) => {
   const code = c.toLowerCase();
   if (code === 'us') {
     return [
-      { slug: 'california', name: 'California', citiesCount: 1 },
+      { slug: 'california', name: 'California', citiesCount: 2 },
       { slug: 'texas', name: 'Texas', citiesCount: 1 },
-      { slug: 'new-york', name: 'New York', citiesCount: 1 }
+      { slug: 'new-york', name: 'New York', citiesCount: 1 },
+      { slug: 'illinois', name: 'Illinois', citiesCount: 1 },
+      { slug: 'arizona', name: 'Arizona', citiesCount: 1 },
+      { slug: 'florida', name: 'Florida', citiesCount: 1 },
+      { slug: 'washington', name: 'Washington', citiesCount: 1 },
+      { slug: 'massachusetts', name: 'Massachusetts', citiesCount: 1 },
+      { slug: 'colorado', name: 'Colorado', citiesCount: 1 }
     ];
   } else if (code === 'uk') {
     return [
-      { slug: 'england', name: 'England', citiesCount: 1 }
+      { slug: 'england', name: 'England', citiesCount: 1 },
+      { slug: 'scotland', name: 'Scotland', citiesCount: 1 }
     ];
   } else if (code === 'de') {
     return [
-      { slug: 'berlin', name: 'Berlin', citiesCount: 1 }
+      { slug: 'berlin', name: 'Berlin', citiesCount: 1 },
+      { slug: 'bavaria', name: 'Bavaria', citiesCount: 1 }
     ];
   } else if (code === 'au') {
     return [
-      { slug: 'new-south-wales', name: 'New South Wales', citiesCount: 1 }
+      { slug: 'new-south-wales', name: 'New South Wales', citiesCount: 1 },
+      { slug: 'victoria', name: 'Victoria', citiesCount: 1 }
     ];
   } else if (code === 'ca') {
     return [
-      { slug: 'ontario', name: 'Ontario', citiesCount: 1 }
+      { slug: 'ontario', name: 'Ontario', citiesCount: 1 },
+      { slug: 'british-columbia', name: 'British Columbia', citiesCount: 1 }
     ];
   }
   return [];
