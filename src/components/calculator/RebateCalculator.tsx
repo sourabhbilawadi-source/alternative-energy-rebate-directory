@@ -10,7 +10,9 @@ import {
   Search, 
   HelpCircle,
   ShieldCheck,
-  Building
+  Building,
+  Truck,
+  Flame
 } from 'lucide-react';
 
 export interface DbRebate {
@@ -359,6 +361,11 @@ export default function RebateCalculator({
   // Trees equivalent = CO2_tons * 25 * 16.5
   const treesEquivalent = carbonAbatementTons * 25 * 16.5;
 
+  // Carbon equivalents matching SME hub
+  const equivalentCars = carbonAbatementTons * 0.22;
+  const equivalentCoal = carbonAbatementTons * 0.96;
+  const equivalentForest = carbonAbatementTons * 1.2;
+
   // Animation layout variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -654,49 +661,48 @@ export default function RebateCalculator({
             </p>
           </motion.div>
 
-          {/* Annual Carbon Abatement */}
-          <motion.div 
-            variants={itemVariants}
-            key={`co2-${carbonAbatementTons.toFixed(1)}`}
-            initial={{ scale: 0.98 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 200, damping: 14 }}
-            className="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 space-y-2 hover:shadow-md transition-shadow duration-300"
-          >
-            <div className="flex items-center justify-between text-[var(--text-muted)]">
-              <span className="text-xs font-bold uppercase tracking-wider">Carbon Abated</span>
-              <Leaf className="w-4 h-4 text-green-500" />
-            </div>
-            <div className="text-2xl font-black text-[var(--text-main)]">
-              <AnimatedNumber value={carbonAbatementTons} formatter={(v) => v.toFixed(1)} /> <span className="text-sm font-bold text-[var(--text-muted)]">Tons CO₂</span>
-            </div>
-            <p className="text-xs text-[var(--text-muted)]">
-              Annually removed from the regional power grid.
-            </p>
-          </motion.div>
-
-          {/* Trees planted emotional metric */}
-          <motion.div 
-            variants={itemVariants}
-            key={`trees-${Math.round(treesEquivalent)}`}
-            initial={{ scale: 0.98 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 200, damping: 14 }}
-            className="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 space-y-2 hover:shadow-md transition-shadow duration-300"
-          >
-            <div className="flex items-center justify-between text-[var(--text-muted)]">
-              <span className="text-xs font-bold uppercase tracking-wider">Tree Equivalents</span>
-              <Building className="w-4 h-4 text-green-500" />
-            </div>
-            <div className="text-2xl font-black text-[var(--text-main)]">
-              <AnimatedNumber value={treesEquivalent} /> <span className="text-sm font-bold text-[var(--text-muted)]">Trees</span>
-            </div>
-            <p className="text-xs text-[var(--text-muted)]">
-              Mature trees absorbing carbon over a 25-yr lifespan.
-            </p>
-          </motion.div>
-
         </div>
+
+        {/* Carbon Offset Analytics Drawer */}
+        <motion.div 
+          variants={itemVariants}
+          key={`carbon-offset-${carbonAbatementTons.toFixed(2)}`}
+          className="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 space-y-3 shadow-inner"
+        >
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-bold text-[var(--text-main)] flex items-center gap-1.5">
+              <Leaf className="w-4 h-4 text-green-500" />
+              Scope 2 Emissions Abated
+            </span>
+            <span className="text-sm font-black text-green-500">
+              <AnimatedNumber value={carbonAbatementTons} formatter={(v) => v.toFixed(1)} /> Tons CO₂/yr
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 border-t border-[var(--color-border)]/40 pt-3 text-center text-[10px] text-[var(--text-muted)]">
+            <div className="space-y-1.5 p-2 bg-[var(--bg-secondary)]/50 rounded-xl border border-[var(--color-border)]/40">
+              <Truck className="w-4 h-4 text-[var(--text-muted)] mx-auto" />
+              <div className="font-bold text-[var(--text-main)]">
+                <AnimatedNumber value={equivalentCars} /> Cars
+              </div>
+              <div>Passenger cars off road</div>
+            </div>
+            <div className="space-y-1.5 p-2 bg-[var(--bg-secondary)]/50 rounded-xl border border-[var(--color-border)]/40">
+              <Flame className="w-4 h-4 text-[var(--text-muted)] mx-auto" />
+              <div className="font-bold text-[var(--text-main)]">
+                <AnimatedNumber value={equivalentCoal} /> Tons
+              </div>
+              <div>Tons of coal unburned</div>
+            </div>
+            <div className="space-y-1.5 p-2 bg-[var(--bg-secondary)]/50 rounded-xl border border-[var(--color-border)]/40">
+              <Building className="w-4 h-4 text-[var(--text-muted)] mx-auto" />
+              <div className="font-bold text-[var(--text-main)]">
+                <AnimatedNumber value={equivalentForest} /> Acres
+              </div>
+              <div>Acres of forest saved</div>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Incentives Applied overview */}
         <motion.div 

@@ -2,6 +2,7 @@
 import '../../../../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import RebateCalculator from '../../../../../components/calculator/RebateCalculator';
+import SmeHub from '../../../../../components/calculator/SmeHub';
 import { supabase } from '../../../../../lib/supabase';
 
 // Enable static pre-rendering with pre-configured static paths
@@ -350,83 +351,15 @@ const websiteSchema = {
 
     <!-- SME Decarbonization Hub Panel -->
     <div id="panel-sme" class="hidden space-y-8 animate-fade-in">
-      <div class="bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-6 md:p-8">
-        <h2 class="text-2xl font-bold mb-4">SME Sizing & Decarbonization Pathways</h2>
-        <p class="text-[var(--text-muted)] mb-6 max-w-3xl">
-          Small and Medium Enterprises (SMEs) face distinct structural barriers, including leased property constraints, capital shortages, and complex compliance guidelines. Use our comparison matrices and localized peer network indicators to navigate business energy transition strategies.
-        </p>
-
-        <!-- SME Leased vs Owned Upgrades Table -->
-        <h3 class="text-xl font-bold mb-3">Leased vs Owned Equipment Upgrades</h3>
-        <div class="overflow-x-auto mb-8 border border-[var(--color-border)] rounded-lg">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-[var(--bg-primary)] border-b border-[var(--color-border)]">
-                <th class="p-4 font-semibold">Aspect</th>
-                <th class="p-4 font-semibold">Leased Property Strategy</th>
-                <th class="p-4 font-semibold">Owned Property Strategy</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="border-b border-[var(--color-border)]">
-                <td class="p-4 font-medium">Financing Method</td>
-                <td class="p-4">Power Purchase Agreement (PPA) / Solar Lease (0-down capital requirements)</td>
-                <td class="p-4">Direct Purchase / Commercial Clean Energy Loan (capital investment)</td>
-              </tr>
-              <tr class="border-b border-[var(--color-border)]">
-                <td class="p-4 font-medium">Rebate Eligibility</td>
-                <td class="p-4">Third-party developer claims federal tax credits; passes saving via lower rates</td>
-                <td class="p-4">Enterprise claims MACRS depreciation + 30% FTC directly</td>
-              </tr>
-              <tr class="border-b border-[var(--color-border)]">
-                <td class="p-4 font-medium">Property Value Impact</td>
-                <td class="p-4">No capital addition; agreement transfers upon sale or lease assignment</td>
-                <td class="p-4">Immediate asset value appreciation; increases equity value by 4.1%</td>
-              </tr>
-              <tr>
-                <td class="p-4 font-medium">Maintenance & Risk</td>
-                <td class="p-4">Provider assumes full system warranty, tracking, and inverter replacements</td>
-                <td class="p-4">System owner maintains hardware; requires regional service contract</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Localized Peer-Network Tables -->
-        <h3 class="text-xl font-bold mb-3">Regional Business Clusters Peer Table</h3>
-        <div class="overflow-x-auto border border-[var(--color-border)] rounded-lg">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-[var(--bg-primary)] border-b border-[var(--color-border)]">
-                <th class="p-4 font-semibold">Business Sector</th>
-                <th class="p-4 font-semibold">Average Rooftop Solar Size</th>
-                <th class="p-4 font-semibold">Annual Savings Offset</th>
-                <th class="p-4 font-semibold">Primary Policy Category</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="border-b border-[var(--color-border)]">
-                <td class="p-4 font-medium">Manufacturing & Logistics</td>
-                <td class="p-4">250 kW</td>
-                <td class="p-4">$32,000 / year</td>
-                <td class="p-4">Commercial Net Metering Program</td>
-              </tr>
-              <tr class="border-b border-[var(--color-border)]">
-                <td class="p-4 font-medium">Retail & Office Spaces</td>
-                <td class="p-4">45 kW</td>
-                <td class="p-4">$7,800 / year</td>
-                <td class="p-4">Demand Response Program</td>
-              </tr>
-              <tr class="border-b border-[var(--color-border)]">
-                <td class="p-4 font-medium">Agricultural & Cold Storage</td>
-                <td class="p-4">120 kW</td>
-                <td class="p-4">$19,500 / year</td>
-                <td class="p-4">USDA REAP Grants & State Funding</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <SmeHub 
+        client:visible 
+        defaultGridRate={localSpecs.gridRate}
+        defaultSunHours={localSpecs.sunHours}
+        defaultGridEmissions={localSpecs.gridEmissions}
+        defaultCostPerWatt={localSpecs.costPerWatt}
+        state={displayState}
+        city={displayCity}
+      />
     </div>
   </main>
 
