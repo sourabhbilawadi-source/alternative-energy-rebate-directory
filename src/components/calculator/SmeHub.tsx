@@ -12,6 +12,7 @@ import {
   Flame 
 } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
+import type { RegionEntry } from '../../data/regions';
 
 interface SmeHubProps {
   defaultGridRate: number;
@@ -21,6 +22,7 @@ interface SmeHubProps {
   state: string;
   city: string;
   lang?: string;
+  regionEntry?: RegionEntry;
 }
 
 // Custom high-performance animated number counter
@@ -64,7 +66,8 @@ export default function SmeHub({
   defaultCostPerWatt: initialCostPerWatt,
   state,
   city,
-  lang = 'en-us'
+  lang = 'en-us',
+  regionEntry
 }: SmeHubProps) {
   const t = useTranslations(lang);
 
@@ -312,6 +315,61 @@ export default function SmeHub({
             <div>Capital Tax ITC: <strong>30% (Sec 48)</strong></div>
           </div>
         </motion.div>
+
+        {/* Data Sources and Verification block */}
+        {regionEntry && (
+          <motion.div 
+            variants={itemVariants}
+            className="bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-4 text-[10px] text-[var(--text-muted)] space-y-1.5 shadow-sm"
+          >
+            <div className="font-bold text-[var(--text-main)] mb-1 flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-[var(--color-accent)]" />
+              Data Sources & Verification
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1 border-t border-[var(--color-border)]/50">
+              {regionEntry.gridRateSource && (
+                <div>
+                  Grid Rate: {regionEntry.gridRateSource.sourceUrl !== '#' ? (
+                    <a href={regionEntry.gridRateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.gridRateSource.sourceName}</a>
+                  ) : (
+                    <span className="font-semibold">{regionEntry.gridRateSource.sourceName}</span>
+                  )}
+                  {regionEntry.gridRateSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.gridRateSource.lastVerified})</span>}
+                </div>
+              )}
+              {regionEntry.costPerWattSource && (
+                <div>
+                  Cost/W: {regionEntry.costPerWattSource.sourceUrl !== '#' ? (
+                    <a href={regionEntry.costPerWattSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.costPerWattSource.sourceName}</a>
+                  ) : (
+                    <span className="font-semibold">{regionEntry.costPerWattSource.sourceName}</span>
+                  )}
+                  {regionEntry.costPerWattSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.costPerWattSource.lastVerified})</span>}
+                </div>
+              )}
+              {regionEntry.federalTaxCreditSource && (
+                <div>
+                  Federal Credit: {regionEntry.federalTaxCreditSource.sourceUrl !== '#' ? (
+                    <a href={regionEntry.federalTaxCreditSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.federalTaxCreditSource.sourceName}</a>
+                  ) : (
+                    <span className="font-semibold">{regionEntry.federalTaxCreditSource.sourceName}</span>
+                  )}
+                  {regionEntry.federalTaxCreditSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.federalTaxCreditSource.lastVerified})</span>}
+                </div>
+              )}
+              {regionEntry.stateRebateSource && (
+                <div>
+                  State Rebate: {regionEntry.stateRebateSource.sourceUrl !== '#' ? (
+                    <a href={regionEntry.stateRebateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.stateRebateSource.sourceName}</a>
+                  ) : (
+                    <span className="font-semibold">{regionEntry.stateRebateSource.sourceName}</span>
+                  )}
+                  {regionEntry.stateRebateSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.stateRebateSource.lastVerified})</span>}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
       </motion.div>
 
       {/* ----------------- RIGHT PANEL: DYNAMIC RESULTS ----------------- */}

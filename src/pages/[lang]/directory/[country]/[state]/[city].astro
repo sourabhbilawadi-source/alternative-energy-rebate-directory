@@ -344,6 +344,7 @@ const websiteSchema = {
           state={displayState}
           dbRebates={dbRebates}
           lang={lang}
+          regionEntry={match}
         >
           <!-- Skeleton Loading Fallback to prevent Cumulative Layout Shift (CLS) -->
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-3xl p-6 md:p-8 shadow-xl animate-pulse min-h-[650px]">
@@ -405,6 +406,7 @@ const websiteSchema = {
         state={displayState}
         city={displayCity}
         lang={lang}
+        regionEntry={match}
       />
     </div>
   </main>

@@ -1,5 +1,11 @@
 // src/data/regions.ts
 
+export interface MetricSource {
+  sourceName: string;
+  sourceUrl: string;
+  lastVerified: string;
+}
+
 export interface RegionEntry {
   countryCode: string;   // e.g. 'us'
   countryName: string;   // e.g. 'United States'
@@ -19,6 +25,15 @@ export interface RegionEntry {
   federalTaxCreditPct: number | null;
   stateRebate: number | null;
   utilityRebate: number | null;
+
+  // Metric sources
+  gridRateSource?: MetricSource;
+  sunHoursSource?: MetricSource;
+  gridEmissionsSource?: MetricSource;
+  costPerWattSource?: MetricSource;
+  federalTaxCreditSource?: MetricSource;
+  stateRebateSource?: MetricSource;
+  utilityRebateSource?: MetricSource;
 }
 
 export const COUNTRY_METADATA: Record<string, { name: string; flag: string }> = {
@@ -28,6 +43,16 @@ export const COUNTRY_METADATA: Record<string, { name: string; flag: string }> = 
   ca: { name: 'Canada', flag: '🇨🇦' },
   au: { name: 'Australia', flag: '🇦🇺' },
   fr: { name: 'France', flag: '🇫🇷' }
+};
+
+const TODO_SOURCES = {
+  gridRateSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' },
+  sunHoursSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' },
+  gridEmissionsSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' },
+  costPerWattSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' },
+  federalTaxCreditSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' },
+  stateRebateSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' },
+  utilityRebateSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' }
 };
 
 export const regionsData: RegionEntry[] = [
@@ -50,7 +75,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.10,
     federalTaxCreditPct: 0.30,
     stateRebate: 1500,
-    utilityRebate: 500
+    utilityRebate: 500,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -66,7 +92,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.10,
     federalTaxCreditPct: 0.30,
     stateRebate: 1500,
-    utilityRebate: 500
+    utilityRebate: 500,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -82,7 +109,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 2.70,
     federalTaxCreditPct: 0.30,
     stateRebate: 0,
-    utilityRebate: 400
+    utilityRebate: 400,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -98,7 +126,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.25,
     federalTaxCreditPct: 0.30,
     stateRebate: 1000,
-    utilityRebate: 500
+    utilityRebate: 500,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -114,7 +143,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
-    utilityRebate: 300
+    utilityRebate: 300,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -130,7 +160,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
-    utilityRebate: 300
+    utilityRebate: 300,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -146,7 +177,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
-    utilityRebate: 300
+    utilityRebate: 300,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -162,7 +194,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
-    utilityRebate: 300
+    utilityRebate: 300,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -178,7 +211,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
-    utilityRebate: 300
+    utilityRebate: 300,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -194,7 +228,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
-    utilityRebate: 300
+    utilityRebate: 300,
+    ...TODO_SOURCES
   },
 
   // United Kingdom
@@ -212,7 +247,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
-    utilityRebate: 300
+    utilityRebate: 300,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'uk',
@@ -228,7 +264,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
-    utilityRebate: 300
+    utilityRebate: 300,
+    ...TODO_SOURCES
   },
 
   // Germany
@@ -246,7 +283,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 2.90,
     federalTaxCreditPct: 0.0,
     stateRebate: 1500,
-    utilityRebate: 400
+    utilityRebate: 400,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'de',
@@ -262,7 +300,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
-    utilityRebate: 300
+    utilityRebate: 300,
+    ...TODO_SOURCES
   },
 
   // Australia
@@ -280,7 +319,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 1.80,
     federalTaxCreditPct: 0.0,
     stateRebate: 2000,
-    utilityRebate: 800
+    utilityRebate: 800,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'au',
@@ -296,7 +336,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
-    utilityRebate: 300
+    utilityRebate: 300,
+    ...TODO_SOURCES
   },
 
   // Canada
@@ -314,7 +355,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 2.80,
     federalTaxCreditPct: 0.0,
     stateRebate: 2500,
-    utilityRebate: 600
+    utilityRebate: 600,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'ca',
@@ -330,7 +372,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
-    utilityRebate: 300
+    utilityRebate: 300,
+    ...TODO_SOURCES
   },
 
   // ==========================================
@@ -346,13 +389,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Georgia',
     citySlug: 'atlanta',
     cityName: 'Atlanta',
-    gridRate: null, // TODO: Sourced grid rate
-    sunHours: null, // TODO: Sourced annual peak sun hours
-    gridEmissions: null, // TODO: Sourced grid emissions (kg CO2 / kWh)
-    costPerWatt: null, // TODO: Sourced solar cost per watt ($/W)
-    federalTaxCreditPct: 0.30, // US Standard Federal Credit
-    stateRebate: null, // TODO: Sourced state rebate
-    utilityRebate: null // TODO: Sourced utility rebate
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
+    federalTaxCreditPct: 0.30,
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Pennsylvania
   {
@@ -363,13 +407,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Pennsylvania',
     citySlug: 'philadelphia',
     cityName: 'Philadelphia',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -379,15 +424,16 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Pennsylvania',
     citySlug: 'pittsburgh',
     cityName: 'Pittsburgh',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
-  // Texas (new cities in existing state)
+  // Texas
   {
     countryCode: 'us',
     countryName: 'United States',
@@ -396,13 +442,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Texas',
     citySlug: 'dallas',
     cityName: 'Dallas',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -412,13 +459,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Texas',
     citySlug: 'austin',
     cityName: 'Austin',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -428,15 +476,16 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Texas',
     citySlug: 'san-antonio',
     cityName: 'San Antonio',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
-  // California (new cities in existing state)
+  // California
   {
     countryCode: 'us',
     countryName: 'United States',
@@ -445,13 +494,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'California',
     citySlug: 'san-diego',
     cityName: 'San Diego',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -461,13 +511,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'California',
     citySlug: 'san-jose',
     cityName: 'San Jose',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -477,13 +528,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'California',
     citySlug: 'sacramento',
     cityName: 'Sacramento',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Nevada
   {
@@ -494,15 +546,16 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Nevada',
     citySlug: 'las-vegas',
     cityName: 'Las Vegas',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
-  // Florida (new cities in existing state)
+  // Florida
   {
     countryCode: 'us',
     countryName: 'United States',
@@ -511,13 +564,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Florida',
     citySlug: 'orlando',
     cityName: 'Orlando',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -527,13 +581,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Florida',
     citySlug: 'tampa',
     cityName: 'Tampa',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -543,13 +598,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Florida',
     citySlug: 'jacksonville',
     cityName: 'Jacksonville',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // North Carolina
   {
@@ -560,13 +616,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'North Carolina',
     citySlug: 'charlotte',
     cityName: 'Charlotte',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -576,13 +633,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'North Carolina',
     citySlug: 'raleigh',
     cityName: 'Raleigh',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Tennessee
   {
@@ -593,13 +651,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Tennessee',
     citySlug: 'nashville',
     cityName: 'Nashville',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Ohio
   {
@@ -610,13 +669,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Ohio',
     citySlug: 'columbus',
     cityName: 'Columbus',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -626,13 +686,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Ohio',
     citySlug: 'cleveland',
     cityName: 'Cleveland',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Indiana
   {
@@ -643,13 +704,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Indiana',
     citySlug: 'indianapolis',
     cityName: 'Indianapolis',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Michigan
   {
@@ -660,13 +722,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Michigan',
     citySlug: 'detroit',
     cityName: 'Detroit',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Minnesota
   {
@@ -677,13 +740,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Minnesota',
     citySlug: 'minneapolis',
     cityName: 'Minneapolis',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Missouri
   {
@@ -694,13 +758,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Missouri',
     citySlug: 'kansas-city',
     cityName: 'Kansas City',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   {
     countryCode: 'us',
@@ -710,13 +775,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Missouri',
     citySlug: 'st-louis',
     cityName: 'St. Louis',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Utah
   {
@@ -727,13 +793,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Utah',
     citySlug: 'salt-lake-city',
     cityName: 'Salt Lake City',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Oregon
   {
@@ -744,13 +811,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Oregon',
     citySlug: 'portland',
     cityName: 'Portland',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // New Mexico
   {
@@ -761,13 +829,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'New Mexico',
     citySlug: 'albuquerque',
     cityName: 'Albuquerque',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Hawaii
   {
@@ -778,13 +847,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Hawaii',
     citySlug: 'honolulu',
     cityName: 'Honolulu',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Louisiana
   {
@@ -795,13 +865,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Louisiana',
     citySlug: 'new-orleans',
     cityName: 'New Orleans',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Maryland
   {
@@ -812,13 +883,14 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Maryland',
     citySlug: 'baltimore',
     cityName: 'Baltimore',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   },
   // Virginia
   {
@@ -829,12 +901,13 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Virginia',
     citySlug: 'richmond',
     cityName: 'Richmond',
-    gridRate: null, // TODO
-    sunHours: null, // TODO
-    gridEmissions: null, // TODO
-    costPerWatt: null, // TODO
+    gridRate: null,
+    sunHours: null,
+    gridEmissions: null,
+    costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null, // TODO
-    utilityRebate: null // TODO
+    stateRebate: null,
+    utilityRebate: null,
+    ...TODO_SOURCES
   }
 ];
