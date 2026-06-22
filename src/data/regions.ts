@@ -141,7 +141,7 @@ export const regionsData: RegionEntry[] = [
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
-    federalTaxCreditPct: 0.0,
+    federalTaxCreditPct: 0.30,
     stateRebate: 1200,
     utilityRebate: 300,
     ...TODO_SOURCES
@@ -158,7 +158,7 @@ export const regionsData: RegionEntry[] = [
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
-    federalTaxCreditPct: 0.0,
+    federalTaxCreditPct: 0.30,
     stateRebate: 1200,
     utilityRebate: 300,
     ...TODO_SOURCES
@@ -175,7 +175,7 @@ export const regionsData: RegionEntry[] = [
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
-    federalTaxCreditPct: 0.0,
+    federalTaxCreditPct: 0.30,
     stateRebate: 1200,
     utilityRebate: 300,
     ...TODO_SOURCES
@@ -192,7 +192,7 @@ export const regionsData: RegionEntry[] = [
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
-    federalTaxCreditPct: 0.0,
+    federalTaxCreditPct: 0.30,
     stateRebate: 1200,
     utilityRebate: 300,
     ...TODO_SOURCES
@@ -209,7 +209,7 @@ export const regionsData: RegionEntry[] = [
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
-    federalTaxCreditPct: 0.0,
+    federalTaxCreditPct: 0.30,
     stateRebate: 1200,
     utilityRebate: 300,
     ...TODO_SOURCES
@@ -226,7 +226,7 @@ export const regionsData: RegionEntry[] = [
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
-    federalTaxCreditPct: 0.0,
+    federalTaxCreditPct: 0.30,
     stateRebate: 1200,
     utilityRebate: 300,
     ...TODO_SOURCES

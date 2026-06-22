@@ -67,12 +67,13 @@ const displayCountry = match?.countryName || (country ? country.toUpperCase() : 
 
 // Localized mock energy rates and solar resources based on state
 const getLocalSpecs = () => {
+  const isUs = country === 'us';
   const DEFAULT_FALLBACK = {
     gridRate: 0.32,
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
-    federalTaxCreditPct: 0.0,
+    federalTaxCreditPct: isUs ? 0.30 : 0.0,
     stateRebate: 1200,
     utilityRebate: 300
   };
@@ -87,7 +88,7 @@ const getLocalSpecs = () => {
     gridEmissions: match.gridEmissions !== null ? match.gridEmissions : DEFAULT_FALLBACK.gridEmissions,
     costPerWatt: match.costPerWatt !== null ? match.costPerWatt : DEFAULT_FALLBACK.costPerWatt,
     incentives: {
-      federalTaxCreditPct: match.federalTaxCreditPct !== null ? match.federalTaxCreditPct : DEFAULT_FALLBACK.federalTaxCreditPct,
+      federalTaxCreditPct: isUs ? 0.30 : (match.federalTaxCreditPct !== null ? match.federalTaxCreditPct : DEFAULT_FALLBACK.federalTaxCreditPct),
       stateRebate: match.stateRebate !== null ? match.stateRebate : DEFAULT_FALLBACK.stateRebate,
       utilityRebate: match.utilityRebate !== null ? match.utilityRebate : DEFAULT_FALLBACK.utilityRebate
     }
