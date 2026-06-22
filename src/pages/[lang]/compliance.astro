@@ -1,0 +1,128 @@
+---
+import '../../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'en-us' } },
+    { params: { lang: 'de-de' } },
+    { params: { lang: 'fr-fr' } },
+  ];
+}
+
+const { lang } = Astro.params;
+---
+
+<!DOCTYPE html>
+<html lang={lang} data-theme="sage-minimalist">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <title>DSIRE Policy & Compliance Guide | EcoRebates</title>
+  <meta name="description" content="Access guides on Federal Tax Credits, Net Metering rules (NEM 3.0), MACRS depreciation, and USDA REAP grants." />
+  <ClientRouter />
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+  <!-- Navbar -->
+  <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="/logo.png" alt="EcoRebates Logo" class="w-8 h-8 object-contain rounded-lg" />
+        <a href="/" class="font-bold text-lg tracking-tight text-[var(--text-main)]">EcoRebates</a>
+      </div>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors">Directory</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">Search</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">Compare Sizing</a>
+        <a href={`/${lang}/compliance`} class="text-[var(--text-main)] transition-colors">Compliance Guide</a>
+      </nav>
+      <a href={`/${lang}/directory`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
+        Browse Directory
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow" transition:animate="fade">
+    <div class="text-center md:text-left mb-10">
+      <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-[var(--text-main)]">Regulatory Policy & Compliance Guide</h1>
+      <p class="text-lg text-[var(--text-muted)]">A comprehensive guide on federal incentives, state net-metering laws, and SME decarbonization compliance.</p>
+    </div>
+
+    <div class="space-y-8">
+      {/* Introduction Card */}
+      <div class="bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-6 shadow-sm">
+        <h2 class="text-xl font-bold mb-2 text-[var(--text-main)]">DSIRE Database Scope</h2>
+        <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+          The Database of State Incentives for Renewables & Efficiency (DSIRE) represents the foundational taxonomy for clean energy programs in the US. Our sizing engine maps utility programs and rebate values matching these official policy rules to ensure accurate payback computations.
+        </p>
+      </div>
+
+      {/* Grid of compliance cards */}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Federal ITC */}
+        <div class="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+          <span class="text-xs font-bold text-[var(--color-accent)] uppercase tracking-wider">Federal Program</span>
+          <h3 class="text-lg font-bold text-[var(--text-main)] mt-1 mb-2">Residential Clean Energy Credit (Section 25D)</h3>
+          <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+            Provides a **30% tax credit** for residential solar, battery storage systems, and heat pump installations. Valid through 2032, tapering to 26% in 2033 and 22% in 2034. Battery systems over 3 kWh qualify even without paired solar panels.
+          </p>
+        </div>
+
+        {/* NEM 3.0 */}
+        <div class="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+          <span class="text-xs font-bold text-[var(--color-accent)] uppercase tracking-wider">State Policy</span>
+          <h3 class="text-lg font-bold text-[var(--text-main)] mt-1 mb-2">California Net Billing Tariff (NEM 3.0)</h3>
+          <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+            Adopted in California, NEM 3.0 cuts solar-only credit values for exported electricity by ~75%. Export rates are calculated based on hourly avoided grid cost. This policy makes **home battery storage essential** to store excess daylight generation and avoid high peak grid fees.
+          </p>
+        </div>
+
+        {/* MACRS */}
+        <div class="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+          <span class="text-xs font-bold text-[var(--color-accent)] uppercase tracking-wider">Commercial Sizing</span>
+          <h3 class="text-lg font-bold text-[var(--text-main)] mt-1 mb-2">MACRS Depreciation Deductions</h3>
+          <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+            Modified Accelerated Cost Recovery System (MACRS) allows commercial enterprises to recover solar investments through accelerated depreciation. Commercial solar equipment qualifies for a **5-year cost recovery period**, significantly improving corporate ROI in early years.
+          </p>
+        </div>
+
+        {/* USDA REAP */}
+        <div class="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+          <span class="text-xs font-bold text-[var(--color-accent)] uppercase tracking-wider">Agricultural Grants</span>
+          <h3 class="text-lg font-bold text-[var(--text-main)] mt-1 mb-2">USDA Rural Energy for America (REAP)</h3>
+          <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+            Provides agricultural producers and rural small businesses with grants covering **up to 50% of total project costs** for renewable energy setups. Can be combined with the 30% federal tax credit to offset up to 80% of total capital layout.
+          </p>
+        </div>
+      </div>
+
+      {/* Carbon and SME Compliance Guidance */}
+      <div class="bg-[var(--bg-secondary)]/40 border border-[var(--color-border)] rounded-2xl p-6 shadow-sm space-y-4">
+        <h3 class="text-lg font-bold text-[var(--text-main)]">SME Compliance & Decarbonization Targets</h3>
+        <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+          Small and Medium Enterprises (SMEs) face growing pressures to demonstrate environmental tracking. Under standard ESG frameworks, Scope 1 (direct fuel combustion) and Scope 2 (purchased grid electricity) emissions must be audited:
+        </p>
+        <ul class="list-disc pl-5 text-xs text-[var(--text-muted)] space-y-2">
+          <li><strong>Scope 2 Offsetting:</strong> Every kWh generated by on-site solar panels directly offsets grid purchases, abating carbon at a rate matching the local utility's grid emissions factor (e.g. 0.82 lbs CO₂/kWh in Texas).</li>
+          <li><strong>Energy Storage Resilience:</strong> Commercial battery setups provide load shedding and secure backups, protecting enterprise operations from weather-induced grid failures.</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>&copy; 2026 EcoRebates. All rights reserved.</div>
+      <div class="flex gap-4">
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)]">Directory</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">Search</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">Compare</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] font-semibold">Compliance</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

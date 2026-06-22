@@ -1,0 +1,112 @@
+---
+import '../../../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { supabase } from '../../../lib/supabase';
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'en-us' } },
+    { params: { lang: 'de-de' } },
+    { params: { lang: 'fr-fr' } },
+  ];
+}
+
+const { lang } = Astro.params;
+
+// Fetch countries from regions database, fallback to presets if Supabase not configured
+let countriesList = [
+  { code: 'us', name: 'United States', flag: '🇺🇸', regionsCount: 2 },
+  { code: 'uk', name: 'United Kingdom', flag: '🇬🇧', regionsCount: 1 }
+];
+
+if (supabase) {
+  try {
+    const { data } = await supabase
+      .from('regions')
+      .select('country_code');
+    
+    if (data && data.length > 0) {
+      const uniqueCodes = [...new Set(data.map(r => r.country_code.toLowerCase()))];
+      countriesList = uniqueCodes.map(code => {
+        const name = code === 'us' ? 'United States' : code === 'gb' || code === 'uk' ? 'United Kingdom' : code.toUpperCase();
+        const flag = code === 'us' ? '🇺🇸' : code === 'gb' || code === 'uk' ? '🇬🇧' : '🌐';
+        const count = data.filter(r => r.country_code.toLowerCase() === code).length;
+        return { code: code === 'gb' ? 'uk' : code, name, flag, regionsCount: count };
+      });
+    }
+  } catch (err) {
+    console.error('Failed to query countries from Supabase regions. Using presets:', err);
+  }
+}
+---
+
+<!DOCTYPE html>
+<html lang={lang} data-theme="sage-minimalist">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <title>Alternative Energy Rebate Directory | Countries</title>
+  <meta name="description" content="Browse alternative energy rebate directories by country to find local solar incentives and tax credits." />
+  <ClientRouter />
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+  <!-- Navbar -->
+  <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="/logo.png" alt="EcoRebates Logo" class="w-8 h-8 object-contain rounded-lg" />
+        <a href="/" class="font-bold text-lg tracking-tight text-[var(--text-main)]">EcoRebates</a>
+      </div>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
+        <a href={`/${lang}/directory`} class="text-[var(--text-main)] transition-colors">Directory</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">Search</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">Compare Sizing</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">Compliance Guide</a>
+      </nav>
+      <a href={`/${lang}/search`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
+        Search Portal
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow">
+    <div class="text-center md:text-left mb-10">
+      <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-[var(--text-main)]">Browse Alternative Energy Rebates</h1>
+      <p class="text-lg text-[var(--text-muted)]">Select your country to discover regional tax credits, local utility incentives, and solar sizing calculators.</p>
+    </div>
+
+    <!-- Country Selector Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      {countriesList.map((country) => (
+        <a 
+          href={`/${lang}/directory/${country.code}`}
+          class="bg-[var(--bg-secondary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-all hover:scale-102 group"
+        >
+          <div class="text-4xl p-3 bg-[var(--bg-primary)] rounded-xl border border-[var(--color-border)] shadow-sm">
+            {country.flag}
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-[var(--text-main)] group-hover:text-[var(--color-accent)] transition-colors">{country.name}</h2>
+            <p class="text-xs text-[var(--text-muted)] mt-1">{country.regionsCount} active regional hubs indexed</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>&copy; 2026 EcoRebates. All rights reserved.</div>
+      <div class="flex gap-4">
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] font-semibold">Directory</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">Search</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">Compare</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">Compliance</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

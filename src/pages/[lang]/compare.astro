@@ -1,0 +1,71 @@
+---
+import '../../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import ComparisonEngine from '../../components/compare/ComparisonEngine';
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'en-us' } },
+    { params: { lang: 'de-de' } },
+    { params: { lang: 'fr-fr' } },
+  ];
+}
+
+const { lang } = Astro.params;
+---
+
+<!DOCTYPE html>
+<html lang={lang} data-theme="sage-minimalist">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <title>Compare Sizing & Policy ROI | EcoRebates</title>
+  <meta name="description" content="Compare alternative energy utility rates, solar resource coefficients, and rebate payback timelines side by side." />
+  <ClientRouter />
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+  <!-- Navbar -->
+  <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="/logo.png" alt="EcoRebates Logo" class="w-8 h-8 object-contain rounded-lg" />
+        <a href="/" class="font-bold text-lg tracking-tight text-[var(--text-main)]">EcoRebates</a>
+      </div>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors">Directory</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">Search</a>
+        <a href={`/${lang}/compare`} class="text-[var(--text-main)] transition-colors">Compare Sizing</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">Compliance Guide</a>
+      </nav>
+      <a href={`/${lang}/directory`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
+        Browse Directory
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow" transition:animate="fade">
+    <div class="text-center md:text-left mb-8">
+      <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-[var(--text-main)]">Side-by-Side Sizing Comparison</h1>
+      <p class="text-lg text-[var(--text-muted)]">Select two regions to evaluate grid cost, solar hours, carbon factors, and payback timelines side by side.</p>
+    </div>
+
+    <!-- Comparison Engine React Island -->
+    <ComparisonEngine client:load />
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>&copy; 2026 EcoRebates. All rights reserved.</div>
+      <div class="flex gap-4">
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)]">Directory</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">Search</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] font-semibold">Compare</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">Compliance</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

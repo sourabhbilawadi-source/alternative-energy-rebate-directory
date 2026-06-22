@@ -1,0 +1,138 @@
+---
+import '../../../../../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { supabase } from '../../../../../lib/supabase';
+
+export async function getStaticPaths() {
+  const paths = [];
+  const langs = ['en-us', 'de-de', 'fr-fr'];
+  const regions = [
+    { country: 'us', state: 'california' },
+    { country: 'us', state: 'texas' },
+    { country: 'uk', state: 'england' }
+  ];
+  for (const lang of langs) {
+    for (const r of regions) {
+      paths.push({ params: { lang, country: r.country, state: r.state } });
+    }
+  }
+  return paths;
+}
+
+const { lang, country, state } = Astro.params;
+
+const displayCountry = country?.toUpperCase() || '';
+const displayState = state ? state.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
+
+// Fallback presets if Supabase not configured
+const getCitiesPreset = (s: string) => {
+  const sLower = s.toLowerCase();
+  if (sLower === 'california') {
+    return [{ slug: 'los-angeles', name: 'Los Angeles' }];
+  } else if (sLower === 'texas') {
+    return [{ slug: 'houston', name: 'Houston' }];
+  } else if (sLower === 'england') {
+    return [{ slug: 'london', name: 'London' }];
+  }
+  return [];
+};
+
+let citiesList = getCitiesPreset(state || '');
+
+if (supabase) {
+  try {
+    const { data } = await supabase
+      .from('regions')
+      .select('city')
+      .eq('country_code', country === 'uk' ? 'gb' : (country || 'us').toLowerCase())
+      .ilike('state_province', (state || '').replace(/-/g, ' '));
+    
+    if (data && data.length > 0) {
+      const uniqueCities = [...new Set(data.map(r => r.city))];
+      citiesList = uniqueCities.map(name => {
+        const slug = name.toLowerCase().replace(/\s+/g, '-');
+        return { slug, name };
+      });
+    }
+  } catch (err) {
+    console.error('Failed to query cities from Supabase regions. Using presets:', err);
+  }
+}
+---
+
+<!DOCTYPE html>
+<html lang={lang} data-theme="sage-minimalist">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <title>Alternative Energy Rebate Directory | {displayState} Cities</title>
+  <meta name="description" content={`Browse alternative energy rebate directories in ${displayState}, ${displayCountry} to compute solar ROI.`} />
+  <ClientRouter />
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+  <!-- Navbar -->
+  <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="/logo.png" alt="EcoRebates Logo" class="w-8 h-8 object-contain rounded-lg" />
+        <a href="/" class="font-bold text-lg tracking-tight text-[var(--text-main)]">EcoRebates</a>
+      </div>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
+        <a href={`/${lang}/directory`} class="text-[var(--text-main)] transition-colors">Directory</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">Search</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">Compare Sizing</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">Compliance Guide</a>
+      </nav>
+      <a href={`/${lang}/search`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
+        Search Portal
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow">
+    <!-- Breadcrumbs -->
+    <nav class="text-sm text-[var(--text-muted)] mb-6 flex items-center gap-2" aria-label="Breadcrumb">
+      <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] capitalize">Directory</a>
+      <span>/</span>
+      <a href={`/${lang}/directory/${country}`} class="hover:text-[var(--text-main)] uppercase">{country}</a>
+      <span>/</span>
+      <span class="text-[var(--text-main)] font-semibold capitalize">{displayState}</span>
+    </nav>
+
+    <div class="text-center md:text-left mb-10">
+      <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-[var(--text-main)]">{displayState} Cities</h1>
+      <p class="text-lg text-[var(--text-muted)]">Select your city to access the sizing calculator, utility rates, and active rebate directories.</p>
+    </div>
+
+    <!-- City List -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {citiesList.map((cityItem) => (
+        <a 
+          href={`/${lang}/directory/${country}/${state}/${cityItem.slug}`}
+          class="bg-[var(--bg-secondary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] rounded-xl p-5 flex justify-between items-center shadow-sm hover:shadow-md transition-all hover:scale-101 group animate-fade-in"
+        >
+          <span class="text-lg font-bold text-[var(--text-main)] group-hover:text-[var(--color-accent)] transition-colors">{cityItem.name}</span>
+          <span class="text-sm text-[var(--color-accent)] font-semibold flex items-center gap-1">
+            Calculate ROI &rarr;
+          </span>
+        </a>
+      ))}
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>&copy; 2026 EcoRebates. All rights reserved.</div>
+      <div class="flex gap-4">
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] font-semibold">Directory</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">Search</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">Compare</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">Compliance</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
