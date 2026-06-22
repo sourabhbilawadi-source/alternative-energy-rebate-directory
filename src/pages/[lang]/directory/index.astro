@@ -17,8 +17,11 @@ const t = useTranslations(lang || 'en-us');
 
 // Fetch countries from regions database, fallback to presets if Supabase not configured
 let countriesList = [
-  { code: 'us', name: 'United States', flag: '🇺🇸', regionsCount: 2 },
-  { code: 'uk', name: 'United Kingdom', flag: '🇬🇧', regionsCount: 1 }
+  { code: 'us', name: 'United States', flag: '🇺🇸', regionsCount: 3 },
+  { code: 'uk', name: 'United Kingdom', flag: '🇬🇧', regionsCount: 1 },
+  { code: 'de', name: 'Germany', flag: '🇩🇪', regionsCount: 1 },
+  { code: 'ca', name: 'Canada', flag: '🇨🇦', regionsCount: 1 },
+  { code: 'au', name: 'Australia', flag: '🇦🇺', regionsCount: 1 }
 ];
 
 if (supabase) {
