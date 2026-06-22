@@ -1,0 +1,106 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Open+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* -------------------------------------------------------------
+   Custom Font Imports for Premium Typography
+   ------------------------------------------------------------- */
+
+/* -------------------------------------------------------------
+   Color Palettes & System Design Tokens (60-30-10 Rule)
+   ------------------------------------------------------------- */
+:root {
+  /* Default: Sage Minimalist Theme (Light Theme) */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #FAF3DD;
+  --text-main: #141415;
+  --text-muted: #344E41;
+  --color-accent: #8A9A5B; /* Sage Green */
+  --color-highlight: #FFA69E; /* Warm Peach */
+  --color-border: #DAD7CD;
+  --font-headings: 'Inter', sans-serif;
+  --font-body: 'Open Sans', sans-serif;
+  --font-mono: monospace;
+
+  /* Spring Variables (Raw definitions for layout engine spec compliance) */
+  --bounce-spring-elastic-raw: spring(1 110 12 0); /* Mass, Stiffness, Damping, Velocity */
+  --bounce-spring-smooth-raw: spring(1 85 16 0);
+
+  /* Web-standard GPU spring physics fallbacks for active transitions */
+  --bounce-spring-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --bounce-spring-smooth: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Dark Forest Luxury Theme */
+[data-theme="dark-forest"] {
+  --bg-primary: #141415; /* Midnight */
+  --bg-secondary: #0B3D2E; /* Forest Green */
+  --text-main: #FFFFFF;
+  --text-muted: #DDBEA9; /* Sand */
+  --color-accent: #0B3D2E;
+  --color-highlight: #50C878; /* Emerald Green */
+  --color-border: #1E1E1E;
+  --font-headings: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: monospace;
+}
+
+/* Mint & Clean Tech Theme */
+[data-theme="mint-tech"] {
+  --bg-primary: #1E1E1E; /* Obsidian */
+  --bg-secondary: #141415;
+  --text-main: #FFFFFF;
+  --text-muted: #008080; /* Teal */
+  --color-accent: #3EB489; /* Mint Green */
+  --color-highlight: #FFA69E; /* Warm Peach */
+  --color-border: #343434;
+  --font-headings: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* -------------------------------------------------------------
+   Global Typography and Ergonomics
+   ------------------------------------------------------------- */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  transition: background-color 0.5s ease, color 0.5s ease;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headings);
+  font-weight: 700;
+}
+
+/* -------------------------------------------------------------
+   Micro-Interaction Classes & GPU Promotion
+   ------------------------------------------------------------- */
+.metric-card {
+  transition: transform 0.7s var(--bounce-spring-elastic), opacity 0.5s ease-out;
+  will-change: transform, opacity;
+}
+
+.metric-card:hover {
+  transform: translateY(-5px) scale(1.02);
+}
+
+.interactive-element {
+  transition: transform 0.4s var(--bounce-spring-smooth), opacity 0.3s ease;
+  will-change: transform, opacity;
+}
+
+.interactive-element:hover {
+  transform: scale(1.03);
+}
+
+.interactive-element:active {
+  transform: scale(0.97);
+}
+
+/* Ensure smooth view-transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.5s;
+}

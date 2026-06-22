@@ -1,0 +1,354 @@
+---
+import '../../../../../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import RebateCalculator from '../../../../../components/calculator/RebateCalculator';
+
+// Enable static pre-rendering with pre-configured static paths
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'en-us', country: 'us', state: 'california', city: 'los-angeles' } },
+    { params: { lang: 'en-us', country: 'us', state: 'texas', city: 'houston' } },
+    { params: { lang: 'en-us', country: 'uk', state: 'england', city: 'london' } },
+    { params: { lang: 'de-de', country: 'us', state: 'california', city: 'los-angeles' } },
+    { params: { lang: 'fr-fr', country: 'us', state: 'california', city: 'los-angeles' } },
+  ];
+}
+
+const { lang, country, state, city } = Astro.params;
+
+// Format names for display
+const displayCity = city ? city.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
+const displayState = state ? state.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
+const displayCountry = country ? country.toUpperCase() : '';
+
+// Localized mock energy rates and solar resources based on state
+const getLocalSpecs = (stateName: string) => {
+  const s = stateName.toLowerCase();
+  if (s === 'california') {
+    return {
+      gridRate: 0.28, // California is high cost
+      sunHours: 1800, // Very sunny
+      gridEmissions: 0.52, // Relatively clean grid
+      costPerWatt: 3.10,
+      incentives: {
+        federalTaxCreditPct: 0.30,
+        stateRebate: 1500,
+        utilityRebate: 500,
+      }
+    };
+  } else if (s === 'texas') {
+    return {
+      gridRate: 0.14, // Cheap power
+      sunHours: 1950, // Sunny
+      gridEmissions: 0.82, // Dirtier grid (higher carbon savings)
+      costPerWatt: 2.70,
+      incentives: {
+        federalTaxCreditPct: 0.30,
+        stateRebate: 0,
+        utilityRebate: 400,
+      }
+    };
+  } else {
+    // Default (e.g., England / fallback)
+    return {
+      gridRate: 0.32, // High cost UK/Europe
+      sunHours: 1050, // Overcast
+      gridEmissions: 0.40,
+      costPerWatt: 3.40,
+      incentives: {
+        federalTaxCreditPct: 0.0,
+        stateRebate: 1200, // UK grant
+        utilityRebate: 300,
+      }
+    };
+  }
+};
+
+const localSpecs = getLocalSpecs(state || '');
+
+// SEO URLs
+const siteUrl = 'https://cleanenergyrebates.org';
+const currentPath = `/${lang}/directory/${country}/${state}/${city}`;
+const canonicalUrl = `${siteUrl}${currentPath}`;
+
+// Generate hreflang alternates
+const languages = ['en-us', 'de-de', 'fr-fr'];
+const alternates = languages.map(l => ({
+  hreflang: l,
+  url: `${siteUrl}/${l}/directory/${country}/${state}/${city}`
+}));
+
+// JSON-LD Schemas
+const governmentBenefitSchema = {
+  "@context": "https://schema.org",
+  "@type": "GovernmentBenefit",
+  "name": `Alternative Energy Incentives in ${displayCity}, ${displayState}`,
+  "description": `Discover regional rebates, federal tax credits, and utility incentives for solar energy, battery storage, and heat pumps in ${displayCity}.`,
+  "provider": {
+    "@type": "GovernmentOrganization",
+    "name": "Local Energy Efficiency Agency"
+  },
+  "serviceArea": {
+    "@type": "AdministrativeArea",
+    "name": displayState
+  }
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Alternative Energy Rebate Directory",
+  "url": siteUrl,
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": `${siteUrl}/search?q={search_term_string}`,
+    "query-input": "required name=search_term_string"
+  }
+};
+---
+
+<!DOCTYPE html>
+<html lang={lang} data-theme="sage-minimalist">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>Alternative Energy Rebates | {displayCity}, {displayState}</title>
+  <meta name="description" content={`Comprehensive alternative energy rebates directory for ${displayCity}, ${displayState}. Calculate solar ROI, battery storage yields, and SME carbon offsets.`} />
+  
+  <!-- Canonical & hreflang Alternate Declarations -->
+  <link rel="canonical" href={canonicalUrl} />
+  {alternates.map(alt => (
+    <link rel="alternate" hreflang={alt.hreflang} href={alt.url} />
+  ))}
+
+  <!-- JSON-LD Structured Schema Maps -->
+  <script type="application/ld+json" set:html={JSON.stringify(governmentBenefitSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+
+  <!-- Astro View Transitions -->
+  <ClientRouter />
+</head>
+<body class="min-h-screen pb-16">
+  <!-- Persistent Header with Navigation -->
+  <header class="border-b border-[var(--color-border)] sticky top-0 bg-[var(--bg-primary)]/80 backdrop-blur-md z-40" transition:persist transition:name="main-navigation">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="w-8 h-8 rounded-full bg-[var(--color-accent)] flex items-center justify-center text-white font-bold text-lg">⚡</span>
+        <a href={`/${lang}/directory/us/california/los-angeles`} class="font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity">
+          Antigravity Energy
+        </a>
+      </div>
+      
+      <!-- Top Actions & Selector Controls -->
+      <div class="flex items-center gap-4">
+        <!-- Lang Selector -->
+        <select 
+          id="lang-select" 
+          class="bg-transparent border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded px-2 py-1 outline-none"
+          onchange={`window.location.href = this.value`}
+        >
+          {languages.map(l => (
+            <option value={`${siteUrl}/${l}/directory/${country}/${state}/${city}`} selected={l === lang}>
+              {l.toUpperCase()}
+            </option>
+          ))}
+        </select>
+
+        <!-- Theme Selector -->
+        <select 
+          id="theme-select"
+          class="bg-transparent border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded px-2 py-1 outline-none"
+        >
+          <option value="sage-minimalist">Sage Minimalist</option>
+          <option value="dark-forest">Dark Forest Luxury</option>
+          <option value="mint-tech">Mint & Clean Tech</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8" transition:animate="slide">
+    <!-- Breadcrumbs -->
+    <nav class="text-sm text-[var(--text-muted)] mb-4 flex items-center gap-2" aria-label="Breadcrumb">
+      <span class="hover:text-[var(--text-main)] capitalize">Directory</span>
+      <span>/</span>
+      <span class="hover:text-[var(--text-main)] uppercase">{displayCountry}</span>
+      <span>/</span>
+      <span class="hover:text-[var(--text-main)] capitalize">{displayState}</span>
+      <span>/</span>
+      <span class="text-[var(--text-main)] font-semibold capitalize">{displayCity}</span>
+    </nav>
+
+    <!-- Page Title Header Section -->
+    <div class="mb-10 text-center md:text-left">
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">
+        Alternative Energy Sizing & Rebate Portal
+      </h1>
+      <p class="text-lg text-[var(--text-muted)] max-w-3xl">
+        Explore local utility incentives, federal tax programs, and sizing tools for residential & enterprise solar setups in <strong class="text-[var(--text-main)]">{displayCity}, {displayState}</strong>.
+      </p>
+    </div>
+
+    <!-- Tab Section for Residential vs SME -->
+    <div class="mb-8 border-b border-[var(--color-border)] flex gap-6">
+      <button 
+        id="btn-residential" 
+        class="pb-3 text-lg font-bold border-b-2 border-[var(--color-accent)] text-[var(--text-main)] focus:outline-none"
+      >
+        🏡 Residential Calculator
+      </button>
+      <button 
+        id="btn-sme" 
+        class="pb-3 text-lg font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] focus:outline-none border-b-2 border-transparent"
+      >
+        🏢 SME Decarbonization Hub
+      </button>
+    </div>
+
+    <!-- Active Panels -->
+    <div id="panel-residential" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <!-- Calculator React Island -->
+      <div class="lg:col-span-12">
+        <RebateCalculator 
+          client:load 
+          defaultGridRate={localSpecs.gridRate}
+          defaultSunHours={localSpecs.sunHours}
+          defaultGridEmissions={localSpecs.gridEmissions}
+          defaultCostPerWatt={localSpecs.costPerWatt}
+          federalTaxCreditPct={localSpecs.incentives.federalTaxCreditPct}
+          stateRebate={localSpecs.incentives.stateRebate}
+          utilityRebate={localSpecs.incentives.utilityRebate}
+          city={displayCity}
+          state={displayState}
+        />
+      </div>
+    </div>
+
+    <!-- SME Decarbonization Hub Panel -->
+    <div id="panel-sme" class="hidden space-y-8 animate-fade-in">
+      <div class="bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-6 md:p-8">
+        <h2 class="text-2xl font-bold mb-4">SME Sizing & Decarbonization Pathways</h2>
+        <p class="text-[var(--text-muted)] mb-6 max-w-3xl">
+          Small and Medium Enterprises (SMEs) face distinct structural barriers, including leased property constraints, capital shortages, and complex compliance guidelines. Use our comparison matrices and localized peer network indicators to navigate business energy transition strategies.
+        </p>
+
+        <!-- SME Leased vs Owned Upgrades Table -->
+        <h3 class="text-xl font-bold mb-3">Leased vs Owned Equipment Upgrades</h3>
+        <div class="overflow-x-auto mb-8 border border-[var(--color-border)] rounded-lg">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[var(--bg-primary)] border-b border-[var(--color-border)]">
+                <th class="p-4 font-semibold">Aspect</th>
+                <th class="p-4 font-semibold">Leased Property Strategy</th>
+                <th class="p-4 font-semibold">Owned Property Strategy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-[var(--color-border)]">
+                <td class="p-4 font-medium">Financing Method</td>
+                <td class="p-4">Power Purchase Agreement (PPA) / Solar Lease (0-down capital requirements)</td>
+                <td class="p-4">Direct Purchase / Commercial Clean Energy Loan (capital investment)</td>
+              </tr>
+              <tr class="border-b border-[var(--color-border)]">
+                <td class="p-4 font-medium">Rebate Eligibility</td>
+                <td class="p-4">Third-party developer claims federal tax credits; passes saving via lower rates</td>
+                <td class="p-4">Enterprise claims MACRS depreciation + 30% FTC directly</td>
+              </tr>
+              <tr class="border-b border-[var(--color-border)]">
+                <td class="p-4 font-medium">Property Value Impact</td>
+                <td class="p-4">No capital addition; agreement transfers upon sale or lease assignment</td>
+                <td class="p-4">Immediate asset value appreciation; increases equity value by 4.1%</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-medium">Maintenance & Risk</td>
+                <td class="p-4">Provider assumes full system warranty, tracking, and inverter replacements</td>
+                <td class="p-4">System owner maintains hardware; requires regional service contract</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Localized Peer-Network Tables -->
+        <h3 class="text-xl font-bold mb-3">Regional Business Clusters Peer Table</h3>
+        <div class="overflow-x-auto border border-[var(--color-border)] rounded-lg">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[var(--bg-primary)] border-b border-[var(--color-border)]">
+                <th class="p-4 font-semibold">Business Sector</th>
+                <th class="p-4 font-semibold">Average Rooftop Solar Size</th>
+                <th class="p-4 font-semibold">Annual Savings Offset</th>
+                <th class="p-4 font-semibold">Primary Policy Category</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-[var(--color-border)]">
+                <td class="p-4 font-medium">Manufacturing & Logistics</td>
+                <td class="p-4">250 kW</td>
+                <td class="p-4">$32,000 / year</td>
+                <td class="p-4">Commercial Net Metering Program</td>
+              </tr>
+              <tr class="border-b border-[var(--color-border)]">
+                <td class="p-4 font-medium">Retail & Office Spaces</td>
+                <td class="p-4">45 kW</td>
+                <td class="p-4">$7,800 / year</td>
+                <td class="p-4">Demand Response Program</td>
+              </tr>
+              <tr class="border-b border-[var(--color-border)]">
+                <td class="p-4 font-medium">Agricultural & Cold Storage</td>
+                <td class="p-4">120 kW</td>
+                <td class="p-4">$19,500 / year</td>
+                <td class="p-4">USDA REAP Grants & State Funding</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Client-side theme switching logic
+    const themeSelect = document.getElementById('theme-select') as HTMLSelectElement;
+    if (themeSelect) {
+      themeSelect.addEventListener('change', (e) => {
+        const theme = (e.target as HTMLSelectElement).value;
+        document.documentElement.setAttribute('data-theme', theme);
+      });
+    }
+
+    // Client-side tab navigation logic
+    const btnRes = document.getElementById('btn-residential');
+    const btnSme = document.getElementById('btn-sme');
+    const panelRes = document.getElementById('panel-residential');
+    const panelSme = document.getElementById('panel-sme');
+
+    if (btnRes && btnSme && panelRes && panelSme) {
+      btnRes.addEventListener('click', () => {
+        // Toggle Buttons
+        btnRes.classList.add('border-[var(--color-accent)]', 'text-[var(--text-main)]', 'font-bold');
+        btnRes.classList.remove('text-[var(--text-muted)]', 'font-medium', 'border-transparent');
+        btnSme.classList.add('text-[var(--text-muted)]', 'font-medium', 'border-transparent');
+        btnSme.classList.remove('border-[var(--color-accent)]', 'text-[var(--text-main)]', 'font-bold');
+
+        // Toggle Panels
+        panelRes.classList.remove('hidden');
+        panelSme.classList.add('hidden');
+      });
+
+      btnSme.addEventListener('click', () => {
+        // Toggle Buttons
+        btnSme.classList.add('border-[var(--color-accent)]', 'text-[var(--text-main)]', 'font-bold');
+        btnSme.classList.remove('text-[var(--text-muted)]', 'font-medium', 'border-transparent');
+        btnRes.classList.add('text-[var(--text-muted)]', 'font-medium', 'border-transparent');
+        btnRes.classList.remove('border-[var(--color-accent)]', 'text-[var(--text-main)]', 'font-bold');
+
+        // Toggle Panels
+        panelSme.classList.remove('hidden');
+        panelRes.classList.add('hidden');
+      });
+    }
+  </script>
+</body>
+</html>

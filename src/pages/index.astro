@@ -1,0 +1,142 @@
+---
+import '../styles/global.css';
+---
+
+<!DOCTYPE html>
+<html lang="en" data-theme="sage-minimalist">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>Antigravity Energy | Alternative Energy Rebates Directory</title>
+  <meta name="description" content="Discover alternative energy rebates, federal tax incentives, and solar sizing calculations for residential and enterprise clients globally." />
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+  
+  <!-- Navigation Header -->
+  <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="w-8 h-8 rounded-full bg-[var(--color-accent)] flex items-center justify-center text-white font-bold text-lg">⚡</span>
+        <span class="font-bold text-lg tracking-tight text-[var(--text-main)]">Antigravity Energy</span>
+      </div>
+      <a 
+        href="/en-us/directory/us/california/los-angeles" 
+        class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl hover:opacity-90 transition-opacity"
+      >
+        View Directory
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20 text-center flex-grow flex flex-col justify-center">
+    <div class="space-y-6">
+      <div class="inline-flex items-center gap-2 bg-green-500/10 text-[var(--text-muted)] text-xs font-bold px-3 py-1.5 rounded-full border border-green-500/20">
+        ✨ 124 DSIRE Policy Categories Supported
+      </div>
+      <h1 class="text-5xl md:text-6xl font-black tracking-tight text-[var(--text-main)] leading-tight">
+        Alternative Energy Sizing & Policy Directory
+      </h1>
+      <p class="text-lg md:text-xl text-[var(--text-muted)] max-w-2xl mx-auto">
+        Compute localized payback timelines, solar capacity limits, and battery peak avoidance offsets. Discover regional utility grants and tax credits.
+      </p>
+
+      <!-- Dynamic Zip Search Box -->
+      <div class="max-w-md mx-auto pt-4">
+        <div class="bg-[var(--bg-secondary)] border border-[var(--color-border)] p-2 rounded-2xl flex items-center gap-2 shadow-md">
+          <input 
+            type="text" 
+            id="home-zip"
+            maxLength={5}
+            placeholder="Enter your 5-digit ZIP code (e.g. 90210)" 
+            class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] rounded-xl py-3 px-4 outline-none flex-grow font-semibold"
+          />
+          <button 
+            id="home-search-btn"
+            class="bg-[var(--color-accent)] hover:opacity-90 text-white font-bold px-6 py-3 rounded-xl transition-all"
+          >
+            Find Rebates
+          </button>
+        </div>
+        <p id="search-feedback" class="text-xs text-red-500 mt-2 hidden"></p>
+      </div>
+
+      <!-- Quick Nav Links -->
+      <div class="pt-8 space-y-3">
+        <h3 class="text-sm font-bold text-[var(--text-muted)] uppercase tracking-wider">Featured Regional Portals</h3>
+        <div class="flex flex-wrap justify-center gap-3">
+          <a 
+            href="/en-us/directory/us/california/los-angeles" 
+            class="bg-[var(--bg-secondary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] px-4 py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105 inline-block text-[var(--text-main)]"
+          >
+            ☀️ Los Angeles, CA (High Utility Rates)
+          </a>
+          <a 
+            href="/en-us/directory/us/texas/houston" 
+            class="bg-[var(--bg-secondary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] px-4 py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105 inline-block text-[var(--text-main)]"
+          >
+            ⚡ Houston, TX (High Solar Yields)
+          </a>
+          <a 
+            href="/en-us/directory/uk/england/london" 
+            class="bg-[var(--bg-secondary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] px-4 py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105 inline-block text-[var(--text-main)]"
+          >
+            🇬🇧 London, UK (European SGR Feed-in)
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-6 text-center text-xs text-[var(--text-muted)]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>&copy; 2026 Antigravity Energy. All rights reserved.</div>
+      <div class="flex gap-4">
+        <a href="#" class="hover:text-[var(--text-main)]">Privacy Policy</a>
+        <a href="#" class="hover:text-[var(--text-main)]">Terms of Service</a>
+        <a href="#" class="hover:text-[var(--text-main)]">DSIRE Database Status</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const searchBtn = document.getElementById('home-search-btn');
+    const zipInput = document.getElementById('home-zip') as HTMLInputElement;
+    const feedback = document.getElementById('search-feedback');
+
+    if (searchBtn && zipInput && feedback) {
+      searchBtn.addEventListener('click', () => {
+        const zip = zipInput.value.trim();
+        if (zip.length < 5) {
+          feedback.textContent = 'Please enter a valid 5-digit ZIP code.';
+          feedback.classList.remove('hidden');
+          return;
+        }
+
+        feedback.classList.add('hidden');
+        const firstDigit = zip.charAt(0);
+        
+        // Dynamic redirection routing based on input ZIP code
+        if (firstDigit === '9') {
+          window.location.href = '/en-us/directory/us/california/los-angeles';
+        } else if (firstDigit === '7') {
+          window.location.href = '/en-us/directory/us/texas/houston';
+        } else if (firstDigit === '0' || firstDigit === '1') {
+          window.location.href = '/en-us/directory/us/california/los-angeles'; // default mapping for test
+        } else {
+          window.location.href = '/en-us/directory/us/california/los-angeles';
+        }
+      });
+
+      // Allow enter key press
+      zipInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          searchBtn.click();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
