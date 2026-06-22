@@ -173,8 +173,13 @@ if (supabase) {
           href={`/${lang}/directory/${country.code}`}
           class="bg-[var(--bg-secondary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-all hover:scale-102 group"
         >
-          <div class="text-4xl p-3 bg-[var(--bg-primary)] rounded-xl border border-[var(--color-border)] shadow-sm">
-            {country.flag}
+          <div class="w-16 h-11 flex items-center justify-center bg-[var(--bg-primary)] rounded-xl border border-[var(--color-border)] shadow-sm overflow-hidden p-0.5 flex-shrink-0">
+            <img 
+              src={`https://flagcdn.com/${country.code === 'uk' ? 'gb' : country.code}.svg`} 
+              alt={`${country.name} Flag`} 
+              class="w-full h-full object-cover rounded-lg"
+              loading="lazy"
+            />
           </div>
           <div>
             <h2 class="text-xl font-bold text-[var(--text-main)] group-hover:text-[var(--color-accent)] transition-colors">{country.name}</h2>
