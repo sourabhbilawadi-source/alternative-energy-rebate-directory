@@ -11,7 +11,8 @@ export const translations = {
       compliance: 'Compliance Guide',
       browseDir: 'Browse Directory',
       searchPortal: 'Search Portal',
-      admin: 'Admin Console'
+      admin: 'Admin Console',
+      blog: 'Blog'
     },
     footer: {
       copyright: '© 2026 EcoRebates. All rights reserved.',
@@ -19,6 +20,7 @@ export const translations = {
       search: 'Search',
       compare: 'Compare',
       compliance: 'Compliance',
+      blog: 'Blog',
       admin: 'Admin',
       privacy: 'Privacy Policy',
       terms: 'Terms of Service'
@@ -159,7 +161,8 @@ export const translations = {
       compliance: 'Richtlinien',
       browseDir: 'Verzeichnis Durchsuchen',
       searchPortal: 'Suchportal',
-      admin: 'Admin-Konsole'
+      admin: 'Admin-Konsole',
+      blog: 'Blog'
     },
     footer: {
       copyright: '© 2026 EcoRebates. Alle Rechte vorbehalten.',
@@ -167,6 +170,7 @@ export const translations = {
       search: 'Suche',
       compare: 'Vergleich',
       compliance: 'Richtlinien',
+      blog: 'Blog',
       admin: 'Admin',
       privacy: 'Datenschutzerklärung',
       terms: 'Nutzungsbedingungen'
@@ -307,7 +311,8 @@ export const translations = {
       compliance: 'Conformité',
       browseDir: 'Parcourir l\'annuaire',
       searchPortal: 'Portail de recherche',
-      admin: 'Console Admin'
+      admin: 'Console Admin',
+      blog: 'Blog'
     },
     footer: {
       copyright: '© 2026 EcoRebates. Tous droits réservés.',
@@ -315,6 +320,7 @@ export const translations = {
       search: 'Recherche',
       compare: 'Comparer',
       compliance: 'Conformité',
+      blog: 'Blog',
       admin: 'Admin',
       privacy: 'Politique de confidentialité',
       terms: 'Conditions d\'utilisation'
