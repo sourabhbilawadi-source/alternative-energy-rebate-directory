@@ -31,10 +31,10 @@ import Analytics from '../components/Analytics.astro';
   <!-- Navigation Header -->
   <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <img src="/logo.png" alt="EcoRebates Logo" class="w-8 h-8 object-contain rounded-lg" />
-        <a href="/" class="font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity">EcoRebates</a>
-      </div>
+      <a href="/" class="flex items-center gap-2 font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity group">
+        <img src="/logo.png" alt="EcoRebates Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" />
+        <span>EcoRebates</span>
+      </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
         <a href="/en-us/directory" class="hover:text-[var(--text-main)] transition-colors">Directory</a>
         <a href="/en-us/search" class="hover:text-[var(--text-main)] transition-colors">Search</a>
@@ -118,8 +118,8 @@ import Analytics from '../components/Analytics.astro';
         <a href="/en-us/search" class="hover:text-[var(--text-main)]">Search</a>
         <a href="/en-us/compare" class="hover:text-[var(--text-main)]">Compare Sizing</a>
         <a href="/en-us/compliance" class="hover:text-[var(--text-main)]">DSIRE Compliance Guide</a>
-        <a href="#" class="hover:text-[var(--text-main)]">Privacy Policy</a>
-        <a href="#" class="hover:text-[var(--text-main)]">Terms</a>
+        <a href="/en-us/privacy" class="hover:text-[var(--text-main)]">Privacy Policy</a>
+        <a href="/en-us/terms" class="hover:text-[var(--text-main)]">Terms</a>
       </div>
     </div>
   </footer>

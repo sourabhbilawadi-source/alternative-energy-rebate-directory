@@ -19,7 +19,9 @@ export const translations = {
       search: 'Search',
       compare: 'Compare',
       compliance: 'Compliance',
-      admin: 'Admin'
+      admin: 'Admin',
+      privacy: 'Privacy Policy',
+      terms: 'Terms of Service'
     },
     common: {
       back: 'Back to Directory',
@@ -165,7 +167,9 @@ export const translations = {
       search: 'Suche',
       compare: 'Vergleich',
       compliance: 'Richtlinien',
-      admin: 'Admin'
+      admin: 'Admin',
+      privacy: 'Datenschutzerklärung',
+      terms: 'Nutzungsbedingungen'
     },
     common: {
       back: 'Zurück zum Verzeichnis',
@@ -311,7 +315,9 @@ export const translations = {
       search: 'Recherche',
       compare: 'Comparer',
       compliance: 'Conformité',
-      admin: 'Admin'
+      admin: 'Admin',
+      privacy: 'Politique de confidentialité',
+      terms: 'Conditions d\'utilisation'
     },
     common: {
       back: 'Retour à l\'annuaire',

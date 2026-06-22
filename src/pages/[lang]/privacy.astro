@@ -1,0 +1,233 @@
+---
+import '../../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { useTranslations } from '../../lib/i18n';
+import Analytics from '../../components/Analytics.astro';
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'en-us' } },
+    { params: { lang: 'de-de' } },
+    { params: { lang: 'fr-fr' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const t = useTranslations(lang || 'en-us');
+
+// Define localized content for Privacy Policy
+const content = {
+  'en-us': {
+    title: 'Privacy Policy',
+    subtitle: 'Learn how EcoRebates collects, processes, and protects your information.',
+    lastUpdated: 'Last updated: June 22, 2026',
+    sections: [
+      {
+        id: 'intro',
+        title: '1. Introduction',
+        content: 'Welcome to EcoRebates. We are committed to protecting your privacy and ensuring you have a secure experience on our platform. This Privacy Policy explains how we handle data when you browse our energy rebate directory and use our solar sizing calculators.'
+      },
+      {
+        id: 'data-collection',
+        title: '2. Information We Collect',
+        content: 'To calculate your alternative energy ROI and payback estimates, we collect basic input parameters such as postal/ZIP codes, estimated monthly electricity bills, usable roof area, and battery capacity. This information is processed in real-time. We also collect anonymized technical details (e.g., browser type, language preferences, page routing views) to optimize application performance.'
+      },
+      {
+        id: 'data-usage',
+        title: '3. How We Use Information',
+        content: 'We use the collected information to execute localized solar generation simulations, calculate regional utility grants, provide compliance guides based on DSIRE policies, and analyze portal usage patterns. We do not require or collect personally identifiable information (such as your legal name, physical home address, or phone number) to run computations.'
+      },
+      {
+        id: 'sharing',
+        title: '4. Third-Party Integrations & Data Sharing',
+        content: 'EcoRebates integrates with Supabase to store and load regional energy rates and rebate guidelines. Any query data you submit is processed securely. We do not sell, trade, or transfer your input data to external advertising networks or commercial brokers.'
+      },
+      {
+        id: 'cookies',
+        title: '5. Cookies and Tracking',
+        content: 'We utilize lightweight cookies and local storage tokens to remember your chosen theme (e.g., Sage Minimalist, Dark Forest) and preserve your latest calculator parameters across page changes. You can disable cookies in your browser settings at any time, though some interactive simulation features may reset.'
+      },
+      {
+        id: 'contact',
+        title: '6. Contact & Data Access Rights',
+        content: 'Under frameworks like GDPR and CCPA, you have the right to know what data we hold and request its deletion. Since we do not persist user-linked database records of your computations, there is generally no data to delete. For inquiries, reach out to us at privacy@ecorebates.org.'
+      }
+    ]
+  },
+  'de-de': {
+    title: 'Datenschutzerklärung',
+    subtitle: 'Erfahren Sie, wie EcoRebates Ihre Daten erfasst, verarbeitet und schützt.',
+    lastUpdated: 'Zuletzt aktualisiert: 22. Juni 2026',
+    sections: [
+      {
+        id: 'intro',
+        title: '1. Einführung',
+        content: 'Willkommen bei EcoRebates. Wir setzen uns leidenschaftlich für den Schutz Ihrer Privatsphäre und die Gewährleistung einer sicheren Nutzererfahrung ein. Diese Datenschutzerklärung erläutert die Verarbeitung von Daten beim Durchsuchen unseres Energierabatt-Verzeichnisses und der Nutzung unserer Solar-Rechner.'
+      },
+      {
+        id: 'data-collection',
+        title: '2. Erfasste Informationen',
+        content: 'Zur Amortisationsberechnung Ihrer Solaranlagen erfassen wir grundlegende Parameter wie Postleitzahlen, geschätzte monatliche Stromrechnungen, nutzbare Dachflächen und Batteriekapazitäten. Diese Daten werden in Echtzeit verarbeitet. Zudem erfassen wir anonymisierte technische Details (z. B. Browsertyp, bevorzugte Sprache), um das Portal zu optimieren.'
+      },
+      {
+        id: 'data-usage',
+        title: '3. Verwendung Ihrer Daten',
+        content: 'Wir nutzen diese Informationen ausschließlich zur Simulation der Solarstromerzeugung, Berechnung regionaler Zuschüsse, Bereitstellung von DSIRE-Konformitätsleitfäden und zur Analyse der Website-Nutzung. Zur Durchführung der Berechnungen benötigen wir keine personenbezogenen Daten (wie Name oder vollständige Adresse).'
+      },
+      {
+        id: 'sharing',
+        title: '4. Drittanbieter-Integrationen',
+        content: 'EcoRebates ist an Supabase angebunden, um Stromtarife und Richtlinien abzufragen. Ihre Eingabedaten werden sicher übertragen. Wir verkaufen, tauschen oder übertragen Ihre Berechnungsdaten nicht an Werbenetzwerke oder kommerzielle Makler.'
+      },
+      {
+        id: 'cookies',
+        title: '5. Cookies und Tracking',
+        content: 'Wir verwenden ressourcenschonende Cookies und Local Storage, um Ihr Design (z. B. Salbei-Minimalistisch, Dunkelwald) zu speichern und die Rechnerwerte über verschiedene Seiten hinweg zu erhalten. Sie können Cookies in Ihren Browsereinstellungen jederzeit deaktivieren.'
+      },
+      {
+        id: 'contact',
+        title: '6. Ihre Rechte & Kontakt',
+        content: 'Gemäß der DSGVO haben Sie das Recht auf Auskunft über Ihre gespeicherten Daten sowie auf deren Löschung. Da wir keine nutzerbezogenen Berechnungsdaten in Datenbanken speichern, liegen in der Regel keine Daten vor. Kontaktieren Sie uns bei Fragen unter privacy@ecorebates.org.'
+      }
+    ]
+  },
+  'fr-fr': {
+    title: 'Politique de confidentialité',
+    subtitle: 'Découvrez comment EcoRebates collecte, traite et protège vos informations.',
+    lastUpdated: 'Dernière mise à jour : 22 juin 2026',
+    sections: [
+      {
+        id: 'intro',
+        title: '1. Introduction',
+        content: 'Bienvenue sur EcoRebates. Nous nous engageons à protéger votre vie privée et à garantir une expérience utilisateur sécurisée. Cette politique explique comment nous traitons vos données lors de l\'utilisation de notre annuaire de subventions et de nos simulateurs solaires.'
+      },
+      {
+        id: 'data-collection',
+        title: '2. Informations collectées',
+        content: 'Afin d\'estimer votre ROI énergétique, nous collectons des données de base telles que votre code postal, votre facture d\'électricité estimée, votre surface de toit et la capacité de votre batterie. Nous recueillons également des détails techniques anonymisés (navigateur, langue) pour optimiser les performances de l\'application.'
+      },
+      {
+        id: 'data-usage',
+        title: '3. Utilisation des informations',
+        content: 'Nous utilisons ces informations pour simuler votre production solaire, évaluer les subventions locales, fournir des guides de conformité et analyser l\'usage de notre portail. Aucune donnée nominative (nom, adresse physique) n\'est requise ou conservée.'
+      },
+      {
+        id: 'sharing',
+        title: '4. Tiers & Partage de données',
+        content: 'EcoRebates s\'interface avec Supabase pour charger les tarifs et subventions régionaux. Toutes les requêtes sont sécurisées. Nous ne vendons et ne transférons aucune information de calcul à des régies publicitaires externes.'
+      },
+      {
+        id: 'cookies',
+        title: '5. Cookies et traceurs',
+        content: 'Nous utilisons des cookies légers pour enregistrer vos préférences de thème graphique et conserver les paramètres de votre simulateur pendant votre navigation. Vous pouvez bloquer les cookies à tout moment dans les options de votre navigateur.'
+      },
+      {
+        id: 'contact',
+        title: '6. Droits d\'accès & Contact',
+        content: 'Conformément au RGPD, vous disposez d\'un droit d\'accès et de suppression de vos données personnelles. Ne conservant aucun profil utilisateur associé aux calculs, nous ne possédons généralement aucune donnée. Écrivez-nous à privacy@ecorebates.org.'
+      }
+    ]
+  }
+};
+
+const currentContent = content[lang as keyof typeof content] || content['en-us'];
+---
+
+<!DOCTYPE html>
+<html lang={lang} data-theme="sage-minimalist">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <title>{currentContent.title} | EcoRebates</title>
+  <meta name="description" content={currentContent.subtitle} />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content={`${currentContent.title} | EcoRebates`} />
+  <meta property="og:description" content={currentContent.subtitle} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={`https://ecorebates.org/${lang}/privacy`} />
+  <meta property="og:image" content="https://ecorebates.org/og-preview.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={`${currentContent.title} | EcoRebates`} />
+  <meta name="twitter:description" content={currentContent.subtitle} />
+  <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
+  
+  <ClientRouter />
+  <Analytics />
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+  <!-- Navbar -->
+  <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2 font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity group">
+        <img src="/logo.png" alt="EcoRebates Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" />
+        <span>EcoRebates</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.directory}</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.search}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compare}</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compliance}</a>
+      </nav>
+      <a href={`/${lang}/directory`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
+        {t.nav.browseDir}
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Layout -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20 flex-grow w-full" transition:animate="fade">
+    <div class="mb-12 text-center md:text-left border-b border-[var(--color-border)] pb-8">
+      <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-[var(--text-main)]">{currentContent.title}</h1>
+      <p class="text-lg text-[var(--text-muted)] mb-2">{currentContent.subtitle}</p>
+      <span class="text-xs text-[var(--text-muted)] font-mono opacity-80">{currentContent.lastUpdated}</span>
+    </div>
+
+    <!-- Sidebar and Main Column -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+      <!-- Desktop Sidebar (Navigation) -->
+      <aside class="hidden lg:block lg:col-span-1">
+        <div class="sticky top-24 space-y-3 border-l border-[var(--color-border)] pl-4">
+          <h4 class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-4">Table of Contents</h4>
+          {currentContent.sections.map(sec => (
+            <a 
+              href={`#${sec.id}`}
+              class="block text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] hover:font-semibold transition-all py-1"
+            >
+              {sec.title.split('. ')[1] || sec.title}
+            </a>
+          ))}
+        </div>
+      </aside>
+
+      <!-- Main Contents -->
+      <div class="lg:col-span-3 space-y-10">
+        {currentContent.sections.map(sec => (
+          <section id={sec.id} class="scroll-mt-24 space-y-3 bg-[var(--bg-secondary)]/30 border border-[var(--color-border)] p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+            <h2 class="text-xl font-bold text-[var(--text-main)]">{sec.title}</h2>
+            <p class="text-sm text-[var(--text-muted)] leading-relaxed">{sec.content}</p>
+          </section>
+        ))}
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>{t.footer.copyright}</div>
+      <div class="flex gap-4 flex-wrap justify-center">
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)]">{t.footer.directory}</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">{t.footer.search}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">{t.footer.compare}</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">{t.footer.compliance}</a>
+        <a href={`/${lang}/privacy`} class="hover:text-[var(--text-main)] font-semibold">{t.footer.privacy}</a>
+        <a href={`/${lang}/terms`} class="hover:text-[var(--text-main)]">{t.footer.terms}</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

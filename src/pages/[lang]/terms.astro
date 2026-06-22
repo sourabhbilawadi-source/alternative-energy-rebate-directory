@@ -1,0 +1,233 @@
+---
+import '../../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { useTranslations } from '../../lib/i18n';
+import Analytics from '../../components/Analytics.astro';
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'en-us' } },
+    { params: { lang: 'de-de' } },
+    { params: { lang: 'fr-fr' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const t = useTranslations(lang || 'en-us');
+
+// Define localized content for Terms of Service
+const content = {
+  'en-us': {
+    title: 'Terms of Service',
+    subtitle: 'Please read these terms carefully before using our alternative energy rebate calculators.',
+    lastUpdated: 'Last updated: June 22, 2026',
+    sections: [
+      {
+        id: 'acceptance',
+        title: '1. Acceptance of Terms',
+        content: 'By accessing and using EcoRebates, you agree to comply with and be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.'
+      },
+      {
+        id: 'disclaimers',
+        title: '2. Sizing & Payback Disclaimers',
+        content: 'All solar calculations, battery yield estimations, tax credit percentages, and utility rebate values displayed on EcoRebates are mathematical simulations provided for educational and preliminary planning purposes. Actual payback periods, installation quotes, and rebate approvals will vary based on final utility inspections, physical site constraints, solar orientation, and qualified installer assessments. EcoRebates does not guarantee financial returns or policy eligibility.'
+      },
+      {
+        id: 'use-license',
+        title: '3. Permitted Use & Restrictions',
+        content: 'You are granted a limited license to perform individual calculations and query regional rebate specifications for personal or corporate feasibility analysis. You may not scrape our database, run automated scripts to extract utility rates, or attempt to disrupt the performance of our database endpoints.'
+      },
+      {
+        id: 'ip',
+        title: '4. Intellectual Property',
+        content: 'The search layouts, ROI engine, proprietary datasets, and branding elements (including the EcoRebates name and logos) are the intellectual property of EcoRebates and are protected by applicable copyright and trademark laws.'
+      },
+      {
+        id: 'liability',
+        title: '5. Limitation of Liability',
+        content: 'In no event shall EcoRebates or its contributors be liable for any direct, indirect, or incidental damages arising out of the use of or inability to use our solar sizing calculations, DSIRE compliance summaries, or administrative databases.'
+      },
+      {
+        id: 'governing-law',
+        title: '6. Governing Law & Updates',
+        content: 'These terms are governed by the laws of the jurisdiction in which we operate, without regard to conflict of law principles. We reserve the right to modify these terms at any time by updating this page.'
+      }
+    ]
+  },
+  'de-de': {
+    title: 'Nutzungsbedingungen',
+    subtitle: 'Bitte lesen Sie diese Bedingungen sorgfältig durch, bevor Sie unsere Rechner nutzen.',
+    lastUpdated: 'Zuletzt aktualisiert: 22. Juni 2026',
+    sections: [
+      {
+        id: 'acceptance',
+        title: '1. Akzeptanz der Bedingungen',
+        content: 'Durch den Zugriff auf und die Nutzung von EcoRebates erklären Sie sich mit diesen Nutzungsbedingungen einverstanden. Wenn Sie diesen Bedingungen nicht zustimmen, nutzen Sie unsere Dienste bitte nicht.'
+      },
+      {
+        id: 'disclaimers',
+        title: '2. Haftungsausschluss für Berechnungen',
+        content: 'Alle auf EcoRebates angezeigten Solarberechnungen, Batteriespeicher-Erträge, Steuergutschriften und Rabatte von Versorgungsunternehmen sind mathematische Simulationen zu Planungszwecken. Tatsächliche Amortisationszeiten, Installationsangebote und Rabattgenehmigungen variieren je nach den örtlichen Gegebenheiten, der Ausrichtung und den Angeboten der Installateure. EcoRebates garantiert keine finanziellen Erträge oder Förderfähigkeiten.'
+      },
+      {
+        id: 'use-license',
+        title: '3. Nutzungsrechte & Einschränkungen',
+        content: 'Ihnen wird eine eingeschränkte Lizenz gewährt, um Berechnungen durchzuführen und regionale Rabattspezifikationen für persönliche oder geschäftliche Analysen abzufragen. Es ist untersagt, unsere Datenbank automatisiert auszulesen (Scraping) oder den Betrieb unserer Schnittstellen zu stören.'
+      },
+      {
+        id: 'ip',
+        title: '4. Geistiges Eigentum',
+        content: 'Die Layouts, der ROI-Simulations-Algorithmus, die proprietären Datensätze und die Markenrechte (einschließlich des Namens EcoRebates und der Logos) sind geistiges Eigentum von EcoRebates und urheberrechtlich geschützt.'
+      },
+      {
+        id: 'liability',
+        title: '5. Haftungsbeschränkung',
+        content: 'EcoRebates und seine Partner haften in keinem Fall für direkte oder indirekte Schäden, die aus der Nutzung oder der Unfähigkeit zur Nutzung unserer Berechnungs- und Datenbankdienste resultieren.'
+      },
+      {
+        id: 'governing-law',
+        title: '6. Anwendbares Recht & Änderungen',
+        content: 'Diese Bedingungen unterliegen dem geltenden Recht an unserem Geschäftssitz. Wir behalten uns das Recht vor, diese Bedingungen jederzeit durch Aktualisierung dieser Seite zu ändern.'
+      }
+    ]
+  },
+  'fr-fr': {
+    title: 'Conditions d\'utilisation',
+    subtitle: 'Veuillez lire attentivement ces conditions avant d\'utiliser nos simulateurs de subventions.',
+    lastUpdated: 'Dernière mise à jour : 22 juin 2026',
+    sections: [
+      {
+        id: 'acceptance',
+        title: '1. Acceptation des conditions',
+        content: 'En accédant à EcoRebates et en l\'utilisant, vous acceptez de vous conformer à ces conditions d\'utilisation. Si vous ne les acceptez pas, veuillez ne pas utiliser nos services.'
+      },
+      {
+        id: 'disclaimers',
+        title: '2. Clause de non-responsabilité (Simulations)',
+        content: 'Tous les calculs solaires, estimations de batteries, pourcentages de crédit d\'impôt et valeurs de subventions affichés sur EcoRebates sont des simulations mathématiques à but indicatif. Les délais d\'amortissement réels, devis d\'installation et accords de subventions varieront selon l\'orientation de votre toit et l\'installateur choisi. EcoRebates ne garantit aucun rendement financier.'
+      },
+      {
+        id: 'use-license',
+        title: '3. Usage autorisé & Restrictions',
+        content: 'Il vous est accordé une licence limitée pour effectuer des calculs individuels et consulter les spécifications de subventions. Il est interdit d\'aspirer nos bases de données (scraping) ou de perturber le fonctionnement de nos API.'
+      },
+      {
+        id: 'ip',
+        title: '4. Propriété intellectuelle',
+        content: 'Les interfaces de recherche, le simulateur de ROI, les bases de données et les éléments de marque (nom et logos EcoRebates) sont la propriété exclusive d\'EcoRebates et sont protégés par les lois sur le droit d\'auteur.'
+      },
+      {
+        id: 'liability',
+        title: '5. Limite de responsabilité',
+        content: 'EcoRebates ne pourra en aucun cas être tenu responsable de tout dommage direct ou indirect résultant de l\'utilisation ou de l\'impossibilité d\'utiliser nos outils de dimensionnement et guides DSIRE.'
+      },
+      {
+        id: 'governing-law',
+        title: '6. Loi applicable & Mises à jour',
+        content: 'Ces conditions sont régies par les lois en vigueur à notre siège social. Nous nous réservons le droit de modifier ces conditions à tout moment en mettant à jour cette page.'
+      }
+    ]
+  }
+};
+
+const currentContent = content[lang as keyof typeof content] || content['en-us'];
+---
+
+<!DOCTYPE html>
+<html lang={lang} data-theme="sage-minimalist">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <title>{currentContent.title} | EcoRebates</title>
+  <meta name="description" content={currentContent.subtitle} />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content={`${currentContent.title} | EcoRebates`} />
+  <meta property="og:description" content={currentContent.subtitle} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={`https://ecorebates.org/${lang}/terms`} />
+  <meta property="og:image" content="https://ecorebates.org/og-preview.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={`${currentContent.title} | EcoRebates`} />
+  <meta name="twitter:description" content={currentContent.subtitle} />
+  <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
+  
+  <ClientRouter />
+  <Analytics />
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+  <!-- Navbar -->
+  <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2 font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity group">
+        <img src="/logo.png" alt="EcoRebates Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" />
+        <span>EcoRebates</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.directory}</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.search}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compare}</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compliance}</a>
+      </nav>
+      <a href={`/${lang}/directory`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
+        {t.nav.browseDir}
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Layout -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20 flex-grow w-full" transition:animate="fade">
+    <div class="mb-12 text-center md:text-left border-b border-[var(--color-border)] pb-8">
+      <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-[var(--text-main)]">{currentContent.title}</h1>
+      <p class="text-lg text-[var(--text-muted)] mb-2">{currentContent.subtitle}</p>
+      <span class="text-xs text-[var(--text-muted)] font-mono opacity-80">{currentContent.lastUpdated}</span>
+    </div>
+
+    <!-- Sidebar and Main Column -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+      <!-- Desktop Sidebar (Navigation) -->
+      <aside class="hidden lg:block lg:col-span-1">
+        <div class="sticky top-24 space-y-3 border-l border-[var(--color-border)] pl-4">
+          <h4 class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-4">Table of Contents</h4>
+          {currentContent.sections.map(sec => (
+            <a 
+              href={`#${sec.id}`}
+              class="block text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] hover:font-semibold transition-all py-1"
+            >
+              {sec.title.split('. ')[1] || sec.title}
+            </a>
+          ))}
+        </div>
+      </aside>
+
+      <!-- Main Contents -->
+      <div class="lg:col-span-3 space-y-10">
+        {currentContent.sections.map(sec => (
+          <section id={sec.id} class="scroll-mt-24 space-y-3 bg-[var(--bg-secondary)]/30 border border-[var(--color-border)] p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+            <h2 class="text-xl font-bold text-[var(--text-main)]">{sec.title}</h2>
+            <p class="text-sm text-[var(--text-muted)] leading-relaxed">{sec.content}</p>
+          </section>
+        ))}
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>{t.footer.copyright}</div>
+      <div class="flex gap-4 flex-wrap justify-center">
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)]">{t.footer.directory}</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">{t.footer.search}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">{t.footer.compare}</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">{t.footer.compliance}</a>
+        <a href={`/${lang}/privacy`} class="hover:text-[var(--text-main)]">{t.footer.privacy}</a>
+        <a href={`/${lang}/terms`} class="hover:text-[var(--text-main)] font-semibold">{t.footer.terms}</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

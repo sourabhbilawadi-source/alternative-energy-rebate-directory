@@ -149,10 +149,10 @@ if (supabase) {
   <!-- Navbar -->
   <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <img src="/logo.png" alt="EcoRebates Logo" class="w-8 h-8 object-contain rounded-lg" />
-        <a href="/" class="font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity">EcoRebates</a>
-      </div>
+      <a href="/" class="flex items-center gap-2 font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity group">
+        <img src="/logo.png" alt="EcoRebates Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" />
+        <span>EcoRebates</span>
+      </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
         <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.directory}</a>
         <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.search}</a>
@@ -203,12 +203,13 @@ if (supabase) {
   <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
     <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
       <div>{t.footer.copyright}</div>
-      <div class="flex gap-4">
+      <div class="flex gap-4 flex-wrap justify-center">
         <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)]">{t.footer.directory}</a>
         <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">{t.footer.search}</a>
         <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">{t.footer.compare}</a>
         <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">{t.footer.compliance}</a>
-        <a href={`/${lang}/admin`} class="hover:text-[var(--text-main)]">{t.footer.admin || 'Admin'}</a>
+        <a href={`/${lang}/privacy`} class="hover:text-[var(--text-main)]">{t.footer.privacy}</a>
+        <a href={`/${lang}/terms`} class="hover:text-[var(--text-main)]">{t.footer.terms}</a>
       </div>
     </div>
   </footer>
