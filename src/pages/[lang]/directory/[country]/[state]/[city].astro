@@ -5,11 +5,10 @@ import RebateCalculator from '../../../../../components/calculator/RebateCalcula
 import SmeHub from '../../../../../components/calculator/SmeHub';
 import { supabase } from '../../../../../lib/supabase';
 
-// Enable static pre-rendering with pre-configured static paths
+// Enable static pre-rendering with dynamic paths from database (with static fallbacks)
 export async function getStaticPaths() {
-  const paths = [];
   const langs = ['en-us', 'de-de', 'fr-fr'];
-  const citiesList = [
+  let citiesList = [
     { country: 'us', state: 'california', city: 'los-angeles' },
     { country: 'us', state: 'texas', city: 'houston' },
     { country: 'us', state: 'new-york', city: 'new-york-city' },
@@ -18,6 +17,26 @@ export async function getStaticPaths() {
     { country: 'au', state: 'new-south-wales', city: 'sydney' },
     { country: 'ca', state: 'ontario', city: 'toronto' }
   ];
+
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from('regions')
+        .select('country_code, state_province, city');
+      
+      if (data && data.length > 0) {
+        citiesList = data.map(r => ({
+          country: r.country_code === 'gb' ? 'uk' : r.country_code.toLowerCase(),
+          state: r.state_province.toLowerCase().replace(/\s+/g, '-'),
+          city: r.city.toLowerCase().replace(/\s+/g, '-')
+        }));
+      }
+    } catch (err) {
+      console.error('Failed to query regions for static paths. Using fallbacks:', err);
+    }
+  }
+
+  const paths = [];
   for (const lang of langs) {
     for (const item of citiesList) {
       paths.push({ params: { lang, ...item } });
@@ -96,16 +115,17 @@ const getLocalSpecs = (stateName: string) => {
   }
 };
 
-const localSpecs = getLocalSpecs(state || '');
+const presets = getLocalSpecs(state || '');
+let localSpecs = { ...presets };
 
-// Query dynamic regional rebates from Supabase if configured, falling back to local presets
+// Query dynamic regional rebates & energy specifications from Supabase
 let dbRebates: any[] = [];
 
 if (supabase) {
   try {
     const { data: regionData } = await supabase
       .from('regions')
-      .select('id')
+      .select('id, grid_rate, sun_hours, grid_emissions, cost_per_watt')
       .eq('country_code', country === 'uk' ? 'gb' : (country || 'us').toLowerCase())
       .ilike('state_province', (state || '').replace(/-/g, ' '))
       .ilike('city', (city || '').replace(/-/g, ' '))
@@ -113,6 +133,12 @@ if (supabase) {
       .maybeSingle();
 
     if (regionData) {
+      // Use database specs if available, otherwise fall back to presets
+      if (regionData.grid_rate !== null && regionData.grid_rate !== undefined) localSpecs.gridRate = Number(regionData.grid_rate);
+      if (regionData.sun_hours !== null && regionData.sun_hours !== undefined) localSpecs.sunHours = Number(regionData.sun_hours);
+      if (regionData.grid_emissions !== null && regionData.grid_emissions !== undefined) localSpecs.gridEmissions = Number(regionData.grid_emissions);
+      if (regionData.cost_per_watt !== null && regionData.cost_per_watt !== undefined) localSpecs.costPerWatt = Number(regionData.cost_per_watt);
+
       const { data: rebatesData } = await supabase
         .from('rebates')
         .select('*')

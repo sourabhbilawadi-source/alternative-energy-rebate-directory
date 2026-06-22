@@ -4,9 +4,8 @@ import { ClientRouter } from 'astro:transitions';
 import { supabase } from '../../../../../lib/supabase';
 
 export async function getStaticPaths() {
-  const paths = [];
   const langs = ['en-us', 'de-de', 'fr-fr'];
-  const regions = [
+  let regions = [
     { country: 'us', state: 'california' },
     { country: 'us', state: 'texas' },
     { country: 'us', state: 'new-york' },
@@ -15,6 +14,33 @@ export async function getStaticPaths() {
     { country: 'au', state: 'new-south-wales' },
     { country: 'ca', state: 'ontario' }
   ];
+
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from('regions')
+        .select('country_code, state_province');
+      
+      if (data && data.length > 0) {
+        const seen = new Set();
+        const list = [];
+        for (const r of data) {
+          const country = r.country_code === 'gb' ? 'uk' : r.country_code.toLowerCase();
+          const state = r.state_province.toLowerCase().replace(/\s+/g, '-');
+          const key = `${country}:${state}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            list.push({ country, state });
+          }
+        }
+        regions = list;
+      }
+    } catch (err) {
+      console.error('Failed to query regions for static paths in state index. Using fallbacks:', err);
+    }
+  }
+
+  const paths = [];
   for (const lang of langs) {
     for (const r of regions) {
       paths.push({ params: { lang, country: r.country, state: r.state } });

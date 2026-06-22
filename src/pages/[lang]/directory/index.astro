@@ -28,8 +28,27 @@ if (supabase) {
     if (data && data.length > 0) {
       const uniqueCodes = [...new Set(data.map(r => r.country_code.toLowerCase()))];
       countriesList = uniqueCodes.map(code => {
-        const name = code === 'us' ? 'United States' : code === 'gb' || code === 'uk' ? 'United Kingdom' : code.toUpperCase();
-        const flag = code === 'us' ? '🇺🇸' : code === 'gb' || code === 'uk' ? '🇬🇧' : '🌐';
+        let name = code.toUpperCase();
+        let flag = '🌐';
+        if (code === 'us') {
+          name = 'United States';
+          flag = '🇺🇸';
+        } else if (code === 'gb' || code === 'uk') {
+          name = 'United Kingdom';
+          flag = '🇬🇧';
+        } else if (code === 'de') {
+          name = 'Germany';
+          flag = '🇩🇪';
+        } else if (code === 'ca') {
+          name = 'Canada';
+          flag = '🇨🇦';
+        } else if (code === 'au') {
+          name = 'Australia';
+          flag = '🇦🇺';
+        } else if (code === 'fr') {
+          name = 'France';
+          flag = '🇫🇷';
+        }
         const count = data.filter(r => r.country_code.toLowerCase() === code).length;
         return { code: code === 'gb' ? 'uk' : code, name, flag, regionsCount: count };
       });

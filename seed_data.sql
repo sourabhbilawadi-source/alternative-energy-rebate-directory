@@ -5,16 +5,16 @@
 TRUNCATE public.rebates CASCADE;
 TRUNCATE public.regions CASCADE;
 
--- 1. Insert mock regions (corresponds to dynamic route parameters)
-INSERT INTO public.regions (id, country_code, state_province, city, postal_code) 
+-- 1. Insert mock regions (corresponds to dynamic route parameters, including energy profiles)
+INSERT INTO public.regions (id, country_code, state_province, city, postal_code, grid_rate, sun_hours, grid_emissions, cost_per_watt) 
 VALUES
-  (1, 'us', 'California', 'Los Angeles', '90210'),
-  (2, 'us', 'Texas', 'Houston', '77001'),
-  (3, 'us', 'New York', 'New York City', '10001'),
-  (4, 'gb', 'England', 'London', 'EC1A'),
-  (5, 'de', 'Berlin', 'Berlin', '10115'),
-  (6, 'au', 'New South Wales', 'Sydney', '2000'),
-  (7, 'ca', 'Ontario', 'Toronto', 'M5V');
+  (1, 'us', 'California', 'Los Angeles', '90210', 0.28, 1800, 0.52, 3.10),
+  (2, 'us', 'Texas', 'Houston', '77001', 0.14, 1950, 0.82, 2.70),
+  (3, 'us', 'New York', 'New York City', '10001', 0.23, 1250, 0.66, 3.25),
+  (4, 'gb', 'England', 'London', 'EC1A', 0.22, 1050, 0.40, 3.40),
+  (5, 'de', 'Berlin', 'Berlin', '10115', 0.38, 1100, 0.70, 2.90),
+  (6, 'au', 'New South Wales', 'Sydney', '2000', 0.26, 2100, 0.75, 1.80),
+  (7, 'ca', 'Ontario', 'Toronto', 'M5V', 0.16, 1300, 0.12, 2.80);
 
 -- Restart identity sequences
 ALTER TABLE public.regions ALTER COLUMN id RESTART WITH 8;
