@@ -21,6 +21,19 @@ const { lang } = Astro.params;
   <link rel="icon" type="image/png" href="/logo.png" />
   <title>DSIRE Policy & Compliance Guide | EcoRebates</title>
   <meta name="description" content="Access guides on Federal Tax Credits, Net Metering rules (NEM 3.0), MACRS depreciation, and USDA REAP grants." />
+
+  <!-- Open Graph / Facebook Preview Metadata -->
+  <meta property="og:title" content="DSIRE Policy & Compliance Guide | EcoRebates" />
+  <meta property="og:description" content="Access guides on Federal Tax Credits, Net Metering rules (NEM 3.0), MACRS depreciation, and USDA REAP grants." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={`https://ecorebates.org/${lang}/compliance`} />
+  <meta property="og:image" content="https://ecorebates.org/og-preview.png" />
+
+  <!-- Twitter Card Metadata -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="DSIRE Policy & Compliance Guide | EcoRebates" />
+  <meta name="twitter:description" content="Access guides on Federal Tax Credits, Net Metering rules (NEM 3.0), MACRS depreciation, and USDA REAP grants." />
+  <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
   <ClientRouter />
 </head>
 <body class="min-h-screen flex flex-col justify-between">

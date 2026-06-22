@@ -22,6 +22,19 @@ const { lang } = Astro.params;
   <link rel="icon" type="image/png" href="/logo.png" />
   <title>Search Alternative Energy Rebates | EcoRebates</title>
   <meta name="description" content="Search federal, state, and local utility rebate programs, solar tax credits, and battery incentives dynamically." />
+
+  <!-- Open Graph / Facebook Preview Metadata -->
+  <meta property="og:title" content="Search Alternative Energy Rebates | EcoRebates" />
+  <meta property="og:description" content="Search federal, state, and local utility rebate programs, solar tax credits, and battery incentives dynamically." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={`https://ecorebates.org/${lang}/search`} />
+  <meta property="og:image" content="https://ecorebates.org/og-preview.png" />
+
+  <!-- Twitter Card Metadata -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Search Alternative Energy Rebates | EcoRebates" />
+  <meta name="twitter:description" content="Search federal, state, and local utility rebate programs, solar tax credits, and battery incentives dynamically." />
+  <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
   <ClientRouter />
 </head>
 <body class="min-h-screen flex flex-col justify-between">

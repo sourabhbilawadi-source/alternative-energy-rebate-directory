@@ -22,6 +22,19 @@ const { lang } = Astro.params;
   <link rel="icon" type="image/png" href="/logo.png" />
   <title>Compare Sizing & Policy ROI | EcoRebates</title>
   <meta name="description" content="Compare alternative energy utility rates, solar resource coefficients, and rebate payback timelines side by side." />
+
+  <!-- Open Graph / Facebook Preview Metadata -->
+  <meta property="og:title" content="Compare Sizing & Policy ROI | EcoRebates" />
+  <meta property="og:description" content="Compare alternative energy utility rates, solar resource coefficients, and rebate payback timelines side by side." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={`https://ecorebates.org/${lang}/compare`} />
+  <meta property="og:image" content="https://ecorebates.org/og-preview.png" />
+
+  <!-- Twitter Card Metadata -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Compare Sizing & Policy ROI | EcoRebates" />
+  <meta name="twitter:description" content="Compare alternative energy utility rates, solar resource coefficients, and rebate payback timelines side by side." />
+  <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
   <ClientRouter />
 </head>
 <body class="min-h-screen flex flex-col justify-between">

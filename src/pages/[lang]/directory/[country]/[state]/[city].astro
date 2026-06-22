@@ -146,6 +146,20 @@ const websiteSchema = {
   <link rel="icon" type="image/png" href="/logo.png" />
   <title>Alternative Energy Rebates | {displayCity}, {displayState}</title>
   <meta name="description" content={`Comprehensive alternative energy rebates directory for ${displayCity}, ${displayState}. Calculate solar ROI, battery storage yields, and SME carbon offsets.`} />
+
+  <!-- Open Graph / Facebook Preview Metadata -->
+  <meta property="og:title" content={`Alternative Energy Rebates | ${displayCity}, ${displayState}`} />
+  <meta property="og:description" content={`Comprehensive alternative energy rebates directory for ${displayCity}, ${displayState}. Calculate solar ROI, battery storage yields, and SME carbon offsets.`} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:image" content="https://ecorebates.org/og-preview.png" />
+  <meta property="og:locale" content={lang.replace('-', '_')} />
+
+  <!-- Twitter Card Metadata -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={`Alternative Energy Rebates | ${displayCity}, ${displayState}`} />
+  <meta name="twitter:description" content={`Comprehensive alternative energy rebates directory for ${displayCity}, ${displayState}. Calculate solar ROI, battery storage yields, and SME carbon offsets.`} />
+  <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
   
   <!-- Canonical & hreflang Alternate Declarations -->
   <link rel="canonical" href={canonicalUrl} />
