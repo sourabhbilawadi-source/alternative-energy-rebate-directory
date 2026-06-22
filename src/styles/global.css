@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Open+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
 
 /* -------------------------------------------------------------
    Custom Font Imports for Premium Typography
@@ -36,7 +36,7 @@
   --bg-secondary: #0B3D2E; /* Forest Green */
   --text-main: #FFFFFF;
   --text-muted: #DDBEA9; /* Sand */
-  --color-accent: #0B3D2E;
+  --color-accent: #D4AF37; /* Luxury Gold - Corrected contrast */
   --color-highlight: #50C878; /* Emerald Green */
   --color-border: #1E1E1E;
   --font-headings: 'Playfair Display', serif;
@@ -97,6 +97,36 @@ h1, h2, h3, h4, h5, h6 {
 
 .interactive-element:active {
   transform: scale(0.97);
+}
+
+/* Dynamic Fade-in Transition Utility */
+.animate-fade-in {
+  animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slow spin rotation for active sun icons */
+.animate-spin-slow {
+  animation: spin 16s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Ensure smooth view-transitions */
