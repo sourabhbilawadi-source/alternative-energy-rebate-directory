@@ -228,6 +228,27 @@ export default function RebateCalculator({
 }: RebateCalculatorProps) {
   const t = useTranslations(lang);
 
+  // Helper to validate and hide temporary "TODO" source values
+  // TEMPORARY: Mark this as temporary until real data is backfilled
+  const isValidSource = (source: any) => {
+    return !!(
+      source &&
+      source.sourceName &&
+      source.sourceName.trim() !== '' &&
+      source.sourceName.trim() !== 'TODO' &&
+      source.lastVerified &&
+      source.lastVerified.trim() !== '' &&
+      source.lastVerified.trim() !== 'TODO'
+    );
+  };
+
+  const hasAnyRealSource = regionEntry && (
+    isValidSource(regionEntry.gridRateSource) ||
+    isValidSource(regionEntry.costPerWattSource) ||
+    isValidSource(regionEntry.federalTaxCreditSource) ||
+    isValidSource(regionEntry.stateRebateSource)
+  );
+
   // Input states
   const [zipCode, setZipCode] = useState(() => {
     const c = city ? city.toLowerCase().trim() : '';
@@ -650,8 +671,8 @@ export default function RebateCalculator({
           <EnergyFlowVisualizer batteryEnabled={batteryEnabled} sunHours={sunHours} systemSize={systemSizeCapped} lang={lang} />
         </motion.div>
 
-        {/* Data Sources and Verification block */}
-        {regionEntry && (
+        {/* TEMPORARY: Only show the Data Sources block if at least one real (non-TODO) source is backfilled */}
+        {hasAnyRealSource && (
           <motion.div 
             variants={itemVariants}
             className="bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-4 text-[10px] text-[var(--text-muted)] space-y-1.5 shadow-sm"
@@ -661,7 +682,7 @@ export default function RebateCalculator({
               Data Sources & Verification
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1 border-t border-[var(--color-border)]/50">
-              {regionEntry.gridRateSource && (
+              {isValidSource(regionEntry.gridRateSource) && (
                 <div>
                   Grid Rate: {regionEntry.gridRateSource.sourceUrl !== '#' ? (
                     <a href={regionEntry.gridRateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.gridRateSource.sourceName}</a>
@@ -671,7 +692,7 @@ export default function RebateCalculator({
                   {regionEntry.gridRateSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.gridRateSource.lastVerified})</span>}
                 </div>
               )}
-              {regionEntry.costPerWattSource && (
+              {isValidSource(regionEntry.costPerWattSource) && (
                 <div>
                   Cost/W: {regionEntry.costPerWattSource.sourceUrl !== '#' ? (
                     <a href={regionEntry.costPerWattSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.costPerWattSource.sourceName}</a>
@@ -681,7 +702,7 @@ export default function RebateCalculator({
                   {regionEntry.costPerWattSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.costPerWattSource.lastVerified})</span>}
                 </div>
               )}
-              {regionEntry.federalTaxCreditSource && (
+              {isValidSource(regionEntry.federalTaxCreditSource) && (
                 <div>
                   Federal Credit: {regionEntry.federalTaxCreditSource.sourceUrl !== '#' ? (
                     <a href={regionEntry.federalTaxCreditSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.federalTaxCreditSource.sourceName}</a>
@@ -691,7 +712,7 @@ export default function RebateCalculator({
                   {regionEntry.federalTaxCreditSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.federalTaxCreditSource.lastVerified})</span>}
                 </div>
               )}
-              {regionEntry.stateRebateSource && (
+              {isValidSource(regionEntry.stateRebateSource) && (
                 <div>
                   State Rebate: {regionEntry.stateRebateSource.sourceUrl !== '#' ? (
                     <a href={regionEntry.stateRebateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.stateRebateSource.sourceName}</a>
