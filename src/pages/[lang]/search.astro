@@ -3,6 +3,7 @@ import '../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import SearchPortal from '../../components/search/SearchPortal';
 import { useTranslations } from '../../lib/i18n';
+import Analytics from '../../components/Analytics.astro';
 
 export async function getStaticPaths() {
   return [
@@ -38,6 +39,7 @@ const t = useTranslations(lang || 'en-us');
   <meta name="twitter:description" content="Search federal, state, and local utility rebate programs, solar tax credits, and battery incentives dynamically." />
   <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
   <ClientRouter />
+  <Analytics />
 </head>
 <body class="min-h-screen flex flex-col justify-between">
   <!-- Navbar -->

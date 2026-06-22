@@ -5,6 +5,7 @@ import RebateCalculator from '../../../../../components/calculator/RebateCalcula
 import SmeHub from '../../../../../components/calculator/SmeHub';
 import { supabase } from '../../../../../lib/supabase';
 import { useTranslations } from '../../../../../lib/i18n';
+import Analytics from '../../../../../components/Analytics.astro';
 
 // Enable static pre-rendering with dynamic paths from database (with static fallbacks)
 export async function getStaticPaths() {
@@ -232,6 +233,7 @@ const websiteSchema = {
 
   <!-- Astro View Transitions -->
   <ClientRouter />
+  <Analytics />
 </head>
 <body class="min-h-screen pb-16">
   <!-- Persistent Header with Navigation -->

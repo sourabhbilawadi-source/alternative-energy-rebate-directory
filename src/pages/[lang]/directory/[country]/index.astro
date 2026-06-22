@@ -3,6 +3,7 @@ import '../../../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import { supabase } from '../../../../lib/supabase';
 import { useTranslations } from '../../../../lib/i18n';
+import Analytics from '../../../../components/Analytics.astro';
 
 export async function getStaticPaths() {
   const langs = ['en-us', 'de-de', 'fr-fr'];
@@ -98,6 +99,7 @@ if (supabase) {
   <title>Alternative Energy Rebate Directory | {displayCountry} States</title>
   <meta name="description" content={`Browse alternative energy rebate directories in ${displayCountry} to find regional incentives.`} />
   <ClientRouter />
+  <Analytics />
 </head>
 <body class="min-h-screen flex flex-col justify-between">
   <!-- Navbar -->

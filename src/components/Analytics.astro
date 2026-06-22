@@ -1,0 +1,26 @@
+---
+// src/components/Analytics.astro
+const gaId = import.meta.env.PUBLIC_GA_TRACKING_ID || '';
+---
+
+{gaId && (
+  <>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+    <script define:vars={{ gaId }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      // Initial configuration
+      gtag('config', gaId);
+
+      // Track views when using Astro View Transitions (ClientRouter)
+      document.addEventListener('astro:page-load', () => {
+        gtag('config', gaId, {
+          page_path: window.location.pathname + window.location.search
+        });
+      });
+    </script>
+  </>
+)}

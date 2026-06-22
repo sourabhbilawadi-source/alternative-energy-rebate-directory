@@ -3,6 +3,7 @@ import '../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import AdminDashboard from '../../components/admin/AdminDashboard';
 import { useTranslations } from '../../lib/i18n';
+import Analytics from '../../components/Analytics.astro';
 
 export async function getStaticPaths() {
   return [
@@ -25,6 +26,7 @@ const t = useTranslations(lang || 'en-us');
   <title>{t.nav.admin} | EcoRebates</title>
   <meta name="description" content="Manage regions, cities, rates, and active rebate policies dynamically." />
   <ClientRouter />
+  <Analytics />
 </head>
 <body class="min-h-screen flex flex-col justify-between">
   <!-- Navbar -->
