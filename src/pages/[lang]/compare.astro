@@ -23,21 +23,21 @@ const t = useTranslations(lang || 'en-us');
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/png" href="/logo.png" />
-  <title>{t.compare.title} | EcoRebates</title>
+  <title>{t.compare.title} | IncentiveMapper</title>
   <meta name="description" content="Compare alternative energy utility rates, solar resource coefficients, and rebate payback timelines side by side." />
 
   <!-- Open Graph / Facebook Preview Metadata -->
-  <meta property="og:title" content={`${t.compare.title} | EcoRebates`} />
+  <meta property="og:title" content={`${t.compare.title} | IncentiveMapper`} />
   <meta property="og:description" content="Compare alternative energy utility rates, solar resource coefficients, and rebate payback timelines side by side." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content={`https://ecorebates.org/${lang}/compare`} />
-  <meta property="og:image" content="https://ecorebates.org/og-preview.png" />
+  <meta property="og:url" content={`https://incentivemapper.com/${lang}/compare`} />
+  <meta property="og:image" content="https://incentivemapper.com/og-preview.png" />
 
   <!-- Twitter Card Metadata -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={`${t.compare.title} | EcoRebates`} />
+  <meta name="twitter:title" content={`${t.compare.title} | IncentiveMapper`} />
   <meta name="twitter:description" content="Compare alternative energy utility rates, solar resource coefficients, and rebate payback timelines side by side." />
-  <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
+  <meta name="twitter:image" content="https://incentivemapper.com/og-preview.png" />
   <ClientRouter />
   <script is:inline>
     // 1. Immediately apply saved theme to avoid flashing
@@ -90,8 +90,8 @@ const t = useTranslations(lang || 'en-us');
   <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <a href="/" class="flex items-center gap-2 font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity group">
-        <img src="/logo.png" alt="EcoRebates Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" width="36" height="36" />
-        <span>EcoRebates</span>
+        <img src="/logo.png" alt="IncentiveMapper Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" width="36" height="36" />
+        <span>IncentiveMapper</span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
         <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.directory}</a>

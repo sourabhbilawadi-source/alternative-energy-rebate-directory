@@ -15,7 +15,7 @@ export const translations = {
       blog: 'Blog'
     },
     footer: {
-      copyright: '© 2026 EcoRebates. All rights reserved.',
+      copyright: '© 2026 IncentiveMapper. All rights reserved.',
       directory: 'Directory',
       search: 'Search',
       compare: 'Compare',
@@ -150,7 +150,7 @@ export const translations = {
       successAddCity: 'City successfully registered!',
       successAddRebate: 'Rebate program successfully registered!',
       successDelete: 'Record deleted successfully!',
-      loginError: 'Invalid credentials. Try admin@ecorebates.org / admin123'
+      loginError: 'Invalid credentials. Try admin@incentivemapper.com / admin123'
     }
   },
   'de-de': {
@@ -165,7 +165,7 @@ export const translations = {
       blog: 'Blog'
     },
     footer: {
-      copyright: '© 2026 EcoRebates. Alle Rechte vorbehalten.',
+      copyright: '© 2026 IncentiveMapper. Alle Rechte vorbehalten.',
       directory: 'Verzeichnis',
       search: 'Suche',
       compare: 'Vergleich',
@@ -300,7 +300,7 @@ export const translations = {
       successAddCity: 'Stadt erfolgreich registriert!',
       successAddRebate: 'Rabattprogramm erfolgreich registriert!',
       successDelete: 'Datensatz erfolgreich gelöscht!',
-      loginError: 'Ungültige Anmeldedaten. Versuchen Sie admin@ecorebates.org / admin123'
+      loginError: 'Ungültige Anmeldedaten. Versuchen Sie admin@incentivemapper.com / admin123'
     }
   },
   'fr-fr': {
@@ -315,7 +315,7 @@ export const translations = {
       blog: 'Blog'
     },
     footer: {
-      copyright: '© 2026 EcoRebates. Tous droits réservés.',
+      copyright: '© 2026 IncentiveMapper. Tous droits réservés.',
       directory: 'Annuaire',
       search: 'Recherche',
       compare: 'Comparer',
@@ -450,7 +450,7 @@ export const translations = {
       successAddCity: 'Ville enregistrée avec succès !',
       successAddRebate: 'Programme de rabais enregistré avec succès !',
       successDelete: 'Enregistrement supprimé avec succès !',
-      loginError: 'Identifiants invalides. Essayez admin@ecorebates.org / admin123'
+      loginError: 'Identifiants invalides. Essayez admin@incentivemapper.com / admin123'
     }
   }
 } as const;

@@ -14,7 +14,7 @@ export default function LeadCaptureCta({ region, calculatorType }: LeadCaptureCt
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const storageKey = 'ecorebates-lead-cta-dismissed';
+  const storageKey = 'incentivemapper-lead-cta-dismissed';
 
   useEffect(() => {
     // Only show if not previously dismissed
