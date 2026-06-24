@@ -41,6 +41,7 @@ interface RebateCalculatorProps {
   dbRebates?: DbRebate[];
   lang?: string;
   regionEntry?: RegionEntry;
+  defaultPostalCode?: string;
 }
 
 // Custom animated counter using requestAnimationFrame for high performance
@@ -240,7 +241,8 @@ export default function RebateCalculator({
   state,
   dbRebates: initialDbRebates = [],
   lang = 'en-us',
-  regionEntry
+  regionEntry,
+  defaultPostalCode
 }: RebateCalculatorProps) {
   const t = useTranslations(lang);
 
@@ -271,16 +273,42 @@ export default function RebateCalculator({
   const config = getCountryConfig(localCountry);
 
   const [zipCode, setZipCode] = useState(() => {
+    if (defaultPostalCode) return defaultPostalCode;
     const c = city ? city.toLowerCase().trim() : '';
     if (c.includes('houston')) return '77001';
     if (c.includes('los angeles')) return '90001';
     if (c.includes('new york')) return '10001';
     if (c.includes('london')) return 'SW1A 1AA';
+    
+    // Germany
     if (c.includes('berlin')) return '10115';
-    if (c.includes('sydney')) return '2000';
-    if (c.includes('toronto')) return 'M5V 1J2';
+    if (c.includes('munich')) return '80331';
+    if (c.includes('hamburg')) return '20095';
+    if (c.includes('cologne')) return '50667';
+    if (c.includes('frankfurt')) return '60311';
+    if (c.includes('stuttgart')) return '70173';
+    if (c.includes('leipzig')) return '04109';
     if (c.includes('düsseldorf') || c.includes('dusseldorf')) return '40210';
+    
+    // Australia
+    if (c.includes('sydney')) return '2000';
+    if (c.includes('melbourne')) return '3000';
+    if (c.includes('brisbane')) return '4000';
+    if (c.includes('perth')) return '6000';
+    if (c.includes('adelaide')) return '5000';
+    if (c.includes('canberra')) return '2600';
+    if (c.includes('hobart')) return '7000';
     if (c.includes('darwin')) return '0800';
+
+    // Canada
+    if (c.includes('toronto')) return 'M5V 1J2';
+    if (c.includes('vancouver')) return 'V6B 1A1';
+    if (c.includes('montreal')) return 'H2Y 1Y9';
+    if (c.includes('calgary')) return 'T2P 2M5';
+    if (c.includes('edmonton')) return 'T5J 2R7';
+    if (c.includes('ottawa')) return 'K1P 1J1';
+    if (c.includes('winnipeg')) return 'R3C 1A1';
+
     return '90210'; // Default fallback
   });
   const [monthlyBill, setMonthlyBill] = useState(250);
@@ -364,7 +392,7 @@ export default function RebateCalculator({
 
     setIsUpdating(true);
     const timer = setTimeout(async () => {
-      const specs = await queryLocationSpecs(cleanZip, 'us');
+      const specs = await queryLocationSpecs(cleanZip, localCountry);
       if (specs) {
         setGridRate(specs.gridRate);
         setSunHours(specs.sunHours);

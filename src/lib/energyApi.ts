@@ -59,7 +59,9 @@ export async function queryLocationSpecs(
     if (!cleanQuery) return null;
 
     // 1. Geocode location using OpenStreetMap Nominatim
-    const geocodeUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cleanQuery)}&format=json&limit=1`;
+    let countryRestr = countryHint.toLowerCase();
+    if (countryRestr === 'uk') countryRestr = 'gb';
+    const geocodeUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cleanQuery)}&countrycodes=${countryRestr}&format=json&limit=1`;
     const geoResponse = await fetch(geocodeUrl, {
       headers: {
         'User-Agent': 'IncentiveMapper-Alternative-Energy-Directory-v1.0'
