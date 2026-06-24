@@ -100,12 +100,13 @@ let localSpecs = { ...presets };
 
 // Query dynamic regional rebates & energy specifications from Supabase
 let dbRebates: any[] = [];
+let dbPostalCode = '';
 
 if (supabase) {
   try {
     const { data: regionData } = await supabase
       .from('regions')
-      .select('id, grid_rate, sun_hours, grid_emissions, cost_per_watt')
+      .select('id, grid_rate, sun_hours, grid_emissions, cost_per_watt, postal_code')
       .eq('country_code', country === 'uk' ? 'gb' : (country || 'us').toLowerCase())
       .ilike('state_province', (state || '').replace(/-/g, ' '))
       .ilike('city', (city || '').replace(/-/g, ' '))
@@ -113,6 +114,7 @@ if (supabase) {
       .maybeSingle();
 
     if (regionData) {
+      if (regionData.postal_code) dbPostalCode = regionData.postal_code;
       // Use database specs if available, otherwise fall back to presets
       if (regionData.grid_rate !== null && regionData.grid_rate !== undefined) localSpecs.gridRate = Number(regionData.grid_rate);
       if (regionData.sun_hours !== null && regionData.sun_hours !== undefined) localSpecs.sunHours = Number(regionData.sun_hours);
@@ -381,6 +383,8 @@ if (lang === 'de-de') {
       <div class="lg:col-span-12">
         <RebateCalculator 
           client:visible 
+          key={`${country}-${state}-${city}`}
+          defaultPostalCode={dbPostalCode}
           defaultGridRate={localSpecs.gridRate}
           defaultSunHours={localSpecs.sunHours}
           defaultGridEmissions={localSpecs.gridEmissions}
@@ -447,6 +451,7 @@ if (lang === 'de-de') {
     <div id="panel-sme" class="hidden space-y-8 animate-fade-in">
       <SmeHub 
         client:visible 
+        key={`${country}-${state}-${city}`}
         defaultGridRate={localSpecs.gridRate}
         defaultSunHours={localSpecs.sunHours}
         defaultGridEmissions={localSpecs.gridEmissions}
