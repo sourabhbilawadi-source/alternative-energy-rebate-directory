@@ -250,6 +250,8 @@ export default function RebateCalculator({
   );
 
   // Input states
+  const [ownership, setOwnership] = useState<'purchase' | 'lease'>('purchase');
+  const [localCountry, setLocalCountry] = useState(regionEntry?.countryCode || 'us');
   const [zipCode, setZipCode] = useState(() => {
     const c = city ? city.toLowerCase().trim() : '';
     if (c.includes('houston')) return '77001';
@@ -340,6 +342,7 @@ export default function RebateCalculator({
         setCostPerWatt(specs.costPerWatt);
         setLocalCity(specs.city);
         setLocalState(specs.state);
+        setLocalCountry(specs.countryCode);
 
         // Check if there are local rebates registered for this postal code in localStorage
         try {
@@ -390,8 +393,14 @@ export default function RebateCalculator({
   // System capital cost: kW * WattsPerkW * CostPerWatt
   const capitalCost = systemSizeCapped * 1000 * costPerWatt;
   
+  const isUs = localCountry === 'us';
+
   // Total localized incentives
   const calculateIncentives = () => {
+    const effectiveFedCreditPct = isUs
+      ? (ownership === 'lease' ? 0.30 : 0.0)
+      : federalTaxCreditPct;
+
     if (dbRebates && dbRebates.length > 0) {
       let fedCreditVal = 0;
       let otherIncentivesVal = 0;
@@ -414,11 +423,27 @@ export default function RebateCalculator({
           rebate.technology_category.toLowerCase().includes('federal') || 
           rebate.authority_name.toLowerCase().includes('federal')
         ) {
+          if (isUs && ownership === 'purchase') {
+            value = 0;
+          } else if (isUs && ownership === 'lease') {
+            value = capitalCost * 0.30;
+          }
           fedCreditVal += value;
         } else {
           otherIncentivesVal += value;
         }
       });
+
+      if (isUs && ownership === 'lease') {
+        const hasFedInDb = dbRebates.some(
+          (r) =>
+            r.technology_category.toLowerCase().includes('federal') ||
+            r.authority_name.toLowerCase().includes('federal')
+        );
+        if (!hasFedInDb) {
+          fedCreditVal = capitalCost * 0.30;
+        }
+      }
 
       const totalApplied = Math.min(capitalCost, fedCreditVal + otherIncentivesVal);
       return {
@@ -427,7 +452,7 @@ export default function RebateCalculator({
       };
     }
 
-    const fedCreditVal = capitalCost * federalTaxCreditPct;
+    const fedCreditVal = capitalCost * effectiveFedCreditPct;
     const totalApplied = Math.min(capitalCost, fedCreditVal + stateRebate + utilityRebate);
     return {
       fedTaxCredit: fedCreditVal,
@@ -547,6 +572,39 @@ export default function RebateCalculator({
             <Search className="absolute left-4 top-3.5 w-4 h-4 text-[var(--text-muted)]" />
           </div>
         </motion.div>
+
+        {/* Ownership Model Toggle for US */}
+        {isUs && (
+          <motion.div variants={itemVariants} className="space-y-2">
+            <label className="block text-sm font-semibold text-[var(--text-main)]">
+              Ownership Model
+            </label>
+            <div className="grid grid-cols-2 gap-2 bg-[var(--bg-primary)] p-1 rounded-2xl border border-[var(--color-border)]">
+              <button
+                type="button"
+                onClick={() => setOwnership('purchase')}
+                className={`py-2 px-3 text-xs font-bold rounded-xl transition-all border-none outline-none cursor-pointer ${
+                  ownership === 'purchase'
+                    ? 'bg-[var(--color-accent)] text-white shadow-sm font-bold'
+                    : 'bg-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                }`}
+              >
+                Purchased Outright
+              </button>
+              <button
+                type="button"
+                onClick={() => setOwnership('lease')}
+                className={`py-2 px-3 text-xs font-bold rounded-xl transition-all border-none outline-none cursor-pointer ${
+                  ownership === 'lease'
+                    ? 'bg-[var(--color-accent)] text-white shadow-sm font-bold'
+                    : 'bg-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                }`}
+              >
+                Lease / PPA (Third-Party)
+              </button>
+            </div>
+          </motion.div>
+        )}
 
         {/* Monthly Utility Bill Slider */}
         <motion.div variants={itemVariants} className="space-y-3">
@@ -877,22 +935,53 @@ export default function RebateCalculator({
               {dbRebates && dbRebates.length > 0 ? (
                 <span>{dbRebates.length} Regional Programs</span>
               ) : (
-                <span>Incl. {federalTaxCreditPct * 100}% {t.calculator.federalIncentive}</span>
+                <span>Incl. {isUs ? (ownership === 'lease' ? 30 : 0) : (federalTaxCreditPct * 100)}% {t.calculator.federalIncentive}</span>
               )}
             </div>
           </div>
-          {dbRebates && dbRebates.length > 0 && (
+          {((dbRebates && dbRebates.length > 0) || isUs) && (
             <div className="border-t border-[var(--color-border)] pt-2 mt-1 space-y-1">
-              {dbRebates.map((rebate, index) => (
-                <div key={rebate.id || index} className="flex justify-between text-[var(--text-muted)]">
-                  <span>• {rebate.authority_name} ({rebate.technology_category})</span>
-                  <span>
-                    {rebate.incentive_type === 'percentage' && `${rebate.incentive_value}%`}
-                    {rebate.incentive_type === 'fixed' && `$${rebate.incentive_value}`}
-                    {rebate.incentive_type === 'per_watt' && `$${rebate.incentive_value}/W`}
-                  </span>
+              {dbRebates.map((rebate, index) => {
+                const isFed = rebate.technology_category.toLowerCase().includes('federal') || rebate.authority_name.toLowerCase().includes('federal');
+                return (
+                  <div key={rebate.id || index} className="flex justify-between text-[var(--text-muted)]">
+                    <span>• {rebate.authority_name} ({rebate.technology_category})</span>
+                    <span>
+                      {isFed ? (isUs ? (ownership === 'lease' ? '30%' : '0%') : `${rebate.incentive_value}%`) : (
+                        <>
+                          {rebate.incentive_type === 'percentage' && `${rebate.incentive_value}%`}
+                          {rebate.incentive_type === 'fixed' && `$${rebate.incentive_value}`}
+                          {rebate.incentive_type === 'per_watt' && `$${rebate.incentive_value}/W`}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                );
+              })}
+              {isUs && !dbRebates.some(r => r.technology_category.toLowerCase().includes('federal') || r.authority_name.toLowerCase().includes('federal')) && (
+                <div className="flex justify-between text-[var(--text-muted)] font-semibold">
+                  <span>• Federal Tax Credit (Section 25D/48)</span>
+                  <span>{ownership === 'lease' ? '30%' : '0%'}</span>
                 </div>
-              ))}
+              )}
+            </div>
+          )}
+
+          {isUs && (
+            <div className="mt-2 p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--color-border)] text-[var(--text-muted)] leading-relaxed space-y-1">
+              <div className="font-bold text-[var(--text-main)] flex items-center gap-1">
+                <HelpCircle className="w-3.5 h-3.5 text-[var(--color-accent)]" />
+                Federal Tax Credit Rules (2026)
+              </div>
+              {ownership === 'purchase' ? (
+                <p>
+                  Federal tax credit for homeowner-purchased systems ended Dec 31, 2025. Third-party owned (lease/PPA) systems may still qualify—consult your installer.
+                </p>
+              ) : (
+                <p>
+                  Third-party owned (lease/PPA) systems may qualify for the 30% federal credit (Sec 48), claimed by the developer and typically reflected as lower monthly lease payments.
+                </p>
+              )}
             </div>
           )}
         </motion.div>

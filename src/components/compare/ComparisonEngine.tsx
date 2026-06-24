@@ -63,7 +63,7 @@ export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) 
           gridEmissions: Number(r.grid_emissions),
           costPerWatt: Number(r.cost_per_watt),
           incentives: {
-            federalTaxCreditPct: r.country_code.toLowerCase() === 'us' ? 0.30 : 0.0,
+            federalTaxCreditPct: 0.0,
             stateRebate: 0,
             utilityRebate: 0
           }
@@ -292,6 +292,11 @@ export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) 
           </div>
         </motion.div>
 
+      </div>
+
+      {/* Policy Footnote */}
+      <div className="bg-[var(--bg-secondary)]/50 border border-[var(--color-border)] rounded-2xl p-4 text-xs text-[var(--text-muted)] leading-relaxed">
+        <strong>Note on US Federal Tax Credits (2026):</strong> Residential payback calculations default to homeowner-purchased systems (direct cash/loan purchase) where the 30% federal tax credit (Section 25D) has ended as of Dec 31, 2025. Third-party owned residential systems (leases/PPAs) or commercial systems claiming under Section 48 may still qualify for a 30% credit.
       </div>
     </div>
   );
