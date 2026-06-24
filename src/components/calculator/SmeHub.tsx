@@ -60,6 +60,22 @@ function AnimatedNumber({ value, formatter }: { value: number; formatter?: (v: n
   return <span>{formatter ? formatter(displayValue) : Math.round(displayValue)}</span>;
 }
 
+const getCountryConfig = (code: string) => {
+  const c = code.toLowerCase();
+  switch (c) {
+    case 'de':
+      return { symbol: '€', area: 'm²', carbon: 't', land: 'Hektar', isMetric: true };
+    case 'uk':
+      return { symbol: '£', area: 'm²', carbon: 't', land: 'Acres', isMetric: true };
+    case 'au':
+      return { symbol: 'A$', area: 'm²', carbon: 't', land: 'Hectares', isMetric: true };
+    case 'ca':
+      return { symbol: 'C$', area: 'm²', carbon: 't', land: 'Acres', isMetric: true };
+    default:
+      return { symbol: '$', area: 'sq ft', carbon: 'Tons', land: 'Acres', isMetric: false };
+  }
+};
+
 export default function SmeHub({
   defaultGridRate: initialGridRate,
   defaultSunHours: initialSunHours,
@@ -99,11 +115,24 @@ export default function SmeHub({
   const [gridEmissions, setGridEmissions] = useState(initialGridEmissions);
   const [costPerWattVal, setCostPerWattVal] = useState(initialCostPerWatt);
 
+  const localCountry = regionEntry?.countryCode || 'us';
+  const config = getCountryConfig(localCountry);
+
   // Input states
-  const [facilityArea, setFacilityArea] = useState(25000); // sq ft
+  const [facilityArea, setFacilityArea] = useState(config.isMetric ? 2500 : 25000); // m² or sq ft
   const [monthlyKwh, setMonthlyKwh] = useState(35000); // kWh
   const [isOwned, setIsOwned] = useState(true); // Owned vs Leased
   const [financeModel, setFinanceModel] = useState<'purchase' | 'ppa' | 'lease'>('purchase');
+
+  // Adjust default area footprint if metric changes
+  useEffect(() => {
+    const isMetric = ['de', 'uk', 'au', 'ca'].includes(localCountry.toLowerCase());
+    if (isMetric && facilityArea > 15000) {
+      setFacilityArea(2500);
+    } else if (!isMetric && facilityArea < 5000) {
+      setFacilityArea(25000);
+    }
+  }, [localCountry]);
 
   // Sync settings and merge localStorage admin overrides if present
   useEffect(() => {
@@ -137,7 +166,8 @@ export default function SmeHub({
 
   // Commercial sizing calculations
   // Max capacity based on usable rooftop area (approx 120 sq ft per kW commercial panels)
-  const capacityFromRoof = facilityArea / 120; // kW
+  const facilityAreaSqFt = config.isMetric ? facilityArea * 10.764 : facilityArea;
+  const capacityFromRoof = facilityAreaSqFt / 120; // kW
   
   // Ideal system size based on consumption
   const capacityFromDemand = (monthlyKwh * 12) / sunHours; // kW
@@ -183,10 +213,12 @@ export default function SmeHub({
   const metrics = getFinancingMetrics();
 
   // Carbon Abatement Scope 2 equivalents
-  const carbonTons = (annualGeneration * gridEmissions) / 2000;
+  const carbonTons = config.isMetric 
+    ? (annualGeneration * gridEmissions) / 1000
+    : (annualGeneration * gridEmissions) / 907.185;
   const equivalentCars = carbonTons * 0.22;
   const equivalentCoal = carbonTons * 0.96;
-  const equivalentForest = carbonTons * 1.2;
+  const equivalentForest = config.isMetric ? (carbonTons * 1.2 * 0.4047) : (carbonTons * 1.2);
 
   // Stagger animation setups
   const containerVariants = {
@@ -224,7 +256,7 @@ export default function SmeHub({
           <div className="grid grid-cols-2 gap-3 bg-[var(--bg-primary)] p-1.5 rounded-xl border border-[var(--color-border)]">
             <button 
               onClick={() => { setIsOwned(true); setFinanceModel('purchase'); }}
-              className={`py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+              className={`py-2 px-3 rounded-lg text-xs font-bold transition-all border-none outline-none cursor-pointer ${
                 isOwned 
                   ? 'bg-[var(--color-accent)] text-white shadow-sm' 
                   : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
@@ -234,7 +266,7 @@ export default function SmeHub({
             </button>
             <button 
               onClick={() => { setIsOwned(false); setFinanceModel('ppa'); }}
-              className={`py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+              className={`py-2 px-3 rounded-lg text-xs font-bold transition-all border-none outline-none cursor-pointer ${
                 !isOwned 
                   ? 'bg-[var(--color-accent)] text-white shadow-sm' 
                   : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
@@ -249,17 +281,21 @@ export default function SmeHub({
         <motion.div variants={itemVariants} className="space-y-3">
           <div className="flex justify-between items-center text-sm font-semibold">
             <span className="text-[var(--text-main)]">Rooftop Footprint</span>
-            <span className="text-[var(--color-accent)] text-lg font-bold">{(facilityArea).toLocaleString()} sq ft</span>
+            <span className="text-[var(--color-accent)] text-lg font-bold">{(facilityArea).toLocaleString()} {config.area}</span>
           </div>
           <input 
-            type="range" min="5000" max="250000" step="5000" value={facilityArea} 
+            type="range" 
+            min={config.isMetric ? 500 : 5000} 
+            max={config.isMetric ? 25000 : 250000} 
+            step={config.isMetric ? 500 : 5000} 
+            value={facilityArea} 
             onChange={(e) => setFacilityArea(Number(e.target.value))}
             className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-[var(--color-border)] accent-[var(--color-accent)]"
           />
           <div className="flex justify-between text-xs text-[var(--text-muted)]">
-            <span>5K sq ft</span>
-            <span>125K sq ft</span>
-            <span>250K sq ft</span>
+            <span>{config.isMetric ? "500 m²" : "5K sq ft"}</span>
+            <span>{config.isMetric ? "12,500 m²" : "125K sq ft"}</span>
+            <span>{config.isMetric ? "25,000 m²" : "250K sq ft"}</span>
           </div>
         </motion.div>
 
@@ -288,7 +324,7 @@ export default function SmeHub({
             <button
               onClick={() => setFinanceModel('purchase')}
               disabled={!isOwned}
-              className={`py-2 px-1 text-center rounded-lg text-[10px] font-bold transition-all ${
+              className={`py-2 px-1 text-center rounded-lg text-[10px] font-bold transition-all border-none outline-none cursor-pointer ${
                 !isOwned ? 'opacity-40 cursor-not-allowed' : ''
               } ${
                 financeModel === 'purchase'
@@ -300,17 +336,17 @@ export default function SmeHub({
             </button>
             <button
               onClick={() => setFinanceModel('ppa')}
-              className={`py-2 px-1 text-center rounded-lg text-[10px] font-bold transition-all ${
+              className={`py-2 px-1 text-center rounded-lg text-[10px] font-bold transition-all border-none outline-none cursor-pointer ${
                 financeModel === 'ppa'
                   ? 'bg-[var(--color-accent)] text-white shadow-sm'
                   : 'text-[var(--text-muted)]'
               }`}
             >
-              PPA ($0-Down)
+              PPA ({config.symbol}0-Down)
             </button>
             <button
               onClick={() => setFinanceModel('lease')}
-              className={`py-2 px-1 text-center rounded-lg text-[10px] font-bold transition-all ${
+              className={`py-2 px-1 text-center rounded-lg text-[10px] font-bold transition-all border-none outline-none cursor-pointer ${
                 financeModel === 'lease'
                   ? 'bg-[var(--color-accent)] text-white shadow-sm'
                   : 'text-[var(--text-muted)]'
@@ -331,10 +367,10 @@ export default function SmeHub({
             Enterprise Policy Factors ({city})
           </h4>
           <div className="grid grid-cols-2 gap-2 text-[var(--text-muted)] font-semibold">
-            <div>Baseline Rate: <strong>${gridRate.toFixed(2)}/kWh</strong></div>
-            <div>Commercial Cost: <strong>${costPerWatt.toFixed(2)}/W</strong></div>
+            <div>Baseline Rate: <strong>{config.symbol}{gridRate.toFixed(2)}/kWh</strong></div>
+            <div>Commercial Cost: <strong>{config.symbol}{costPerWatt.toFixed(2)}/W</strong></div>
             <div>Solar Resource: <strong>{sunHours} hrs/yr</strong></div>
-            <div>Capital Tax ITC: <strong>30% (Sec 48)</strong></div>
+            <div>{localCountry === 'us' ? 'Capital Tax ITC' : 'Incentives Support'}: <strong>{localCountry === 'us' ? '30% (Sec 48)' : 'Active Programs'}</strong></div>
           </div>
         </motion.div>
 
@@ -437,7 +473,7 @@ export default function SmeHub({
             ) : (
               <>
                 <span className="text-5xl md:text-6xl font-black tracking-tight text-[var(--text-main)]">
-                  $<AnimatedNumber value={metrics.annualSavings} />
+                  {config.symbol}<AnimatedNumber value={metrics.annualSavings} />
                 </span>
                 <span className="text-xl font-bold text-[var(--text-muted)]">/ year</span>
               </>
@@ -447,13 +483,19 @@ export default function SmeHub({
           <div className="text-[11px] text-[var(--text-muted)] border-t border-[var(--color-border)]/60 pt-3 flex items-center gap-1.5">
             <Scale className="w-4 h-4 text-[var(--color-accent)]" />
             {financeModel === 'purchase' && (
-              <span>Claims 30% Federal ITC + 5-yr MACRS depreciation. Net cost: <strong>${Math.round(metrics.netCost).toLocaleString()}</strong>.</span>
+              <span>
+                {localCountry === 'us'
+                  ? `Claims 30% Federal ITC + 5-yr MACRS depreciation. Net cost: `
+                  : `Claims capital incentives & depreciation offsets. Net cost: `
+                }
+                <strong>{config.symbol}{Math.round(metrics.netCost).toLocaleString()}</strong>.
+              </span>
             )}
             {financeModel === 'ppa' && (
-              <span>$0 upfront capital. Power purchase rate: <strong>${metrics.ppaRate?.toFixed(3)}/kWh</strong> (Utility: ${gridRate.toFixed(2)}/kWh).</span>
+              <span>{config.symbol}0 upfront capital. Power purchase rate: <strong>{config.symbol}{metrics.ppaRate?.toFixed(3)}/kWh</strong> (Utility: {config.symbol}{gridRate.toFixed(2)}/kWh).</span>
             )}
             {financeModel === 'lease' && (
-              <span>$0 upfront capital. Rent: <strong>${Math.round(metrics.monthlyLease || 0).toLocaleString()}/mo</strong>, net profit from day 1.</span>
+              <span>{config.symbol}0 upfront capital. Rent: <strong>{config.symbol}{Math.round(metrics.monthlyLease || 0).toLocaleString()}/mo</strong>, net profit from day 1.</span>
             )}
           </div>
         </motion.div>
@@ -512,7 +554,7 @@ export default function SmeHub({
               {t.calculator.carbonOffset}
             </span>
             <span className="text-sm font-black text-green-500">
-              <AnimatedNumber value={carbonTons} formatter={(v) => v.toFixed(1)} /> {t.calculator.tons}
+              <AnimatedNumber value={carbonTons} formatter={(v) => v.toFixed(1)} /> {config.carbon}
             </span>
           </div>
 
@@ -534,9 +576,14 @@ export default function SmeHub({
             <div className="space-y-1.5 p-2 bg-[var(--bg-secondary)]/50 rounded-xl border border-[var(--color-border)]/40">
               <Building className="w-4 h-4 text-[var(--text-muted)] mx-auto" />
               <div className="font-bold text-[var(--text-main)]">
-                <AnimatedNumber value={equivalentForest} /> Acres
+                <AnimatedNumber value={equivalentForest} /> {config.land}
               </div>
-              <div>{t.calculator.equivalentForest}</div>
+              <div>
+                {lang === 'de-de' 
+                  ? 'Waldfläche gerettet (Hektar)' 
+                  : (config.land === 'Hectares' ? 'Forest hectares saved' : t.calculator.equivalentForest)
+                }
+              </div>
             </div>
           </div>
         </motion.div>

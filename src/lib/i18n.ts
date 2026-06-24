@@ -52,24 +52,24 @@ export const translations = {
       faqTitle: 'Frequently Asked Questions (Clean Energy Policy)',
       faqItems: [
         {
-          q: 'How do I claim the 30% Federal Clean Energy Credit?',
-          a: 'You claim it by filing IRS Form 5695 (Residential Energy Credits) along with your annual tax return (Form 1040). You will calculate 30% of your total solar, battery, or heat pump project costs and apply it to reduce your federal income taxes.'
+          q: 'How does the US Federal Clean Energy Credit work in 2026?',
+          a: 'For homeowner-purchased systems installed in 2026 or later, the 30% residential tax credit (Section 25D) has terminated. However, third-party owned (lease/PPA) systems and commercial installations (Section 48) still qualify for the 30% credit.'
         },
         {
-          q: 'Is the 30% solar tax credit refundable?',
-          a: 'No, it is a non-refundable tax credit, meaning it cannot reduce your tax liability below zero to give you a cash refund check. However, any unused credits can be carried forward to next year’s taxes, and this roll-over can continue indefinitely.'
+          q: 'Is the federal solar tax credit refundable?',
+          a: 'No, it is a non-refundable tax credit. For lease/PPA systems, the developer claims the Section 48 credit and passes the benefit down, so individual homeowners do not need tax liability to benefit from it.'
         },
         {
           q: 'Does the clean energy credit apply to battery storage systems?',
-          a: 'Yes! Under Section 25D, battery storage systems with a capacity of 3 kWh or larger qualify for the 30% federal tax credit, regardless of whether they are charged by solar panels or directly from the power grid.'
+          a: 'In 2026, battery storage systems (3 kWh or larger) installed under a third-party lease/PPA or commercial project still qualify for the 30% credit. Direct homeowner purchases no longer qualify.'
         },
         {
           q: 'How do local utility rebates affect the federal tax credit?',
-          a: 'Utility rebates are generally treated as purchase price reductions. You must subtract the utility rebate amount from your total project cost before calculating the 30% federal tax credit. State tax credits, however, do not reduce your federal tax credit basis.'
+          a: 'For systems where the credit is still active (lease/PPA or commercial), utility rebates generally reduce the tax basis before calculating the 30% federal tax credit.'
         },
         {
           q: 'What installation costs are covered by the tax credit?',
-          a: 'Eligible costs include solar PV panels, inverter systems, mounting hardware, storage batteries (3 kWh+), heat pump equipment, electrical panel upgrades required for the installation, and all assembly and labor costs. General roofing repairs do not qualify.'
+          a: 'Eligible costs for active Section 48 credits include solar PV panels, inverter systems, mounting hardware, storage batteries (3 kWh+), heat pump equipment, electrical panel upgrades required for the installation, and all assembly and labor costs.'
         }
       ]
     },
@@ -202,24 +202,24 @@ export const translations = {
       faqTitle: 'Häufig gestellte Fragen (Richtlinien für saubere Energie)',
       faqItems: [
         {
-          q: 'Wie beantrage ich die Bundessteuergutschrift von 30 %?',
-          a: 'Sie beantragen dies durch Ausfüllen des IRS-Formulars 5695 (Residential Energy Credits) zusammen mit Ihrer jährlichen Einkommensteuererklärung (Formular 1040). Sie berechnen 30 % der gesamten Solar-, Batterie- oder Wärmepumpenprojektkosten und mindern damit Ihre Steuerschuld.'
+          q: 'Wie funktioniert die US-Bundessteuergutschrift für saubere Energie im Jahr 2026?',
+          a: 'Für vom Hauseigentümer gekaufte Systeme, die im Jahr 2026 oder später installiert werden, wurde die 30-prozentige Steuergutschrift für Wohngebäude (Section 25D) beendet. Systeme im Eigentum Dritter (Leasing/PPA) und gewerbliche Anlagen (Section 48) qualifizieren sich jedoch weiterhin für die 30-prozentige Gutschrift.'
         },
         {
-          q: 'Ist die Solarsteuergutschrift erstattungsfähig?',
-          a: 'Nein, es handelt sich um eine nicht erstattungsfähige Steuergutschrift. Das bedeutet, sie kann Ihre Steuerschuld nicht unter Null senken, um Ihnen eine Barauszahlung zu bescheren. Ungenutzte Guthaben können jedoch unbegrenzt auf die folgenden Steuerjahre übertragen werden.'
+          q: 'Ist die US-Solarsteuergutschrift erstattungsfähig?',
+          a: 'Nein, sie ist nicht erstattungsfähig. Bei Leasing-/PPA-Systemen beansprucht der Entwickler die Gutschrift gemäß Section 48 und gibt den Vorteil weiter, sodass einzelne Hauseigentümer keine Steuerschuld benötigen, um davon zu profitieren.'
         },
         {
           q: 'Gilt die saubere Energie-Steuergutschrift auch für Batteriespeicher?',
-          a: 'Ja! Gemäß Section 25D qualifizieren sich Batteriespeichersysteme mit einer Kapazität von 3 kWh oder mehr für die 30%ige Bundessteuergutschrift, unabhängig davon, ob sie durch Solarmodule oder direkt aus dem Stromnetz geladen werden.'
+          a: 'Im Jahr 2026 qualifizieren sich Batteriespeichersysteme (ab 3 kWh), die im Rahmen eines Leasing-/PPA- oder gewerblichen Projekts installiert werden, weiterhin für die 30-prozentige Gutschrift. Direkte Käufe durch Hauseigentümer sind nicht mehr förderfähig.'
         },
         {
           q: 'Wie wirken sich Rabatte von Versorgungsunternehmen auf die Steuergutschrift aus?',
-          a: 'Rabatte von Energieversorgern werden in der Regel als Minderung des Kaufpreises behandelt. Sie müssen den Rabattbetrag von Ihren Gesamtprojektkosten abziehen, bevor Sie die 30%ige Bundessteuergutschrift berechnen. Landessteuergutschriften mindern diese Basis nicht.'
+          a: 'Bei Systemen, für die die Gutschrift noch aktiv ist (Leasing/PPA oder gewerblich), mindern Rabatte von Energieversorgern in der Regel die Steuerbasis vor der Berechnung der 30-prozentigen Gutschrift.'
         },
         {
           q: 'Welche Installationskosten werden von der Steuergutschrift abgedeckt?',
-          a: 'Förderfähig sind PV-Module, Wechselrichter, Halterungen, Speicherbatterien (ab 3 kWh), Wärmepumpen, erforderliche Modernisierungen der Hauselektrik für die Installation sowie alle Montage- und Arbeitskosten. Reine Dachsanierungen sind ausgeschlossen.'
+          a: 'Förderfähig für die aktive Section 48-Gutschrift sind PV-Module, Wechselrichter, Halterungen, Speicherbatterien (ab 3 kWh), Wärmepumpen, erforderliche Modernisierungen der Hauselektrik für die Installation sowie alle Montage- und Arbeitskosten.'
         }
       ]
     },
@@ -352,24 +352,24 @@ export const translations = {
       faqTitle: 'Foire Aux Questions (Politique d\'énergie propre)',
       faqItems: [
         {
-          q: 'Comment réclamer le crédit d\'impôt fédéral de 30 % ?',
-          a: 'Vous le réclamez en remplissant le formulaire IRS 5695 (Residential Energy Credits) et en le joignant à votre déclaration de revenus annuelle (formulaire 1040). Vous calculerez 30 % des coûts totaux de votre projet solaire, batterie ou pompe à chaleur.'
+          q: 'Comment fonctionne le crédit d\'impôt fédéral américain pour l\'énergie propre en 2026 ?',
+          a: 'Pour les systèmes achetés par le propriétaire installés en 2026 ou plus tard, le crédit d\'impôt résidentiel de 30 % (Section 25D) a pris fin. Cependant, les systèmes détenus par des tiers (bail/PPA) et les installations commerciales (Section 48) sont toujours éligibles au crédit de 30 %.'
         },
         {
-          q: 'Le crédit d\'impôt solaire de 30 % est-il remboursable ?',
-          a: 'Non, c\'est un crédit d\'impôt non remboursable, ce qui signifie qu\'il ne peut pas réduire votre impôt en dessous de zéro pour vous donner un chèque. Cependant, tout crédit inutilisé peut être reporté indéfiniment sur les années fiscales suivantes.'
+          q: 'Le crédit d\'impôt solaire fédéral est-il remboursable ?',
+          a: 'Non, c\'est un crédit d\'impôt non remboursable. Pour les systèmes en bail/PPA, le développeur réclame le crédit au titre de la Section 48 et répercute l\'avantage, de sorte que les propriétaires n\'ont pas besoin de passif fiscal pour en bénéficier.'
         },
         {
           q: 'Le crédit d\'impôt s\'applique-t-il aux systèmes de stockage par batterie ?',
-          a: 'Oui ! En vertu de la section 25D, les systèmes de stockage par batterie d\'une capacité de 3 kWh ou plus sont éligibles au crédit d\'impôt de 30 %, qu\'ils soient chargés par des panneaux solaires ou directement depuis le réseau électrique.'
+          a: 'En 2026, les systèmes de stockage par batterie (3 kWh ou plus) installés dans le cadre d\'un bail/PPA tiers ou d\'un projet commercial sont toujours éligibles au crédit de 30 %. Les achats directs par le propriétaire ne sont plus éligibles.'
         },
         {
           q: 'Comment les subventions locales affectent-elles le crédit d\'impôt fédéral ?',
-          a: 'Les rabais des services publics sont traités comme des réductions de prix. Vous devez soustraire ce montant du coût total de votre projet avant de calculer le crédit d\'impôt fédéral de 30 %. Les crédits d\'impôt locaux de l\'État ne réduisent pas cette base.'
+          a: 'Pour les systèmes où le crédit est toujours actif (bail/PPA ou commercial), les rabais des services publics réduisent généralement la base fiscale avant de calculer le crédit de 30 %.'
         },
         {
           q: 'Quels coûts d\'installation sont couverts par le crédit d\'impôt ?',
-          a: 'Les coûts éligibles incluent les panneaux solaires, onduleurs, matériel de montage, batteries de stockage (3 kWh+), pompes à chaleur, mises à niveau électriques requises pour l\'installation, et toute la main-d\'œuvre. Les réparations de toiture ordinaires ne sont pas éligibles.'
+          a: 'Les coûts éligibles pour le crédit de la Section 48 active incluent les panneaux solaires, onduleurs, matériel de montage, batteries de stockage (3 kWh+), pompes à chaleur, mises à niveau électriques requises pour l\'installation, et toute la main-d\'œuvre.'
         }
       ]
     },

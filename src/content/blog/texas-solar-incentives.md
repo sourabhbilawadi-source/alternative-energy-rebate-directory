@@ -26,14 +26,14 @@ Let's look at the two largest metropolitan areas in Texas to see how the incenti
 Homeowners in Houston fall under the CenterPoint distribution network. CenterPoint does not offer a direct cash rebate to residential customers for solar. However, several REPs operating in Houston offer customized "solar buyback" plans. These buyback plans credit you for the excess energy your system exports back to the grid. 
 * Average Cost per Watt in Houston: $3.20 (estimated baseline)
 * For a standard 6 kW system, the baseline cost is approximately $19,200.
-* The 30% Federal Residential Clean Energy Credit reduces the net cost by $5,760, bringing the net investment to $13,440.
+* For third-party owned (lease/PPA) installations, the 30% federal credit reduces the net cost by $5,760, bringing the net investment to $13,440. (Outright homeowner purchases in 2026 no longer qualify for the federal tax credit).
 * Under standard local utility conditions (1,600 sun hours annually and average rates), the typical solar payback period in Houston is estimated at 8.0 years.
 
 #### 2. Dallas (Oncor Electric Delivery Service Territory)
 In the Dallas-Fort Worth metroplex, the distribution network is managed by Oncor. Unlike CenterPoint, Oncor operates a solar photovoltaic incentive program. This program pays performance-based incentives directly to approved solar contractors who install residential systems with battery storage. These incentives can total thousands of dollars depending on system size and battery capacity, significantly lowering the upfront cost of the system.
 * Average Cost per Watt in Dallas: $3.20 (estimated baseline)
 * For a standard 6 kW system, the baseline cost is approximately $19,200.
-* The 30% Federal Tax Credit reduces the net capital cost to $13,440.
+* Utilizing a third-party lease/PPA structure similarly reduces the net cost by $5,760. (Direct homeowner purchases in 2026 do not qualify for federal tax credits).
 * Since Dallas gets high solar exposure (approx. 1,600 sun hours annually) and residents can take advantage of Oncor-specific incentives, the typical payback period for a residential system is estimated at 8.0 years.
 
 ### Strategies for Maximizing Your Texas Solar ROI

@@ -27,14 +27,14 @@ Let's look at the financial math. For a standard 6 kW residential solar installa
 1. **Los Angeles, California**
    * Average Cost per Watt: $3.10
    * Baseline System Cost: $18,600 (before incentives)
-   * With the 30% Federal Residential Clean Energy Credit (Section 25D), the net capital cost drops by $5,580 to $13,020.
+   * For third-party owned (lease/PPA) installations, the 30% federal credit (Section 48) drops the net capital cost by $5,580 to $13,020. (Outright purchases no longer qualify for the federal tax credit after 2025).
    * Applying local state and utility rebates (estimated at $1,500 and $500 respectively), the net investment is reduced to approximately $11,020.
    * With high average sun hours (1,800 hours annually) and grid rates of $0.28/kWh, the estimated payback period for a properly configured solar-plus-storage system sits around 6.3 years.
 
 2. **San Francisco, California**
    * Average Cost per Watt: $3.10
    * Baseline System Cost: $18,600 (before incentives)
-   * The federal tax credit reduces the cost to $13,020.
+   * Utilizing a third-party lease/PPA structure similarly reduces the net cost by $5,580.
    * Subtracting the $1,500 state rebate and $500 utility rebate brings the net cost to $11,020.
    * Given similar sun hours (1,800 annually) and grid rates ($0.28/kWh), San Francisco exhibits a comparable payback timeline of approximately 6.3 years.
 
@@ -44,6 +44,6 @@ To achieve these optimal payback periods, homeowners must configure their system
 
 * **Size the System Correctly**: Do not oversize a solar-only system. Overproduction that gets exported at low NEM 3.0 rates will dilute your return. Sizing the solar array to match your baseline daytime loads—or pairing a larger array with adequate battery storage—is critical.
 * **Leverage Time-of-Use (TOU) Rates**: Ensure you are switched to a highly favorable TOU rate plan (like SCE's TOU-D-PRIME or PG&E's E-ELEC) that rewards battery discharging during high-rate periods.
-* **Take Advantage of All Incentives**: The 30% federal tax credit remains the strongest incentive. Ensure you work with a tax advisor to confirm eligibility. Additionally, look out for state-specific rebates such as the Self-Generation Incentive Program (SGIP), which provides equity and battery storage rebates for qualified customers.
+* **Take Advantage of All Incentives**: The 30% federal tax credit remains active only for third-party owned (lease/PPA) systems or commercial installations under Section 48. Outright homeowner purchases in 2026 no longer qualify. Ensure you work with a tax advisor or installer to confirm the best ownership structure. Additionally, look out for state-specific rebates such as the Self-Generation Incentive Program (SGIP), which provides equity and battery storage rebates for qualified customers.
 
 By utilizing localized calculation portals, homeowners can accurately model these variables to determine their exact financial yield and payback periods.
