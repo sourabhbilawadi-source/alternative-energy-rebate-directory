@@ -22,9 +22,10 @@ interface SearchRebate {
 interface SearchPortalProps {
   initialQuery?: string;
   lang: string;
+  initialRebates?: SearchRebate[];
 }
 
-export default function SearchPortal({ initialQuery = '', lang }: SearchPortalProps) {
+export default function SearchPortal({ initialQuery = '', lang, initialRebates = [] }: SearchPortalProps) {
   const t = useTranslations(lang);
   const [query, setQuery] = useState(initialQuery);
   const [postalQuery, setPostalQuery] = useState('');
@@ -110,60 +111,74 @@ export default function SearchPortal({ initialQuery = '', lang }: SearchPortalPr
     }
   ];
 
-  // Fetch from Supabase on load and merge with local storage overrides
+  // Load data and parse URL search params on mount
   useEffect(() => {
+    // 1. Grab initial query parameter if present in the URL
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const q = urlParams.get('q');
+      if (q) {
+        setQuery(q);
+      }
+    }
+
+    // 2. Load and merge rebates
     async function loadData() {
       setIsLoading(true);
-      let fetchedRebates: SearchRebate[] = [];
+      
+      // Use the server-fetched rebates as the base list
+      let fetchedRebates = [...initialRebates];
 
-      // 1. Fetch from Supabase if active
-      if (supabase) {
-        try {
-          const { data: rebatesData, error } = await supabase
-            .from('rebates')
-            .select(`
-              id,
-              authority_name,
-              technology_category,
-              incentive_value,
-              incentive_type,
-              max_limit,
-              regions (
-                country_code,
-                state_province,
-                city,
-                postal_code
-              )
-            `)
-            .eq('is_active', true);
+      // If server-fetched list is empty (e.g. Supabase was offline/unconfigured and no fallback passed),
+      // we can try fetching from Supabase client-side or fallback to mockRebates.
+      if (fetchedRebates.length === 0) {
+        if (supabase) {
+          try {
+            const { data: rebatesData, error } = await supabase
+              .from('rebates')
+              .select(`
+                id,
+                authority_name,
+                technology_category,
+                incentive_value,
+                incentive_type,
+                max_limit,
+                regions (
+                  country_code,
+                  state_province,
+                  city,
+                  postal_code
+                )
+              `)
+              .eq('is_active', true);
 
-          if (rebatesData && !error) {
-            fetchedRebates = rebatesData.map((item: any) => ({
-              id: item.id,
-              authority_name: item.authority_name,
-              technology_category: item.technology_category,
-              incentive_value: Number(item.incentive_value),
-              incentive_type: item.incentive_type,
-              max_limit: item.max_limit ? Number(item.max_limit) : null,
-              region: {
-                country_code: item.regions?.country_code || 'us',
-                state_province: item.regions?.state_province || '',
-                city: item.regions?.city || '',
-                postal_code: item.regions?.postal_code || ''
-              }
-            }));
+            if (rebatesData && !error) {
+              fetchedRebates = rebatesData.map((item: any) => ({
+                id: item.id,
+                authority_name: item.authority_name,
+                technology_category: item.technology_category,
+                incentive_value: Number(item.incentive_value),
+                incentive_type: item.incentive_type,
+                max_limit: item.max_limit ? Number(item.max_limit) : null,
+                region: {
+                  country_code: item.regions?.country_code || 'us',
+                  state_province: item.regions?.state_province || '',
+                  city: item.regions?.city || '',
+                  postal_code: item.regions?.postal_code || ''
+                }
+              }));
+            }
+          } catch (err) {
+            console.error('Failed to query search database from Supabase client:', err);
           }
-        } catch (err) {
-          console.error('Failed to query search database from Supabase, using mock local data:', err);
         }
       }
 
-      // If Supabase fetch was empty or failed, use mock base
       if (fetchedRebates.length === 0) {
         fetchedRebates = [...mockRebates];
       }
 
-      // 2. Fetch and merge from localStorage (Option B Admin additions)
+      // Merge localstorage additions/modifications (Admin Sandbox additions)
       try {
         const localRegionsRaw = localStorage.getItem('local_regions');
         const localRebatesRaw = localStorage.getItem('local_rebates');
@@ -201,13 +216,13 @@ export default function SearchPortal({ initialQuery = '', lang }: SearchPortalPr
       setIsLoading(false);
     }
     loadData();
-  }, []);
+  }, [initialRebates]);
 
   // Perform search filtering
   useEffect(() => {
     let filtered = rebates.filter((item) => {
-      // 1. Text Search matching authority, technology, city, or state
-      const searchStr = `${item.authority_name} ${item.technology_category} ${item.region.city} ${item.region.state_province}`.toLowerCase();
+      // 1. Text Search matching authority, technology, city, state, or postal code
+      const searchStr = `${item.authority_name} ${item.technology_category} ${item.region.city} ${item.region.state_province} ${item.region.postal_code}`.toLowerCase();
       const textMatches = searchStr.includes(query.toLowerCase());
 
       // 2. Postal Code specific filtering
@@ -216,8 +231,13 @@ export default function SearchPortal({ initialQuery = '', lang }: SearchPortalPr
       // 3. Category Filter
       let catMatches = true;
       if (selectedCategory !== 'all') {
-        catMatches = item.technology_category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
-                     item.authority_name.toLowerCase().includes(selectedCategory.toLowerCase());
+        if (selectedCategory === 'rebate') {
+          const catStr = `${item.technology_category} ${item.authority_name}`.toLowerCase();
+          catMatches = catStr.includes('rebate') || catStr.includes('grant') || catStr.includes('subsidy');
+        } else {
+          catMatches = item.technology_category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
+                       item.authority_name.toLowerCase().includes(selectedCategory.toLowerCase());
+        }
       }
 
       // 4. Country Filter
@@ -234,12 +254,35 @@ export default function SearchPortal({ initialQuery = '', lang }: SearchPortalPr
   }, [query, postalQuery, selectedCategory, selectedCountry, rebates]);
 
   // Extended technology categories for filtering
-  const categories = ['all', 'solar', 'battery', 'heat pump', 'utility', 'tax'];
+  const categories = ['all', 'solar', 'battery', 'heat pump', 'utility', 'tax', 'rebate'];
+
+  // Localized label helper for filter tabs
+  const getCategoryLabel = (cat: string) => {
+    if (cat === 'all') return t.search.allCategories;
+    if (lang === 'de-de') {
+      if (cat === 'solar') return 'Solar';
+      if (cat === 'battery') return 'Batterie';
+      if (cat === 'heat pump') return 'Wärmepumpe';
+      if (cat === 'utility') return 'Versorger';
+      if (cat === 'tax') return 'Steuern';
+      if (cat === 'rebate') return 'Zuschüsse';
+    }
+    if (lang === 'fr-fr') {
+      if (cat === 'solar') return 'Solaire';
+      if (cat === 'battery') return 'Batterie';
+      if (cat === 'heat pump') return 'Pompe à chaleur';
+      if (cat === 'utility') return 'Réseau';
+      if (cat === 'tax') return 'Impôts';
+      if (cat === 'rebate') return 'Subventions';
+    }
+    if (cat === 'heat pump') return 'Heat Pump';
+    return cat;
+  };
 
   // Count matching rebates for each category (based on queries but independent of selectedCategory filter)
   const getCategoryCount = (category: string) => {
     let tempFiltered = rebates.filter((item) => {
-      const searchStr = `${item.authority_name} ${item.technology_category} ${item.region.city} ${item.region.state_province}`.toLowerCase();
+      const searchStr = `${item.authority_name} ${item.technology_category} ${item.region.city} ${item.region.state_province} ${item.region.postal_code}`.toLowerCase();
       const textMatches = searchStr.includes(query.toLowerCase());
       const postalMatches = postalQuery === '' || item.region.postal_code.toLowerCase().includes(postalQuery.toLowerCase().trim());
 
@@ -253,6 +296,13 @@ export default function SearchPortal({ initialQuery = '', lang }: SearchPortalPr
     });
 
     if (category === 'all') return tempFiltered.length;
+
+    if (category === 'rebate') {
+      return tempFiltered.filter((item) => {
+        const catStr = `${item.technology_category} ${item.authority_name}`.toLowerCase();
+        return catStr.includes('rebate') || catStr.includes('grant') || catStr.includes('subsidy');
+      }).length;
+    }
 
     return tempFiltered.filter((item) => {
       return item.technology_category.toLowerCase().includes(category.toLowerCase()) ||
@@ -338,7 +388,7 @@ export default function SearchPortal({ initialQuery = '', lang }: SearchPortalPr
                     : 'bg-[var(--bg-primary)] border-[var(--color-border)] text-[var(--text-muted)] hover:border-[var(--color-accent)]'
                 }`}
               >
-                <span>{cat === 'all' ? t.search.allCategories : cat}</span>
+                <span>{getCategoryLabel(cat)}</span>
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${
                   isActive ? 'bg-white/20 text-white' : 'bg-[var(--bg-secondary)] text-[var(--text-main)] border border-[var(--color-border)]'
                 }`}>

@@ -212,6 +212,41 @@ export default function SmeHub({
 
   const metrics = getFinancingMetrics();
 
+  // Dynamic commercial yield/savings evaluation
+  const getYieldTier = () => {
+    if (financeModel === 'ppa' || financeModel === 'lease') {
+      return {
+        label: 'Instant Savings',
+        className: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+      };
+    }
+    
+    const payback = metrics.payback;
+    if (payback === 0) return { label: 'No Savings', className: 'bg-red-500/10 text-red-500' };
+    if (payback < 4) {
+      return {
+        label: 'Excellent Yield',
+        className: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+      };
+    } else if (payback >= 4 && payback <= 7) {
+      return {
+        label: 'High Yield',
+        className: 'bg-green-500/10 text-green-600 dark:text-green-400'
+      };
+    } else if (payback > 7 && payback <= 10) {
+      return {
+        label: 'Moderate Yield',
+        className: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+      };
+    } else {
+      return {
+        label: 'Slow Yield',
+        className: 'bg-orange-500/10 text-orange-600 dark:text-orange-400'
+      };
+    }
+  };
+  const yieldTier = getYieldTier();
+
   // Carbon Abatement Scope 2 equivalents
   const carbonTons = config.isMetric 
     ? (annualGeneration * gridEmissions) / 1000
@@ -262,7 +297,7 @@ export default function SmeHub({
                   : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
               }`}
             >
-              🏢 Owned Property
+              Owned Property
             </button>
             <button 
               onClick={() => { setIsOwned(false); setFinanceModel('ppa'); }}
@@ -272,7 +307,7 @@ export default function SmeHub({
                   : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
               }`}
             >
-              🔑 Leased Facility
+              Leased Facility
             </button>
           </div>
         </motion.div>
@@ -457,8 +492,8 @@ export default function SmeHub({
             <span className="text-xs font-bold text-[var(--text-muted)] tracking-wider uppercase">
               {financeModel === 'purchase' ? t.calculator.paybackPeriod : 'Net Annual Savings'}
             </span>
-            <span className="px-2.5 py-1 text-xs font-bold bg-green-500/10 text-green-500 rounded-full flex items-center gap-1">
-              <TrendingUp className="w-3.5 h-3.5" /> High Yield
+            <span className={`px-2.5 py-1 text-xs font-bold rounded-full flex items-center gap-1 border border-current/10 ${yieldTier.className}`}>
+              <TrendingUp className="w-3.5 h-3.5" /> {yieldTier.label}
             </span>
           </div>
 

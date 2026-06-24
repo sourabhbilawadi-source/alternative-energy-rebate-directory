@@ -542,6 +542,33 @@ export default function RebateCalculator({
   // Payback timeline (P_back = (C_sys - I_r) / A_save)
   const paybackYears = annualSavingsCapped > 0 ? Math.max(0.5, netSystemCost / annualSavingsCapped) : 0;
 
+  // Dynamic payback yield evaluation
+  const getPaybackTier = (years: number) => {
+    if (years === 0) return { label: 'No Savings', className: 'bg-red-500/10 text-red-500' };
+    if (years < 5) {
+      return {
+        label: 'Excellent Yield',
+        className: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+      };
+    } else if (years >= 5 && years <= 8) {
+      return {
+        label: 'High Return',
+        className: 'bg-green-500/10 text-green-600 dark:text-green-400'
+      };
+    } else if (years > 8 && years <= 12) {
+      return {
+        label: 'Moderate Return',
+        className: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+      };
+    } else {
+      return {
+        label: 'Slow Return',
+        className: 'bg-orange-500/10 text-orange-600 dark:text-orange-400'
+      };
+    }
+  };
+  const paybackTier = getPaybackTier(paybackYears);
+
   // Carbon abatement (CO2_tons = (P_sz * eta_sun * delta_grid) / 2000)
   const carbonAbatementTons = config.isMetric ? (systemSizeCapped * sunHours * gridEmissions) / 1000 : (systemSizeCapped * sunHours * gridEmissions) / 907.185;
 
@@ -869,8 +896,8 @@ export default function RebateCalculator({
           
           <div className="flex items-center justify-between">
             <span className="text-sm font-bold text-[var(--text-muted)] tracking-wider uppercase">{t.calculator.paybackPeriod}</span>
-            <span className="px-2.5 py-1 text-xs font-bold bg-green-500/10 text-green-500 rounded-full flex items-center gap-1">
-              <TrendingUp className="w-3.5 h-3.5" /> High Return
+            <span className={`px-2.5 py-1 text-xs font-bold rounded-full flex items-center gap-1 border border-current/10 ${paybackTier.className}`}>
+              <TrendingUp className="w-3.5 h-3.5" /> {paybackTier.label}
             </span>
           </div>
 

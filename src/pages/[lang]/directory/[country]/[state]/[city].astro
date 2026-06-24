@@ -222,6 +222,7 @@ if (lang === 'de-de') {
     ? `Save on solar in ${displayCity}, ${displayState} with local utility rates of ${currencySymbol}${rateText}/kWh. Calculate your estimated payback, solar savings, and active rebates today!`
     : `Save on solar in ${displayCity}, ${displayState} with a ${fedPctText}% federal tax credit and utility rates of ${currencySymbol}${rateText}/kWh. Estimated payback period: ${paybackText} years. Calculate your solar ROI today!`;
 }
+import Navbar from '../../../../../components/Navbar.astro';
 ---
 
 <!DOCTYPE html>
@@ -307,36 +308,7 @@ if (lang === 'de-de') {
 </head>
 <body class="min-h-screen pb-16">
   <!-- Persistent Header with Navigation -->
-  <header class="border-b border-[var(--color-border)] sticky top-0 bg-[var(--bg-primary)]/80 backdrop-blur-md z-40" transition:persist transition:name="main-navigation">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <a href={`/${lang}/directory/us/california/los-angeles`} class="flex items-center gap-2 font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity group">
-        <img src="/logo.png" alt="IncentiveMapper Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" width="36" height="36" />
-        <span>IncentiveMapper</span>
-      </a>
-      
-      <div class="flex items-center gap-3">
-        <!-- Lang Selector -->
-        <select 
-          id="lang-select" 
-          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
-        >
-          <option value="en-us" selected={lang === 'en-us'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">EN-US</option>
-          <option value="de-de" selected={lang === 'de-de'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">DE-DE</option>
-          <option value="fr-fr" selected={lang === 'fr-fr'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">FR-FR</option>
-        </select>
-
-        <!-- Theme Selector -->
-        <select 
-          id="theme-select"
-          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
-        >
-          <option value="sage-minimalist" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Sage Minimalist</option>
-          <option value="dark-forest" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Dark Forest Luxury</option>
-          <option value="mint-tech" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Mint & Clean Tech</option>
-        </select>
-      </div>
-    </div>
-  </header>
+  <Navbar lang={lang} />
 
   <!-- Main Content Layout -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8" transition:animate="slide">
@@ -367,13 +339,13 @@ if (lang === 'de-de') {
         id="btn-residential" 
         class="pb-3 text-lg font-bold border-b-2 border-[var(--color-accent)] text-[var(--text-main)] focus:outline-none"
       >
-        🏡 {lang === 'de-de' ? 'Wohnrechner' : lang === 'fr-fr' ? 'Simulateur Résidentiel' : 'Residential Calculator'}
+        {lang === 'de-de' ? 'Wohnrechner' : lang === 'fr-fr' ? 'Simulateur Résidentiel' : 'Residential Calculator'}
       </button>
       <button 
         id="btn-sme" 
         class="pb-3 text-lg font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] focus:outline-none border-b-2 border-transparent"
       >
-        🏢 {lang === 'de-de' ? 'KMU-Dekarbonisierungszentrum' : lang === 'fr-fr' ? 'Espace Décarbonation PME' : 'SME Decarbonization Hub'}
+        {lang === 'de-de' ? 'KMU-Dekarbonisierungszentrum' : lang === 'fr-fr' ? 'Espace Décarbonation PME' : 'SME Decarbonization Hub'}
       </button>
     </div>
 
@@ -465,14 +437,20 @@ if (lang === 'de-de') {
   </main>
 
   <script>
-    // Client-side tab navigation logic
-    const btnRes = document.getElementById('btn-residential');
-    const btnSme = document.getElementById('btn-sme');
-    const panelRes = document.getElementById('panel-residential');
-    const panelSme = document.getElementById('panel-sme');
+    // Robust event delegation on document ensures click handlers survive Astro ClientRouter transitions and DOM morphs
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      const btn = target?.closest('#btn-residential, #btn-sme');
+      if (!btn) return;
 
-    if (btnRes && btnSme && panelRes && panelSme) {
-      btnRes.addEventListener('click', () => {
+      const btnRes = document.getElementById('btn-residential');
+      const btnSme = document.getElementById('btn-sme');
+      const panelRes = document.getElementById('panel-residential');
+      const panelSme = document.getElementById('panel-sme');
+
+      if (!btnRes || !btnSme || !panelRes || !panelSme) return;
+
+      if (btn.id === 'btn-residential') {
         // Toggle Buttons
         btnRes.classList.add('border-[var(--color-accent)]', 'text-[var(--text-main)]', 'font-bold');
         btnRes.classList.remove('text-[var(--text-muted)]', 'font-medium', 'border-transparent');
@@ -484,9 +462,7 @@ if (lang === 'de-de') {
         panelRes.classList.add('animate-fade-in');
         panelSme.classList.add('hidden');
         panelSme.classList.remove('animate-fade-in');
-      });
-
-      btnSme.addEventListener('click', () => {
+      } else {
         // Toggle Buttons
         btnSme.classList.add('border-[var(--color-accent)]', 'text-[var(--text-main)]', 'font-bold');
         btnSme.classList.remove('text-[var(--text-muted)]', 'font-medium', 'border-transparent');
@@ -498,8 +474,8 @@ if (lang === 'de-de') {
         panelSme.classList.add('animate-fade-in');
         panelRes.classList.add('hidden');
         panelRes.classList.remove('animate-fade-in');
-      });
-    }
+      }
+    });
   </script>
 </body>
 </html>

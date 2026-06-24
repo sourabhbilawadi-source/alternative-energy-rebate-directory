@@ -5,6 +5,9 @@ import SearchPortal from '../../components/search/SearchPortal';
 import { useTranslations } from '../../lib/i18n';
 import Analytics from '../../components/Analytics.astro';
 
+import { supabase } from '../../lib/supabase';
+import { regionsData } from '../../data/regions';
+
 export async function getStaticPaths() {
   return [
     { params: { lang: 'en-us' } },
@@ -15,6 +18,104 @@ export async function getStaticPaths() {
 
 const { lang } = Astro.params;
 const t = useTranslations(lang || 'en-us');
+import Navbar from '../../components/Navbar.astro';
+
+// Fetch active rebates on the server side
+let serverRebates = [];
+if (supabase) {
+  try {
+    const { data } = await supabase
+      .from('rebates')
+      .select(`
+        id,
+        authority_name,
+        technology_category,
+        incentive_value,
+        incentive_type,
+        max_limit,
+        regions (
+          country_code,
+          state_province,
+          city,
+          postal_code
+        )
+      `)
+      .eq('is_active', true);
+    
+    if (data) {
+      serverRebates = data.map((item: any) => ({
+        id: item.id,
+        authority_name: item.authority_name,
+        technology_category: item.technology_category,
+        incentive_value: Number(item.incentive_value),
+        incentive_type: item.incentive_type,
+        max_limit: item.max_limit ? Number(item.max_limit) : null,
+        region: {
+          country_code: item.regions?.country_code || 'us',
+          state_province: item.regions?.state_province || '',
+          city: item.regions?.city || '',
+          postal_code: item.regions?.postal_code || ''
+        }
+      }));
+    }
+  } catch (err) {
+    console.error('Failed to pre-fetch rebates from Supabase:', err);
+  }
+}
+
+// Fallback to static regionsData rebates compilation if DB is unconfigured/empty
+if (serverRebates.length === 0) {
+  regionsData.forEach((r, idx) => {
+    if (r.federalTaxCreditPct && r.federalTaxCreditPct > 0) {
+      serverRebates.push({
+        id: `static-fed-${idx}`,
+        authority_name: 'Federal Solar Tax Credit',
+        technology_category: 'Federal Tax Incentive',
+        incentive_value: r.federalTaxCreditPct,
+        incentive_type: 'percentage',
+        max_limit: null,
+        region: {
+          country_code: r.countryCode,
+          state_province: r.stateName,
+          city: r.cityName,
+          postal_code: ''
+        }
+      });
+    }
+    if (r.stateRebate && r.stateRebate > 0) {
+      serverRebates.push({
+        id: `static-state-${idx}`,
+        authority_name: `${r.stateName} Clean Energy Rebate`,
+        technology_category: 'State Solar Rebate',
+        incentive_value: r.stateRebate,
+        incentive_type: 'fixed',
+        max_limit: null,
+        region: {
+          country_code: r.countryCode,
+          state_province: r.stateName,
+          city: r.cityName,
+          postal_code: ''
+        }
+      });
+    }
+    if (r.utilityRebate && r.utilityRebate > 0) {
+      serverRebates.push({
+        id: `static-util-${idx}`,
+        authority_name: `${r.cityName} Utility Sizing Offset`,
+        technology_category: 'Local Utility Rebate',
+        incentive_value: r.utilityRebate,
+        incentive_type: 'fixed',
+        max_limit: null,
+        region: {
+          country_code: r.countryCode,
+          state_province: r.stateName,
+          city: r.cityName,
+          postal_code: ''
+        }
+      });
+    }
+  });
+}
 ---
 
 <!DOCTYPE html>
@@ -86,47 +187,7 @@ const t = useTranslations(lang || 'en-us');
   <Analytics />
 </head>
 <body class="min-h-screen flex flex-col justify-between">
-  <!-- Navbar -->
-  <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2 font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity group">
-        <img src="/logo.png" alt="IncentiveMapper Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" width="36" height="36" />
-        <span>IncentiveMapper</span>
-      </a>
-      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
-        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.directory}</a>
-        <a href={`/${lang}/search`} class="text-[var(--text-main)] transition-colors">{t.nav.search}</a>
-        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compare}</a>
-        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compliance}</a>
-              <a href={`/${lang}/blog`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.blog}</a>
-</nav>
-      <div class="flex items-center gap-3">
-        <!-- Lang Selector -->
-        <select 
-          id="lang-select" 
-          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
-        >
-          <option value="en-us" selected={lang === 'en-us'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">EN-US</option>
-          <option value="de-de" selected={lang === 'de-de'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">DE-DE</option>
-          <option value="fr-fr" selected={lang === 'fr-fr'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">FR-FR</option>
-        </select>
-
-        <!-- Theme Selector -->
-        <select 
-          id="theme-select"
-          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
-        >
-          <option value="sage-minimalist" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Sage Minimalist</option>
-          <option value="dark-forest" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Dark Forest Luxury</option>
-          <option value="mint-tech" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Mint & Clean Tech</option>
-        </select>
-
-        <a href={`/${lang}/directory`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
-          {t.nav.browseDir}
-        </a>
-      </div>
-    </div>
-  </header>
+  <Navbar lang={lang} />
 
   <!-- Main Content -->
   <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow" transition:animate="slide">
@@ -136,7 +197,7 @@ const t = useTranslations(lang || 'en-us');
     </div>
 
     <!-- Search Portal React Island -->
-    <SearchPortal client:load lang={lang} />
+    <SearchPortal client:load lang={lang} initialRebates={serverRebates} />
   </main>
 
   <!-- Footer -->
@@ -148,26 +209,11 @@ const t = useTranslations(lang || 'en-us');
         <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] font-semibold">{t.footer.search}</a>
         <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">{t.footer.compare}</a>
         <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">{t.footer.compliance}</a>
-                <a href={`/${lang}/blog`} class="hover:text-[var(--text-main)]">{t.footer.blog}</a>
-<a href={`/${lang}/privacy`} class="hover:text-[var(--text-main)]">{t.footer.privacy}</a>
+        <a href={`/${lang}/blog`} class="hover:text-[var(--text-main)]">{t.footer.blog}</a>
+        <a href={`/${lang}/privacy`} class="hover:text-[var(--text-main)]">{t.footer.privacy}</a>
         <a href={`/${lang}/terms`} class="hover:text-[var(--text-main)]">{t.footer.terms}</a>
       </div>
     </div>
   </footer>
-  
-  <script>
-    // Client-side initialization to grab query string 'q' and pass it to React
-    const searchPortal = document.querySelector('input[type="text"]') as HTMLInputElement;
-    if (searchPortal) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const queryParam = urlParams.get('q');
-      if (queryParam) {
-        searchPortal.value = queryParam;
-        // Trigger React onChange update
-        const event = new Event('input', { bubbles: true });
-        searchPortal.dispatchEvent(event);
-      }
-    }
-  </script>
 </body>
 </html>

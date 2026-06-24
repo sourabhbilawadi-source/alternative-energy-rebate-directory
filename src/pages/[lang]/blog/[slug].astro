@@ -102,6 +102,7 @@ function resolveRegionLink(tag: string): ResolvedRegion | null {
 const resolvedRegions = post.data.relatedRegions
   .map(tag => resolveRegionLink(tag))
   .filter((r): r is ResolvedRegion => r !== null);
+import Navbar from '../../../components/Navbar.astro';
 ---
 
 <!DOCTYPE html>
@@ -174,47 +175,8 @@ const resolvedRegions = post.data.relatedRegions
   <Analytics />
 </head>
 <body class="min-h-screen flex flex-col justify-between">
-  <!-- Navbar -->
-  <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2 font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity group">
-        <img src="/logo.png" alt="IncentiveMapper Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" width="36" height="36" />
-        <span>IncentiveMapper</span>
-      </a>
-      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
-        <a href={`/${activeLang}/directory`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.directory}</a>
-        <a href={`/${activeLang}/search`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.search}</a>
-        <a href={`/${activeLang}/compare`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compare}</a>
-        <a href={`/${activeLang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compliance}</a>
-              <a href={`/${activeLang}/blog`} class="text-[var(--text-main)] transition-colors">{t.nav.blog}</a>
-</nav>
-      <div class="flex items-center gap-3">
-        <!-- Lang Selector -->
-        <select 
-          id="lang-select" 
-          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
-        >
-          <option value="en-us" selected={activeLang === 'en-us'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">EN-US</option>
-          <option value="de-de" selected={activeLang === 'de-de'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">DE-DE</option>
-          <option value="fr-fr" selected={activeLang === 'fr-fr'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">FR-FR</option>
-        </select>
+  <Navbar lang={lang} />
 
-        <!-- Theme Selector -->
-        <select 
-          id="theme-select"
-          class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
-        >
-          <option value="sage-minimalist" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Sage Minimalist</option>
-          <option value="dark-forest" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Dark Forest Luxury</option>
-          <option value="mint-tech" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Mint & Clean Tech</option>
-        </select>
-
-        <a href={`/${activeLang}/directory`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl">
-          {t.nav.browseDir}
-        </a>
-      </div>
-    </div>
-  </header>
 
   <!-- Main Content -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow w-full">

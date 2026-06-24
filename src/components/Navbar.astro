@@ -1,0 +1,161 @@
+---
+import { useTranslations } from '../lib/i18n';
+
+interface Props {
+  lang?: string;
+}
+
+const { lang = 'en-us' } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<header class="border-b border-[var(--color-border)] sticky top-0 z-50" style="background-color: color-mix(in srgb, var(--bg-primary) 85%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 flex flex-wrap items-center justify-between py-2">
+    <a href="/" class="flex items-center gap-2 font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity group z-10">
+      <img src="/logo.png" alt="IncentiveMapper Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" width="36" height="36" />
+      <span>IncentiveMapper</span>
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="hidden lg:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
+      <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.directory}</a>
+      <a href={`/${lang}/search`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.search}</a>
+      <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compare}</a>
+      <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.compliance}</a>
+      <a href={`/${lang}/blog`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.blog}</a>
+    </nav>
+
+    <!-- Controls (Desktop & Tablet) -->
+    <div class="hidden md:flex items-center gap-3">
+      <!-- Lang Selector -->
+      <select 
+        id="lang-select" 
+        class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
+      >
+        <option value="en-us" selected={lang === 'en-us'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">EN-US</option>
+        <option value="de-de" selected={lang === 'de-de'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">DE-DE</option>
+        <option value="fr-fr" selected={lang === 'fr-fr'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">FR-FR</option>
+      </select>
+
+      <!-- Theme Selector -->
+      <select 
+        id="theme-select"
+        class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
+      >
+        <option value="sage-minimalist" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Sage Minimalist</option>
+        <option value="dark-forest" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Dark Forest</option>
+        <option value="mint-tech" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Mint Tech</option>
+      </select>
+      
+
+      <a href={`/${lang}/directory`} class="bg-[var(--color-accent)] text-white font-bold text-sm px-4 py-2 rounded-xl shrink-0">
+        {t.nav.browseDir || 'Browse Directory'}
+      </a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-btn" class="md:hidden p-2 text-[var(--text-main)] focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobile Menu Dropdown -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-[var(--color-border)] absolute w-full left-0 shadow-lg" style="background-color: var(--bg-primary);">
+    <nav class="flex flex-col p-4 gap-4 text-sm font-semibold text-[var(--text-muted)]">
+      <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)]">{t.nav.directory}</a>
+      <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">{t.nav.search}</a>
+      <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">{t.nav.compare}</a>
+      <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">{t.nav.compliance}</a>
+      <a href={`/${lang}/blog`} class="hover:text-[var(--text-main)]">{t.nav.blog}</a>
+      <hr class="border-[var(--color-border)]" />
+      <div class="flex items-center justify-between">
+        <span>Language</span>
+        <select 
+          id="lang-select-mobile" 
+          class="bg-[var(--bg-secondary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none"
+        >
+          <option value="en-us" selected={lang === 'en-us'}>EN-US</option>
+          <option value="de-de" selected={lang === 'de-de'}>DE-DE</option>
+          <option value="fr-fr" selected={lang === 'fr-fr'}>FR-FR</option>
+        </select>
+      </div>
+      <div class="flex items-center justify-between">
+        <span>Theme</span>
+        <select 
+          id="theme-select-mobile"
+          class="bg-[var(--bg-secondary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none"
+        >
+          <option value="sage-minimalist">Sage Minimalist</option>
+          <option value="dark-forest">Dark Forest</option>
+          <option value="mint-tech">Mint Tech</option>
+        </select>
+      </div>
+      
+
+      <a href={`/${lang}/directory`} class="bg-[var(--color-accent)] text-white text-center font-bold text-sm px-4 py-3 rounded-xl w-full">
+        {t.nav.browseDir || 'Browse Directory'}
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script is:inline>
+  function initNavbar() {
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    if (btn && menu) {
+      if (!btn.dataset.hasListener) {
+        btn.addEventListener('click', () => {
+          menu.classList.toggle('hidden');
+        });
+        btn.dataset.hasListener = 'true';
+      }
+    }
+    
+    // Sync mobile selectors with main logic
+    const activeTheme = localStorage.getItem('theme') || 'sage-minimalist';
+    const themeSelectMobile = document.getElementById('theme-select-mobile');
+    if (themeSelectMobile) {
+      themeSelectMobile.value = activeTheme;
+      if (!themeSelectMobile.dataset.hasListener) {
+        themeSelectMobile.addEventListener('change', (e) => {
+          const theme = e.target.value;
+          localStorage.setItem('theme', theme);
+          document.documentElement.setAttribute('data-theme', theme);
+          const mainSelect = document.getElementById('theme-select');
+          if (mainSelect) mainSelect.value = theme;
+        });
+        themeSelectMobile.dataset.hasListener = 'true';
+      }
+    }
+
+    const langSelectMobile = document.getElementById('lang-select-mobile');
+    if (langSelectMobile) {
+      if (!langSelectMobile.dataset.hasListener) {
+        langSelectMobile.addEventListener('change', (e) => {
+          const targetLang = e.target.value;
+          const pathParts = window.location.pathname.split('/').filter(Boolean);
+          if (pathParts.length === 0) {
+            window.location.href = `/${targetLang}/directory`;
+          } else {
+            const supportedLangs = ['en-us', 'de-de', 'fr-fr'];
+            if (supportedLangs.includes(pathParts[0])) {
+              pathParts[0] = targetLang;
+            } else {
+              pathParts.unshift(targetLang);
+            }
+            window.location.href = `/${pathParts.join('/')}${window.location.search}`;
+          }
+        });
+        langSelectMobile.dataset.hasListener = 'true';
+      }
+    }
+  }
+
+  // Run immediately since elements are already parsed when the script runs
+  initNavbar();
+
+  // Also run on standard DOMContentLoaded and Astro transition load events
+  document.addEventListener('DOMContentLoaded', initNavbar);
+  document.addEventListener('astro:page-load', initNavbar);
+</script>
