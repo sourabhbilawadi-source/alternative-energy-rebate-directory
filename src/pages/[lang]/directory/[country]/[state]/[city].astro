@@ -187,6 +187,16 @@ const estimatedPayback = annualSavings > 0 ? (netCost / annualSavings) : null;
 const paybackText = estimatedPayback ? estimatedPayback.toFixed(1) : 'under 5';
 
 // Localized Title & Description
+const getCurrencySymbol = (code: string) => {
+  const c = code?.toLowerCase();
+  if (c === 'de') return '€';
+  if (c === 'uk') return '£';
+  if (c === 'au') return 'A$';
+  if (c === 'ca') return 'C$';
+  return '$';
+};
+const currencySymbol = getCurrencySymbol(country);
+
 let seoTitle = '';
 let seoDescription = '';
 const fedPctText = Math.round((localSpecs.incentives?.federalTaxCreditPct || 0.0) * 100);
@@ -196,19 +206,19 @@ const isUs = country === 'us';
 if (lang === 'de-de') {
   seoTitle = `${displayCity}, ${displayState} Solarförderung 2026 — Berechnen Sie Ihre Amortisationszeit | IncentiveMapper`;
   seoDescription = isUs 
-    ? `Sparen Sie bei Solarstrom in ${displayCity}, ${displayState} mit Stromtarifen von $${rateText}/kWh. Berechnen Sie Ihre Amortisationszeit, Solareinsparungen und lokale Solarförderungen!`
-    : `Sparen Sie bei Solarstrom in ${displayCity}, ${displayState} mit ${fedPctText}% Bundessteuergutschrift und Stromtarifen von $${rateText}/kWh. Geschätzte Amortisation: ${paybackText} Jahre. Berechnen Sie Ihren ROI!`;
+    ? `Sparen Sie bei Solarstrom in ${displayCity}, ${displayState} mit Stromtarifen von ${currencySymbol}${rateText}/kWh. Berechnen Sie Ihre Amortisationszeit, Solareinsparungen und lokale Solarförderungen!`
+    : `Sparen Sie bei Solarstrom in ${displayCity}, ${displayState} mit ${fedPctText}% Bundessteuergutschrift und Stromtarifen von ${currencySymbol}${rateText}/kWh. Geschätzte Amortisation: ${paybackText} Jahre. Berechnen Sie Ihren ROI!`;
 } else if (lang === 'fr-fr') {
   seoTitle = `Subventions Solaires ${displayCity}, ${displayState} 2026 — Calculez Votre Période d'Amortissement | IncentiveMapper`;
   seoDescription = isUs
-    ? `Économisez sur l'énergie solaire à ${displayCity}, ${displayState} avec des tarifs d'électricité de $${rateText}/kWh. Calculez votre amortissement, vos économies et vos subventions locales!`
-    : `Économisez sur l'énergie solaire à ${displayCity}, ${displayState} avec un crédit d'impôt fédéral de ${fedPctText}% et des tarifs de $${rateText}/kWh. Période d'amortissement estimée : ${paybackText} ans.`;
+    ? `Économisez sur l'énergie solaire à ${displayCity}, ${displayState} avec des tarifs d'électricité de ${currencySymbol}${rateText}/kWh. Calculez votre amortissement, vos économies et vos subventions locales!`
+    : `Économisez sur l'énergie solaire à ${displayCity}, ${displayState} avec un crédit d'impôt fédéral de ${fedPctText}% et des tarifs de ${currencySymbol}${rateText}/kWh. Période d'amortissement estimée : ${paybackText} ans.`;
 } else {
   // Default to English
   seoTitle = `${displayCity}, ${displayState} Solar Rebates 2026 — Calculate Your Payback Period | IncentiveMapper`;
   seoDescription = isUs
-    ? `Save on solar in ${displayCity}, ${displayState} with local utility rates of $${rateText}/kWh. Calculate your estimated payback, solar savings, and active rebates today!`
-    : `Save on solar in ${displayCity}, ${displayState} with a ${fedPctText}% federal tax credit and utility rates of $${rateText}/kWh. Estimated payback period: ${paybackText} years. Calculate your solar ROI today!`;
+    ? `Save on solar in ${displayCity}, ${displayState} with local utility rates of ${currencySymbol}${rateText}/kWh. Calculate your estimated payback, solar savings, and active rebates today!`
+    : `Save on solar in ${displayCity}, ${displayState} with a ${fedPctText}% federal tax credit and utility rates of ${currencySymbol}${rateText}/kWh. Estimated payback period: ${paybackText} years. Calculate your solar ROI today!`;
 }
 ---
 

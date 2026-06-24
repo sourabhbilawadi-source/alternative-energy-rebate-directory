@@ -939,6 +939,22 @@ export const regionsData: RegionEntry[] = [
     stateRebate: 0,
     utilityRebate: 0
   },
+  {
+    countryCode: 'au',
+    countryName: 'Australia',
+    flag: '🇦🇺',
+    stateSlug: 'northern-territory',
+    stateName: 'Northern Territory',
+    citySlug: 'darwin',
+    cityName: 'Darwin',
+    gridRate: 0.26,
+    sunHours: 2400,
+    gridEmissions: 0.70,
+    costPerWatt: 1.80,
+    federalTaxCreditPct: 0.0,
+    stateRebate: 0,
+    utilityRebate: 0
+  },
 
   // --- Germany ---
   {
@@ -1013,6 +1029,22 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Saxony',
     citySlug: 'leipzig',
     cityName: 'Leipzig',
+    gridRate: 0.36,
+    sunHours: 1100,
+    gridEmissions: 0.38,
+    costPerWatt: 2.80,
+    federalTaxCreditPct: 0.0,
+    stateRebate: 0,
+    utilityRebate: 0
+  },
+  {
+    countryCode: 'de',
+    countryName: 'Germany',
+    flag: '🇩🇪',
+    stateSlug: 'north-rhine-westphalia',
+    stateName: 'North Rhine-Westphalia',
+    citySlug: 'düsseldorf',
+    cityName: 'Düsseldorf',
     gridRate: 0.36,
     sunHours: 1100,
     gridEmissions: 0.38,

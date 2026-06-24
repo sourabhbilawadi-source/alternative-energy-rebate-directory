@@ -9,6 +9,7 @@ interface CitySpecs {
   name: string;
   state: string;
   country: string;
+  countryCode: string;
   gridRate: number;
   sunHours: number;
   gridEmissions: number;
@@ -20,6 +21,22 @@ interface CitySpecs {
   };
 }
 
+const getCountryConfig = (code: string) => {
+  const c = code.toLowerCase();
+  switch (c) {
+    case 'de':
+      return { symbol: '€', area: 'm²', carbon: 't', isMetric: true };
+    case 'uk':
+      return { symbol: '£', area: 'm²', carbon: 't', isMetric: true };
+    case 'au':
+      return { symbol: 'A$', area: 'm²', carbon: 't', isMetric: true };
+    case 'ca':
+      return { symbol: 'C$', area: 'm²', carbon: 't', isMetric: true };
+    default:
+      return { symbol: '$', area: 'sq ft', carbon: 'Tons', isMetric: false };
+  }
+};
+
 export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) {
   const t = useTranslations(lang);
 
@@ -30,6 +47,7 @@ export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) 
       name: r.cityName,
       state: r.stateName,
       country: r.countryName,
+      countryCode: r.countryCode,
       gridRate: r.gridRate!,
       sunHours: r.sunHours!,
       gridEmissions: r.gridEmissions!,
@@ -45,7 +63,23 @@ export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) 
   const [cityAKey, setCityAKey] = useState('los-angeles');
   const [cityBKey, setCityBKey] = useState('houston');
   const [monthlyBill, setMonthlyBill] = useState(250);
-  const [roofArea, setRoofArea] = useState(1200);
+  
+  const cityA = cities.find(c => c.key === cityAKey) || cities[0];
+  const cityB = cities.find(c => c.key === cityBKey) || cities[1];
+  
+  const configA = getCountryConfig(cityA.countryCode);
+  const configB = getCountryConfig(cityB.countryCode);
+
+  const [roofArea, setRoofArea] = useState(configA.isMetric ? 120 : 1200);
+
+  // Adjust roof area default if City A's country changes
+  useEffect(() => {
+    if (configA.isMetric && roofArea > 1000) {
+      setRoofArea(120);
+    } else if (!configA.isMetric && roofArea < 500) {
+      setRoofArea(1200);
+    }
+  }, [cityAKey]);
 
   // Sync custom regions created via Admin panel
   useEffect(() => {
@@ -58,6 +92,7 @@ export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) 
           name: r.city,
           state: r.state_province,
           country: r.country_code.toUpperCase(),
+          countryCode: r.country_code,
           gridRate: Number(r.grid_rate),
           sunHours: Number(r.sun_hours),
           gridEmissions: Number(r.grid_emissions),
@@ -82,13 +117,14 @@ export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) 
     }
   }, []);
 
-  const cityA = cities.find(c => c.key === cityAKey) || cities[0];
-  const cityB = cities.find(c => c.key === cityBKey) || cities[1];
-
   // Helper to compute ROI parameters
   const calculateROI = (city: CitySpecs) => {
+    const config = getCountryConfig(city.countryCode);
     const systemSizeIdeal = (12 * monthlyBill) / (city.gridRate * city.sunHours);
-    const systemSizeCapped = Math.min(roofArea / 150, systemSizeIdeal);
+    
+    // Slider is in City A's local unit (m² if configA.isMetric, else sq ft)
+    const roofAreaSqFt = configA.isMetric ? roofArea * 10.764 : roofArea;
+    const systemSizeCapped = Math.min(roofAreaSqFt / 150, systemSizeIdeal);
     const capitalCost = systemSizeCapped * 1000 * city.costPerWatt;
     
     // Incentives
@@ -102,7 +138,9 @@ export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) 
     const payback = annualSavings > 0 ? Math.max(0.5, netCost / annualSavings) : 0;
 
     // Ecological
-    const carbonAbated = (systemSizeCapped * city.sunHours * city.gridEmissions) / 2000;
+    const carbonAbated = config.isMetric 
+      ? (systemSizeCapped * city.sunHours * city.gridEmissions) / 1000
+      : (systemSizeCapped * city.sunHours * city.gridEmissions) / 907.185;
 
     return {
       size: systemSizeCapped,
@@ -123,7 +161,7 @@ export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) 
         <div className="space-y-3">
           <div className="flex justify-between items-center text-sm font-semibold">
             <span className="text-[var(--text-main)]">{t.calculator.monthlyBill}</span>
-            <span className="text-[var(--color-accent)] text-lg font-bold">${monthlyBill}</span>
+            <span className="text-[var(--color-accent)] text-lg font-bold">{configA.symbol}{monthlyBill}</span>
           </div>
           <input 
             type="range" min="50" max="1000" step="10" value={monthlyBill} 
@@ -134,10 +172,14 @@ export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) 
         <div className="space-y-3">
           <div className="flex justify-between items-center text-sm font-semibold">
             <span className="text-[var(--text-main)]">{t.calculator.roofArea}</span>
-            <span className="text-[var(--color-accent)] text-lg font-bold">{roofArea} sq ft</span>
+            <span className="text-[var(--color-accent)] text-lg font-bold">{roofArea} {configA.area}</span>
           </div>
           <input 
-            type="range" min="100" max="5000" step="50" value={roofArea} 
+            type="range" 
+            min={configA.isMetric ? 10 : 100} 
+            max={configA.isMetric ? 500 : 5000} 
+            step={configA.isMetric ? 5 : 50} 
+            value={roofArea} 
             onChange={(e) => setRoofArea(Number(e.target.value))}
             className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-[var(--color-border)] accent-[var(--color-accent)]"
           />
@@ -196,11 +238,11 @@ export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) 
             </div>
             <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
               <span className="text-xs font-bold text-[var(--text-muted)]">{t.calculator.netCost}:</span>
-              <span className="text-xl font-extrabold text-[var(--text-main)]">${Math.round(roiA.cost).toLocaleString()}</span>
+              <span className="text-xl font-extrabold text-[var(--text-main)]">{configA.symbol}{Math.round(roiA.cost).toLocaleString()}</span>
             </div>
             <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
-              <span className="text-xs font-bold text-[var(--text-muted)]">Annual bill savings:</span>
-              <span className="text-xl font-extrabold text-[var(--text-main)]">${Math.round(roiA.savings).toLocaleString()}</span>
+              <span className="text-xs font-bold text-[var(--text-muted)] font-semibold">Annual bill savings:</span>
+              <span className="text-xl font-extrabold text-[var(--text-main)]">{configA.symbol}{Math.round(roiA.savings).toLocaleString()}</span>
             </div>
             <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
               <span className="text-xs font-bold text-[var(--text-muted)]">System Size Capped:</span>
@@ -208,13 +250,13 @@ export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) 
             </div>
             <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
               <span className="text-xs font-bold text-[var(--text-muted)]">{t.calculator.carbonOffset}:</span>
-              <span className="text-xl font-extrabold text-[var(--text-main)]">{roiA.carbon.toFixed(1)} {t.calculator.years ? 'Tons' : 'Tons'}</span>
+              <span className="text-xl font-extrabold text-[var(--text-main)]">{roiA.carbon.toFixed(1)} {configA.carbon}</span>
             </div>
           </div>
 
           <div className="bg-[var(--bg-primary)]/40 p-4 rounded-2xl border border-[var(--color-border)] text-xs space-y-1">
             <div className="font-bold mb-1 text-[var(--text-main)]">Regional Policy Specs:</div>
-            <div className="text-[var(--text-muted)] font-semibold">{t.calculator.gridRate}: <strong>${cityA.gridRate}/kWh</strong></div>
+            <div className="text-[var(--text-muted)] font-semibold">{t.calculator.gridRate}: <strong>{configA.symbol}{cityA.gridRate}/kWh</strong></div>
             <div className="text-[var(--text-muted)] font-semibold">{t.calculator.sunHours}: <strong>{cityA.sunHours} hrs/yr</strong></div>
             <div className="text-[var(--text-muted)] font-semibold">{t.calculator.federalIncentive}: <strong>{cityA.incentives.federalTaxCreditPct * 100}%</strong></div>
           </div>
@@ -268,11 +310,11 @@ export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) 
             </div>
             <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
               <span className="text-xs font-bold text-[var(--text-muted)]">{t.calculator.netCost}:</span>
-              <span className="text-xl font-extrabold text-[var(--text-main)]">${Math.round(roiB.cost).toLocaleString()}</span>
+              <span className="text-xl font-extrabold text-[var(--text-main)]">{configB.symbol}{Math.round(roiB.cost).toLocaleString()}</span>
             </div>
             <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
-              <span className="text-xs font-bold text-[var(--text-muted)]">Annual bill savings:</span>
-              <span className="text-xl font-extrabold text-[var(--text-main)]">${Math.round(roiB.savings).toLocaleString()}</span>
+              <span className="text-xs font-bold text-[var(--text-muted)] font-semibold">Annual bill savings:</span>
+              <span className="text-xl font-extrabold text-[var(--text-main)]">{configB.symbol}{Math.round(roiB.savings).toLocaleString()}</span>
             </div>
             <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
               <span className="text-xs font-bold text-[var(--text-muted)]">System Size Capped:</span>
@@ -280,13 +322,13 @@ export default function ComparisonEngine({ lang = 'en-us' }: { lang?: string }) 
             </div>
             <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
               <span className="text-xs font-bold text-[var(--text-muted)]">{t.calculator.carbonOffset}:</span>
-              <span className="text-xl font-extrabold text-[var(--text-main)]">{roiB.carbon.toFixed(1)} {t.calculator.years ? 'Tons' : 'Tons'}</span>
+              <span className="text-xl font-extrabold text-[var(--text-main)]">{roiB.carbon.toFixed(1)} {configB.carbon}</span>
             </div>
           </div>
 
           <div className="bg-[var(--bg-primary)]/40 p-4 rounded-2xl border border-[var(--color-border)] text-xs space-y-1">
             <div className="font-bold mb-1 text-[var(--text-main)]">Regional Policy Specs:</div>
-            <div className="text-[var(--text-muted)] font-semibold">{t.calculator.gridRate}: <strong>${cityB.gridRate}/kWh</strong></div>
+            <div className="text-[var(--text-muted)] font-semibold">{t.calculator.gridRate}: <strong>{configB.symbol}{cityB.gridRate}/kWh</strong></div>
             <div className="text-[var(--text-muted)] font-semibold">{t.calculator.sunHours}: <strong>{cityB.sunHours} hrs/yr</strong></div>
             <div className="text-[var(--text-muted)] font-semibold">{t.calculator.federalIncentive}: <strong>{cityB.incentives.federalTaxCreditPct * 100}%</strong></div>
           </div>

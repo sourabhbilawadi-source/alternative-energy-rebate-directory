@@ -212,6 +212,22 @@ function EnergyFlowVisualizer({ batteryEnabled, sunHours, systemSize, lang }: { 
   );
 }
 
+const getCountryConfig = (code: string) => {
+  const c = code.toLowerCase();
+  switch (c) {
+    case 'de':
+      return { symbol: '€', area: 'm²', carbon: 't', land: 'Hektar', isMetric: true };
+    case 'uk':
+      return { symbol: '£', area: 'm²', carbon: 't', land: 'Acres', isMetric: true };
+    case 'au':
+      return { symbol: 'A$', area: 'm²', carbon: 't', land: 'Hectares', isMetric: true };
+    case 'ca':
+      return { symbol: 'C$', area: 'm²', carbon: 't', land: 'Acres', isMetric: true };
+    default:
+      return { symbol: '$', area: 'sq ft', carbon: 'Tons', land: 'Acres', isMetric: false };
+  }
+};
+
 export default function RebateCalculator({
   defaultGridRate,
   defaultSunHours,
@@ -252,6 +268,8 @@ export default function RebateCalculator({
   // Input states
   const [ownership, setOwnership] = useState<'purchase' | 'lease'>('purchase');
   const [localCountry, setLocalCountry] = useState(regionEntry?.countryCode || 'us');
+  const config = getCountryConfig(localCountry);
+
   const [zipCode, setZipCode] = useState(() => {
     const c = city ? city.toLowerCase().trim() : '';
     if (c.includes('houston')) return '77001';
@@ -261,10 +279,12 @@ export default function RebateCalculator({
     if (c.includes('berlin')) return '10115';
     if (c.includes('sydney')) return '2000';
     if (c.includes('toronto')) return 'M5V 1J2';
+    if (c.includes('düsseldorf') || c.includes('dusseldorf')) return '40210';
+    if (c.includes('darwin')) return '0800';
     return '90210'; // Default fallback
   });
   const [monthlyBill, setMonthlyBill] = useState(250);
-  const [roofArea, setRoofArea] = useState(1200);
+  const [roofArea, setRoofArea] = useState(config.isMetric ? 120 : 1200);
   const [batteryEnabled, setBatteryEnabled] = useState(false);
   const [batteryCapacity, setBatteryCapacity] = useState(10);
 
@@ -277,6 +297,16 @@ export default function RebateCalculator({
   const [localState, setLocalState] = useState(state);
   const [dbRebates, setDbRebates] = useState<DbRebate[]>(initialDbRebates);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  // Adjust roof area default if country changes
+  useEffect(() => {
+    const isMetric = ['de', 'uk', 'au', 'ca'].includes(localCountry.toLowerCase());
+    if (isMetric && roofArea > 1000) {
+      setRoofArea(120);
+    } else if (!isMetric && roofArea < 500) {
+      setRoofArea(1200);
+    }
+  }, [localCountry]);
 
   // Merge database presets with any localStorage overrides (Option B) on mount and city change
   useEffect(() => {
@@ -388,7 +418,8 @@ export default function RebateCalculator({
   const systemSizeIdeal = (12 * monthlyBill) / (gridRate * sunHours); // kW
   
   // P_sz = min( A_roof / F_sqft, S ) where F_sqft = 150
-  const systemSizeCapped = Math.min(roofArea / 150, systemSizeIdeal); // kW
+  const roofAreaSqFt = config.isMetric ? roofArea * 10.764 : roofArea;
+  const systemSizeCapped = Math.min(roofAreaSqFt / 150, systemSizeIdeal); // kW
   
   // System capital cost: kW * WattsPerkW * CostPerWatt
   const capitalCost = systemSizeCapped * 1000 * costPerWatt;
@@ -484,12 +515,12 @@ export default function RebateCalculator({
   const paybackYears = annualSavingsCapped > 0 ? Math.max(0.5, netSystemCost / annualSavingsCapped) : 0;
 
   // Carbon abatement (CO2_tons = (P_sz * eta_sun * delta_grid) / 2000)
-  const carbonAbatementTons = (systemSizeCapped * sunHours * gridEmissions) / 2000;
+  const carbonAbatementTons = config.isMetric ? (systemSizeCapped * sunHours * gridEmissions) / 1000 : (systemSizeCapped * sunHours * gridEmissions) / 907.185;
 
   // Carbon equivalents
   const equivalentCars = carbonAbatementTons * 0.22;
   const equivalentCoal = carbonAbatementTons * 0.96;
-  const equivalentForest = carbonAbatementTons * 1.2;
+  const equivalentForest = config.isMetric ? (carbonAbatementTons * 1.2 * 0.4047) : (carbonAbatementTons * 1.2);
 
   // Animation layout variants
   const containerVariants = {
@@ -610,7 +641,7 @@ export default function RebateCalculator({
         <motion.div variants={itemVariants} className="space-y-3">
           <div className="flex justify-between items-center text-sm font-semibold">
             <span className="text-[var(--text-main)]">{t.calculator.monthlyBill}</span>
-            <span className="text-[var(--color-accent)] text-lg font-bold">${monthlyBill}</span>
+            <span className="text-[var(--color-accent)] text-lg font-bold">{config.symbol}{monthlyBill}</span>
           </div>
           <input 
             type="range" 
@@ -622,9 +653,9 @@ export default function RebateCalculator({
             className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-[var(--color-border)] accent-[var(--color-accent)]"
           />
           <div className="flex justify-between text-xs text-[var(--text-muted)]">
-            <span>$50</span>
-            <span>$500</span>
-            <span>$1,000</span>
+            <span>{config.symbol}50</span>
+            <span>{config.symbol}500</span>
+            <span>{config.symbol}1,000</span>
           </div>
         </motion.div>
 
@@ -632,21 +663,21 @@ export default function RebateCalculator({
         <motion.div variants={itemVariants} className="space-y-3">
           <div className="flex justify-between items-center text-sm font-semibold">
             <span className="text-[var(--text-main)]">{t.calculator.roofArea}</span>
-            <span className="text-[var(--color-accent)] text-lg font-bold">{roofArea} sq ft</span>
+            <span className="text-[var(--color-accent)] text-lg font-bold">{roofArea} {config.area}</span>
           </div>
           <input 
             type="range" 
-            min="100" 
-            max="5000" 
-            step="50"
+            min={config.isMetric ? 10 : 100} 
+            max={config.isMetric ? 500 : 5000} 
+            step={config.isMetric ? 5 : 50}
             value={roofArea} 
             onChange={(e) => setRoofArea(Number(e.target.value))}
             className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-[var(--color-border)] accent-[var(--color-accent)]"
           />
           <div className="flex justify-between text-xs text-[var(--text-muted)]">
-            <span>100 sq ft</span>
-            <span>2,500 sq ft</span>
-            <span>5,000 sq ft</span>
+            <span>{config.isMetric ? "10 m²" : "100 sq ft"}</span>
+            <span>{config.isMetric ? "250 m²" : "2,500 sq ft"}</span>
+            <span>{config.isMetric ? "500 m²" : "5,000 sq ft"}</span>
           </div>
         </motion.div>
 
@@ -700,7 +731,7 @@ export default function RebateCalculator({
                   className="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-[var(--color-border)] accent-[var(--color-accent)]"
                 />
                 <div className="text-[11px] text-[var(--text-muted)] border-t border-[var(--color-border)]/50 pt-2 leading-relaxed">
-                  Estimated battery cost: <strong className="text-[var(--text-main)]">${(batteryCapacity * 750).toLocaleString()}</strong>. Yields an extra <strong className="text-[var(--text-main)]">${Math.round(batteryCapacity * 365 * 0.26 * 0.88)}/yr</strong> in peak shifting offsets.
+                  Estimated battery cost: <strong className="text-[var(--text-main)]">{config.symbol}{(batteryCapacity * 750).toLocaleString()}</strong>. Yields an extra <strong className="text-[var(--text-main)]">{config.symbol}{Math.round(batteryCapacity * 365 * 0.26 * 0.88)}/yr</strong> in peak shifting offsets.
                 </div>
               </motion.div>
             )}
@@ -717,10 +748,10 @@ export default function RebateCalculator({
             {t.calculator.localAveragesTitle}
           </h4>
           <div className="grid grid-cols-2 gap-2 text-[var(--text-muted)] font-semibold">
-            <div>{t.calculator.gridRate}: <strong className="text-[var(--text-main)]">${gridRate.toFixed(2)}/kWh</strong></div>
+            <div>{t.calculator.gridRate}: <strong className="text-[var(--text-main)]">{config.symbol}{gridRate.toFixed(2)}/kWh</strong></div>
             <div>{t.calculator.sunHours}: <strong className="text-[var(--text-main)]">{sunHours} hrs/yr</strong></div>
             <div>{t.calculator.gridEmissions}: <strong className="text-[var(--text-main)]">{gridEmissions.toFixed(2)} kg/kWh</strong></div>
-            <div>{t.calculator.costPerWatt}: <strong className="text-[var(--text-main)]">${costPerWatt.toFixed(2)}/W</strong></div>
+            <div>{t.calculator.costPerWatt}: <strong className="text-[var(--text-main)]">{config.symbol}{costPerWatt.toFixed(2)}/W</strong></div>
           </div>
         </motion.div>
 
@@ -824,7 +855,7 @@ export default function RebateCalculator({
 
           <div className="text-xs text-[var(--text-muted)] flex items-center gap-1.5 border-t border-[var(--color-border)] pt-3">
             <HelpCircle className="w-4 h-4" />
-            Based on a net system installation cost of <strong className="text-[var(--text-main)]">${Math.round(netSystemCost).toLocaleString()}</strong> after incentives{batteryEnabled && " and battery components"}.
+            Based on a net system installation cost of <strong className="text-[var(--text-main)]">{config.symbol}{Math.round(netSystemCost).toLocaleString()}</strong> after incentives{batteryEnabled && " and battery components"}.
           </div>
         </motion.div>
 
@@ -850,7 +881,7 @@ export default function RebateCalculator({
               <AnimatedNumber value={systemSizeCapped} formatter={(v) => v.toFixed(2)} /> <span className="text-sm font-bold text-[var(--text-muted)]">kW</span>
             </div>
             <p className="text-xs text-[var(--text-muted)]">
-              Capped by {roofArea} sq ft usable roof space.
+              Capped by {roofArea} {config.area} usable roof space.
             </p>
           </motion.div>
 
@@ -868,10 +899,10 @@ export default function RebateCalculator({
               <Zap className="w-4 h-4 text-[var(--color-accent)]" />
             </div>
             <div className="text-2xl font-black text-[var(--text-main)]">
-              $<AnimatedNumber value={annualSavingsCapped} /> <span className="text-sm font-bold text-[var(--text-muted)]">/ yr</span>
+              {config.symbol}<AnimatedNumber value={annualSavingsCapped} /> <span className="text-sm font-bold text-[var(--text-muted)]">/ yr</span>
             </div>
             <p className="text-xs text-[var(--text-muted)]">
-              Saves <strong className="text-[var(--text-main)]">${Math.round(annualSavingsCapped / 12)}</strong> average per month.
+              Saves <strong className="text-[var(--text-main)]">{config.symbol}{Math.round(annualSavingsCapped / 12)}</strong> average per month.
             </p>
           </motion.div>
 
@@ -889,7 +920,7 @@ export default function RebateCalculator({
               {t.calculator.carbonOffset}
             </span>
             <span className="text-sm font-black text-green-500">
-              <AnimatedNumber value={carbonAbatementTons} formatter={(v) => v.toFixed(1)} /> {t.calculator.tons}
+              <AnimatedNumber value={carbonAbatementTons} formatter={(v) => v.toFixed(1)} /> {config.carbon}
             </span>
           </div>
 
@@ -911,9 +942,14 @@ export default function RebateCalculator({
             <div className="space-y-1.5 p-2 bg-[var(--bg-secondary)]/50 rounded-xl border border-[var(--color-border)]/40">
               <Building className="w-4 h-4 text-[var(--text-muted)] mx-auto" />
               <div className="font-bold text-[var(--text-main)]">
-                <AnimatedNumber value={equivalentForest} /> Acres
+                <AnimatedNumber value={equivalentForest} /> {config.land}
               </div>
-              <div>{t.calculator.equivalentForest}</div>
+              <div>
+                {lang === 'de-de' 
+                  ? 'Waldfläche gerettet (Hektar)' 
+                  : (config.land === 'Hectares' ? 'Forest hectares saved' : t.calculator.equivalentForest)
+                }
+              </div>
             </div>
           </div>
         </motion.div>
@@ -929,7 +965,7 @@ export default function RebateCalculator({
                 <DollarSign className="w-3.5 h-3.5" />
               </div>
               <span className="text-[var(--text-muted)]">{t.calculator.activeRebatesTitle}:</span>
-              <strong className="text-[var(--text-main)]">${Math.round(totalIncentives).toLocaleString()}</strong>
+              <strong className="text-[var(--text-main)]">{config.symbol}{Math.round(totalIncentives).toLocaleString()}</strong>
             </div>
             <div className="text-[var(--text-muted)] text-right font-medium">
               {dbRebates && dbRebates.length > 0 ? (
@@ -950,8 +986,8 @@ export default function RebateCalculator({
                       {isFed ? (isUs ? (ownership === 'lease' ? '30%' : '0%') : `${rebate.incentive_value}%`) : (
                         <>
                           {rebate.incentive_type === 'percentage' && `${rebate.incentive_value}%`}
-                          {rebate.incentive_type === 'fixed' && `$${rebate.incentive_value}`}
-                          {rebate.incentive_type === 'per_watt' && `$${rebate.incentive_value}/W`}
+                          {rebate.incentive_type === 'fixed' && `${config.symbol}${rebate.incentive_value}`}
+                          {rebate.incentive_type === 'per_watt' && `${config.symbol}${rebate.incentive_value}/W`}
                         </>
                       )}
                     </span>
@@ -985,6 +1021,25 @@ export default function RebateCalculator({
             </div>
           )}
         </motion.div>
+
+        {/* Germany-specific EEG Reform Disclaimer */}
+        {localCountry === 'de' && (
+          <motion.div
+            variants={itemVariants}
+            className="mt-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-[var(--text-muted)] space-y-1 shadow-sm animate-pulse-subtle"
+          >
+            <div className="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
+              <HelpCircle className="w-3.5 h-3.5" />
+              {lang === 'de-de' ? 'EEG-Reform-Entwurf' : 'EEG Reform Draft'}
+            </div>
+            <p className="leading-relaxed">
+              {lang === 'de-de' 
+                ? 'Ein Referentenentwurf des BMWK (April 2026) sieht vor, die feste Einspeisevergütung für neue Aufdachanlagen ab dem 1. Januar 2027 abzuschaffen. Dies ist noch kein geltendes Recht.'
+                : 'A ministerial draft (BMWK Referentenentwurf, April 2026) proposes abolishing fixed feed-in tariffs for new residential systems from Jan 1, 2027. This is not yet final law.'
+              }
+            </p>
+          </motion.div>
+        )}
 
       </motion.div>
     </motion.div>
