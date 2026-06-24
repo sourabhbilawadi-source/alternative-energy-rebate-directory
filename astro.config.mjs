@@ -7,7 +7,7 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://ecorebates.org', // Production site URL required for sitemaps
+  site: 'https://incentivemapper.com', // Production site URL required for sitemaps
   adapter: cloudflare(),
 
   vite: {

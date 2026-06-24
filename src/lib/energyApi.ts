@@ -62,7 +62,7 @@ export async function queryLocationSpecs(
     const geocodeUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cleanQuery)}&format=json&limit=1`;
     const geoResponse = await fetch(geocodeUrl, {
       headers: {
-        'User-Agent': 'EcoRebates-Alternative-Energy-Directory-v1.0'
+        'User-Agent': 'IncentiveMapper-Alternative-Energy-Directory-v1.0'
       }
     });
 

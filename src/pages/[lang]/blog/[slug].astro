@@ -38,7 +38,7 @@ const localT = {
     relatedTitle: 'Related Solar Calculators',
     relatedDesc: 'Check local utility rates, solar incentives, and calculate your exact payback period using our interactive calculator for these regions:',
     calcAction: 'Calculate Solar ROI &rarr;',
-    metaTitleSuffix: '| EcoRebates Blog'
+    metaTitleSuffix: '| IncentiveMapper Blog'
   },
   'de-de': {
     backToBlog: '&larr; Zurück zum Blog',
@@ -47,7 +47,7 @@ const localT = {
     relatedTitle: 'Passende Solarrechner',
     relatedDesc: 'Prüfen Sie die Stromtarife, Solarförderungen und berechnen Sie Ihre Amortisationszeit mit unserem interaktiven Rechner für diese Regionen:',
     calcAction: 'Solar-ROI Berechnen &rarr;',
-    metaTitleSuffix: '| EcoRebates Blog'
+    metaTitleSuffix: '| IncentiveMapper Blog'
   },
   'fr-fr': {
     backToBlog: '&larr; Retour au Blog',
@@ -56,14 +56,14 @@ const localT = {
     relatedTitle: 'Calculateurs Solaires Associés',
     relatedDesc: 'Vérifiez les tarifs d\'électricité locaux, les subventions solaires et calculez votre retour sur investissement pour ces régions :',
     calcAction: 'Calculer le ROI Solaire &rarr;',
-    metaTitleSuffix: '| EcoRebates Blog'
+    metaTitleSuffix: '| IncentiveMapper Blog'
   }
 };
 
 const labels = localT[activeLang as keyof typeof localT] || localT['en-us'];
 const seoTitle = `${post.data.title} ${labels.metaTitleSuffix}`;
 const seoDescription = post.data.description;
-const canonicalUrl = `https://ecorebates.org/${activeLang}/blog/${post.id}`;
+const canonicalUrl = `https://incentivemapper.com/${activeLang}/blog/${post.id}`;
 
 // Helper function to resolve region tag data (names & slugs)
 interface ResolvedRegion {
@@ -118,13 +118,13 @@ const resolvedRegions = post.data.relatedRegions
   <meta property="og:description" content={seoDescription} />
   <meta property="og:type" content="article" />
   <meta property="og:url" content={canonicalUrl} />
-  <meta property="og:image" content="https://ecorebates.org/og-preview.png" />
+  <meta property="og:image" content="https://incentivemapper.com/og-preview.png" />
 
   <!-- Twitter Card Metadata -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={seoTitle} />
   <meta name="twitter:description" content={seoDescription} />
-  <meta name="twitter:image" content="https://ecorebates.org/og-preview.png" />
+  <meta name="twitter:image" content="https://incentivemapper.com/og-preview.png" />
 
   <ClientRouter />
   <script is:inline>
@@ -178,8 +178,8 @@ const resolvedRegions = post.data.relatedRegions
   <header class="border-b border-[var(--color-border)] bg-[var(--bg-primary)]/80 backdrop-blur-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <a href="/" class="flex items-center gap-2 font-bold text-lg tracking-tight text-[var(--text-main)] hover:opacity-80 transition-opacity group">
-        <img src="/logo.png" alt="EcoRebates Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" width="36" height="36" />
-        <span>EcoRebates</span>
+        <img src="/logo.png" alt="IncentiveMapper Logo" class="w-9 h-9 object-contain rounded-lg transition-transform duration-300 group-hover:scale-105" width="36" height="36" />
+        <span>IncentiveMapper</span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-muted)]">
         <a href={`/${activeLang}/directory`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.directory}</a>

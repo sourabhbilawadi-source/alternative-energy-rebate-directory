@@ -228,7 +228,7 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
     }
 
     // Offline / Mock credentials fallback
-    if (email === 'admin@ecorebates.org' && password === 'admin123') {
+    if (email === 'admin@incentivemapper.com' && password === 'admin123') {
       setIsLoggedIn(true);
       setIsMockMode(true);
       sessionStorage.setItem('admin_session', 'mock');
@@ -488,7 +488,7 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
               <input 
                 type="email" 
                 required 
-                placeholder="admin@ecorebates.org"
+                placeholder="admin@incentivemapper.com"
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] rounded-xl py-3 px-4 outline-none focus:border-[var(--color-accent)] transition-all font-semibold"
