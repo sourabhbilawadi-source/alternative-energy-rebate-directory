@@ -69,14 +69,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'California',
     citySlug: 'los-angeles',
     cityName: 'Los Angeles',
-    gridRate: 0.28,
+    gridRate: 0.24,
     sunHours: 1800,
     gridEmissions: 0.52,
     costPerWatt: 3.10,
     federalTaxCreditPct: 0.30,
-    stateRebate: 1500,
-    utilityRebate: 500,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'LADWP', sourceUrl: 'https://www.ladwp.com/ladwp/faces/ladwp/residential/r-customerservice/r-cs-ratesandbilling/r-cs-rb-residentialrates', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'LADWP', sourceUrl: 'https://www.ladwp.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -86,14 +90,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'California',
     citySlug: 'san-francisco',
     cityName: 'San Francisco',
-    gridRate: 0.28,
+    gridRate: 0.41,
     sunHours: 1800,
     gridEmissions: 0.52,
     costPerWatt: 3.10,
     federalTaxCreditPct: 0.30,
-    stateRebate: 1500,
-    utilityRebate: 500,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'PG&E', sourceUrl: 'https://www.pge.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'PG&E', sourceUrl: 'https://www.pge.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -109,8 +117,12 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 2.70,
     federalTaxCreditPct: 0.30,
     stateRebate: 0,
-    utilityRebate: 400,
-    ...TODO_SOURCES
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'EIA', sourceUrl: 'https://www.eia.gov/electricity/monthly/epm_table_grapher.php?t=epmt_5_6_a', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'CenterPoint Energy', sourceUrl: 'https://www.centerpointenergy.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -125,9 +137,13 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.66,
     costPerWatt: 3.25,
     federalTaxCreditPct: 0.30,
-    stateRebate: 1000,
-    utilityRebate: 500,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Con Edison', sourceUrl: 'https://www.coned.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Con Edison', sourceUrl: 'https://www.coned.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -137,14 +153,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Illinois',
     citySlug: 'chicago',
     cityName: 'Chicago',
-    gridRate: 0.32,
+    gridRate: 0.17,
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.30,
-    stateRebate: 1200,
-    utilityRebate: 300,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 3000,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'ComEd', sourceUrl: 'https://www.comed.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'ComEd', sourceUrl: 'https://www.comed.com/smart-energy/my-green-power-connection/solar-energy/solar-rebates', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -154,14 +174,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Arizona',
     citySlug: 'phoenix',
     cityName: 'Phoenix',
-    gridRate: 0.32,
+    gridRate: 0.15,
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.30,
-    stateRebate: 1200,
-    utilityRebate: 300,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'APS', sourceUrl: 'https://www.aps.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'APS', sourceUrl: 'https://www.aps.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -171,14 +195,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Florida',
     citySlug: 'miami',
     cityName: 'Miami',
-    gridRate: 0.32,
+    gridRate: 0.14,
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.30,
-    stateRebate: 1200,
-    utilityRebate: 300,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'FPL', sourceUrl: 'https://www.fpl.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'FPL', sourceUrl: 'https://www.fpl.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -188,14 +216,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Washington',
     citySlug: 'seattle',
     cityName: 'Seattle',
-    gridRate: 0.32,
+    gridRate: 0.14,
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.30,
-    stateRebate: 1200,
-    utilityRebate: 300,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Seattle City Light', sourceUrl: 'https://www.seattle.gov/city-light', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Seattle City Light', sourceUrl: 'https://www.seattle.gov/city-light', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -205,14 +237,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Massachusetts',
     citySlug: 'boston',
     cityName: 'Boston',
-    gridRate: 0.32,
+    gridRate: 0.36,
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.30,
-    stateRebate: 1200,
-    utilityRebate: 300,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Eversource', sourceUrl: 'https://www.eversource.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Eversource', sourceUrl: 'https://www.eversource.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -222,14 +258,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Colorado',
     citySlug: 'denver',
     cityName: 'Denver',
-    gridRate: 0.32,
+    gridRate: 0.158,
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
     federalTaxCreditPct: 0.30,
-    stateRebate: 1200,
-    utilityRebate: 300,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Xcel Energy', sourceUrl: 'https://www.xcelenergy.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Xcel Energy', sourceUrl: 'https://www.xcelenergy.com', lastVerified: '2026-06-24' }
   },
 
   // United Kingdom
@@ -389,14 +429,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Georgia',
     citySlug: 'atlanta',
     cityName: 'Atlanta',
-    gridRate: null,
+    gridRate: 0.155,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Georgia Power', sourceUrl: 'https://www.georgiapower.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Georgia Power', sourceUrl: 'https://www.georgiapower.com', lastVerified: '2026-06-24' }
   },
   // Pennsylvania
   {
@@ -407,14 +451,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Pennsylvania',
     citySlug: 'philadelphia',
     cityName: 'Philadelphia',
-    gridRate: null,
+    gridRate: 0.118,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'PECO', sourceUrl: 'https://www.peco.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'PECO', sourceUrl: 'https://www.peco.com/SolarRebate', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -424,14 +472,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Pennsylvania',
     citySlug: 'pittsburgh',
     cityName: 'Pittsburgh',
-    gridRate: null,
+    gridRate: 0.1414,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Duquesne Light', sourceUrl: 'https://www.duquesnelight.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Duquesne Light', sourceUrl: 'https://www.duquesnelight.com', lastVerified: '2026-06-24' }
   },
   // Texas
   {
@@ -442,14 +494,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Texas',
     citySlug: 'dallas',
     cityName: 'Dallas',
-    gridRate: null,
+    gridRate: 0.164,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'EIA', sourceUrl: 'https://www.eia.gov/electricity/monthly/epm_table_grapher.php?t=epmt_5_6_a', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Oncor', sourceUrl: 'https://www.oncor.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -459,14 +515,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Texas',
     citySlug: 'austin',
     cityName: 'Austin',
-    gridRate: null,
+    gridRate: 0.12,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 2500,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Austin Energy', sourceUrl: 'https://austinenergy.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Austin Energy', sourceUrl: 'https://austinenergy.com/ae/green-power/solar-solutions', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -476,14 +536,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Texas',
     citySlug: 'san-antonio',
     cityName: 'San Antonio',
-    gridRate: null,
+    gridRate: 0.125,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'CPS Energy', sourceUrl: 'https://www.cpsenergy.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'CPS Energy', sourceUrl: 'https://www.cpsenergy.com', lastVerified: '2026-06-24' }
   },
   // California
   {
@@ -494,14 +558,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'California',
     citySlug: 'san-diego',
     cityName: 'San Diego',
-    gridRate: null,
+    gridRate: 0.457,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'SDG&E', sourceUrl: 'https://www.sdge.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'SDG&E', sourceUrl: 'https://www.sdge.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -511,14 +579,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'California',
     citySlug: 'san-jose',
     cityName: 'San Jose',
-    gridRate: null,
+    gridRate: 0.41,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'PG&E', sourceUrl: 'https://www.pge.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'PG&E', sourceUrl: 'https://www.pge.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -528,14 +600,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'California',
     citySlug: 'sacramento',
     cityName: 'Sacramento',
-    gridRate: null,
+    gridRate: 0.2,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'SMUD', sourceUrl: 'https://www.smud.org', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'SMUD', sourceUrl: 'https://www.smud.org', lastVerified: '2026-06-24' }
   },
   // Nevada
   {
@@ -546,14 +622,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Nevada',
     citySlug: 'las-vegas',
     cityName: 'Las Vegas',
-    gridRate: null,
+    gridRate: 0.118,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'NV Energy', sourceUrl: 'https://www.nvenergy.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'NV Energy', sourceUrl: 'https://www.nvenergy.com', lastVerified: '2026-06-24' }
   },
   // Florida
   {
@@ -564,14 +644,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Florida',
     citySlug: 'orlando',
     cityName: 'Orlando',
-    gridRate: null,
+    gridRate: 0.126,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'OUC', sourceUrl: 'https://www.ouc.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'OUC', sourceUrl: 'https://www.ouc.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -581,14 +665,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Florida',
     citySlug: 'tampa',
     cityName: 'Tampa',
-    gridRate: null,
+    gridRate: 0.162,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Tampa Electric', sourceUrl: 'https://www.tampaelectric.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Tampa Electric', sourceUrl: 'https://www.tampaelectric.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -598,14 +686,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Florida',
     citySlug: 'jacksonville',
     cityName: 'Jacksonville',
-    gridRate: null,
+    gridRate: 0.117,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'JEA', sourceUrl: 'https://www.jea.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'JEA', sourceUrl: 'https://www.jea.com', lastVerified: '2026-06-24' }
   },
   // North Carolina
   {
@@ -616,14 +708,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'North Carolina',
     citySlug: 'charlotte',
     cityName: 'Charlotte',
-    gridRate: null,
+    gridRate: 0.139,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Duke Energy', sourceUrl: 'https://www.duke-energy.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Duke Energy', sourceUrl: 'https://www.duke-energy.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -633,14 +729,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'North Carolina',
     citySlug: 'raleigh',
     cityName: 'Raleigh',
-    gridRate: null,
+    gridRate: 0.139,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Duke Energy', sourceUrl: 'https://www.duke-energy.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Duke Energy', sourceUrl: 'https://www.duke-energy.com', lastVerified: '2026-06-24' }
   },
   // Tennessee
   {
@@ -651,14 +751,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Tennessee',
     citySlug: 'nashville',
     cityName: 'Nashville',
-    gridRate: null,
+    gridRate: 0.12,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'NES', sourceUrl: 'https://www.nespower.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'NES', sourceUrl: 'https://www.nespower.com', lastVerified: '2026-06-24' }
   },
   // Ohio
   {
@@ -669,14 +773,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Ohio',
     citySlug: 'columbus',
     cityName: 'Columbus',
-    gridRate: null,
+    gridRate: 0.101,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'AEP Ohio', sourceUrl: 'https://www.aepohio.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'AEP Ohio', sourceUrl: 'https://www.aepohio.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -686,14 +794,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Ohio',
     citySlug: 'cleveland',
     cityName: 'Cleveland',
-    gridRate: null,
+    gridRate: 0.103,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Cleveland Public Power', sourceUrl: 'https://www.cpp.org', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Cleveland Public Power', sourceUrl: 'https://www.cpp.org', lastVerified: '2026-06-24' }
   },
   // Indiana
   {
@@ -704,14 +816,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Indiana',
     citySlug: 'indianapolis',
     cityName: 'Indianapolis',
-    gridRate: null,
+    gridRate: 0.17,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'AES Indiana', sourceUrl: 'https://www.aesindiana.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'AES Indiana', sourceUrl: 'https://www.aesindiana.com', lastVerified: '2026-06-24' }
   },
   // Michigan
   {
@@ -722,14 +838,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Michigan',
     citySlug: 'detroit',
     cityName: 'Detroit',
-    gridRate: null,
+    gridRate: 0.19,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'DTE Energy', sourceUrl: 'https://www.dteenergy.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'DTE Energy', sourceUrl: 'https://www.dteenergy.com', lastVerified: '2026-06-24' }
   },
   // Minnesota
   {
@@ -740,14 +860,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Minnesota',
     citySlug: 'minneapolis',
     cityName: 'Minneapolis',
-    gridRate: null,
+    gridRate: 0.165,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Xcel Energy', sourceUrl: 'https://www.xcelenergy.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Xcel Energy', sourceUrl: 'https://www.xcelenergy.com', lastVerified: '2026-06-24' }
   },
   // Missouri
   {
@@ -758,14 +882,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Missouri',
     citySlug: 'kansas-city',
     cityName: 'Kansas City',
-    gridRate: null,
+    gridRate: 0.135,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Evergy', sourceUrl: 'https://www.evergy.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Evergy', sourceUrl: 'https://www.evergy.com', lastVerified: '2026-06-24' }
   },
   {
     countryCode: 'us',
@@ -775,14 +903,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Missouri',
     citySlug: 'st-louis',
     cityName: 'St. Louis',
-    gridRate: null,
+    gridRate: 0.13,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Ameren Missouri', sourceUrl: 'https://www.ameren.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Ameren Missouri', sourceUrl: 'https://www.ameren.com', lastVerified: '2026-06-24' }
   },
   // Utah
   {
@@ -793,14 +925,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Utah',
     citySlug: 'salt-lake-city',
     cityName: 'Salt Lake City',
-    gridRate: null,
+    gridRate: 0.14,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Rocky Mountain Power', sourceUrl: 'https://www.rockymountainpower.net', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Rocky Mountain Power', sourceUrl: 'https://www.rockymountainpower.net', lastVerified: '2026-06-24' }
   },
   // Oregon
   {
@@ -811,14 +947,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Oregon',
     citySlug: 'portland',
     cityName: 'Portland',
-    gridRate: null,
+    gridRate: 0.2,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 2500,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'PGE', sourceUrl: 'https://www.portlandgeneral.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'Energy Trust of Oregon', sourceUrl: 'https://www.energytrust.org', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'PGE', sourceUrl: 'https://www.portlandgeneral.com', lastVerified: '2026-06-24' }
   },
   // New Mexico
   {
@@ -829,14 +969,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'New Mexico',
     citySlug: 'albuquerque',
     cityName: 'Albuquerque',
-    gridRate: null,
+    gridRate: 0.16,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'PNM', sourceUrl: 'https://www.pnm.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'PNM', sourceUrl: 'https://www.pnm.com', lastVerified: '2026-06-24' }
   },
   // Hawaii
   {
@@ -847,14 +991,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Hawaii',
     citySlug: 'honolulu',
     cityName: 'Honolulu',
-    gridRate: null,
+    gridRate: 0.42,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'HECO', sourceUrl: 'https://www.hawaiianelectric.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'HECO', sourceUrl: 'https://www.hawaiianelectric.com', lastVerified: '2026-06-24' }
   },
   // Louisiana
   {
@@ -865,14 +1013,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Louisiana',
     citySlug: 'new-orleans',
     cityName: 'New Orleans',
-    gridRate: null,
+    gridRate: 0.14,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Entergy New Orleans', sourceUrl: 'https://www.entergyneworleans.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Entergy New Orleans', sourceUrl: 'https://www.entergyneworleans.com', lastVerified: '2026-06-24' }
   },
   // Maryland
   {
@@ -883,14 +1035,18 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Maryland',
     citySlug: 'baltimore',
     cityName: 'Baltimore',
-    gridRate: null,
+    gridRate: 0.2,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'BGE', sourceUrl: 'https://www.bge.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'BGE', sourceUrl: 'https://www.bge.com', lastVerified: '2026-06-24' }
   },
   // Virginia
   {
@@ -901,13 +1057,17 @@ export const regionsData: RegionEntry[] = [
     stateName: 'Virginia',
     citySlug: 'richmond',
     cityName: 'Richmond',
-    gridRate: null,
+    gridRate: 0.15,
     sunHours: null,
     gridEmissions: null,
     costPerWatt: null,
     federalTaxCreditPct: 0.30,
-    stateRebate: null,
-    utilityRebate: null,
-    ...TODO_SOURCES
+    stateRebate: 0,
+    utilityRebate: 0,
+    ...TODO_SOURCES,
+    gridRateSource: { sourceName: 'Dominion Energy', sourceUrl: 'https://www.dominionenergy.com', lastVerified: '2026-06-24' },
+    federalTaxCreditSource: { sourceName: 'IRS.gov', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
+    stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
+    utilityRebateSource: { sourceName: 'Dominion Energy', sourceUrl: 'https://www.dominionenergy.com', lastVerified: '2026-06-24' }
   }
 ];
