@@ -1,0 +1,425 @@
+---
+import '../../../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { supabase } from '../../../lib/supabase';
+import { useTranslations } from '../../../lib/i18n';
+import Analytics from '../../../components/Analytics.astro';
+import Navbar from '../../../components/Navbar.astro';
+import { COUNTRY_METADATA } from '../../../data/regions';
+
+export async function getStaticPaths() {
+  const langs = ['en-us', 'de-de', 'fr-fr'];
+  const paths = [];
+
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from('rebates')
+        .select('technology_category')
+        .eq('is_active', true);
+
+      if (data && data.length > 0) {
+        // Extract distinct category values and slugify them
+        const categories = [...new Set(data.map(r => r.technology_category))];
+        
+        for (const lang of langs) {
+          for (const cat of categories) {
+            const category_slug = cat
+              .toLowerCase()
+              .replace(/[^a-z0-9\s-]/g, '')
+              .trim()
+              .replace(/\s+/g, '-')
+              .replace(/-+/g, '-');
+            
+            paths.push({ params: { lang, category_slug } });
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Failed to generate static paths for categories:', err);
+    }
+  }
+
+  // Fallbacks if DB is empty or fails
+  if (paths.length === 0) {
+    const fallbackCategories = [
+      'solar',
+      'wind',
+      'battery-storage-program',
+      'heat-pump',
+      'federal-tax-incentive',
+      'local-utility-rebate'
+    ];
+    for (const lang of langs) {
+      for (const category_slug of fallbackCategories) {
+        paths.push({ params: { lang, category_slug } });
+      }
+    }
+  }
+
+  return paths;
+}
+
+const { lang, category_slug } = Astro.params;
+const t = useTranslations(lang || 'en-us');
+
+// Helper to slugify categories
+function slugifyCategory(category: string): string {
+  return category
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
+// Fetch database records
+let rebates: any[] = [];
+let matchedCategory = '';
+
+if (supabase) {
+  try {
+    // First, find the matching display name of the category
+    const { data: distinctData } = await supabase
+      .from('rebates')
+      .select('technology_category');
+      
+    if (distinctData) {
+      const uniqueCats = [...new Set(distinctData.map(r => r.technology_category))];
+      const found = uniqueCats.find(cat => slugifyCategory(cat) === category_slug);
+      if (found) {
+        matchedCategory = found;
+      }
+    }
+
+    if (matchedCategory) {
+      const { data: rebatesData } = await supabase
+        .from('rebates')
+        .select('*, regions(*)')
+        .eq('technology_category', matchedCategory)
+        .eq('is_active', true);
+        
+      if (rebatesData) {
+        rebates = rebatesData;
+      }
+    }
+  } catch (err) {
+    console.error('Failed to query rebates for category:', err);
+  }
+}
+
+// Fallback category title if not found in database
+const displayCategory = matchedCategory || (category_slug ? category_slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Energy');
+
+// Localized strings
+const l10n = {
+  'en-us': {
+    titleSuffix: 'Rebates Worldwide — 2026 Guide',
+    metaDescStart: 'Compare active rebates and green energy incentives.',
+    metaDescEnd: 'Learn eligibility and application rules.',
+    country: 'Country',
+    region: 'Region',
+    rebate: 'Rebate',
+    apply: 'View Rebate Details',
+    noRebates: 'No active rebates found in this category.',
+    back: 'Back to Directory',
+    breadcrumbCategories: 'Categories',
+    home: 'Home'
+  },
+  'de-de': {
+    titleSuffix: 'Rabatte weltweit — Leitfaden 2026',
+    metaDescStart: 'Vergleichen Sie aktive Rabatte und grüne Energieanreize.',
+    metaDescEnd: 'Erfahren Sie mehr über Berechtigung und Bewerbung.',
+    country: 'Land',
+    region: 'Region',
+    rebate: 'Rabatt',
+    apply: 'Rabattdetails anzeigen',
+    noRebates: 'Keine aktiven Rabatte in dieser Kategorie gefunden.',
+    back: 'Zurück zum Verzeichnis',
+    breadcrumbCategories: 'Kategorien',
+    home: 'Startseite'
+  },
+  'fr-fr': {
+    titleSuffix: 'Subventions dans le monde — Guide 2026',
+    metaDescStart: 'Comparez les subventions actives et incitations à l\'énergie verte.',
+    metaDescEnd: 'Découvrez l\'éligibilité et l\'application.',
+    country: 'Pays',
+    region: 'Région',
+    rebate: 'Subvention',
+    apply: 'Voir les détails de la subvention',
+    noRebates: 'Aucune subvention active trouvée dans cette catégorie.',
+    back: 'Retour à l\'annuaire',
+    breadcrumbCategories: 'Catégories',
+    home: 'Accueil'
+  }
+}[lang as 'en-us' | 'de-de' | 'fr-fr'] || {
+  titleSuffix: 'Rebates Worldwide — 2026 Guide',
+  metaDescStart: 'Compare active rebates and green energy incentives.',
+  metaDescEnd: 'Learn eligibility and application rules.',
+  country: 'Country',
+  region: 'Region',
+  rebate: 'Rebate',
+  apply: 'View Rebate Details',
+  noRebates: 'No active rebates found in this category.',
+  back: 'Back to Directory',
+  breadcrumbCategories: 'Categories',
+  home: 'Home'
+};
+
+// SEO Configuration
+const siteUrl = 'https://incentivemapper.com';
+const currentPath = `/${lang}/category/${category_slug}`;
+const canonicalUrl = `${siteUrl}${currentPath}`;
+const pageTitle = `${displayCategory} ${l10n.titleSuffix}`;
+
+const uniqueCountries = [...new Set(rebates.map(r => r.regions?.country_code?.toLowerCase() || 'us'))];
+const countryCount = uniqueCountries.length;
+const rebatesCount = rebates.length;
+
+const metaDescription = `${l10n.metaDescStart} Browse ${rebatesCount} active ${displayCategory.toLowerCase()} programs across ${countryCount} countries. ${l10n.metaDescEnd}`;
+
+// Generate hreflang alternates
+const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
+  hreflang: l,
+  url: `${siteUrl}/${l}/category/${category_slug}`
+}));
+
+// Group rebates by country, then state
+const groupedRebates: Record<string, Record<string, any[]>> = {};
+rebates.forEach(r => {
+  const rawCountry = r.regions?.country_code === 'gb' ? 'uk' : r.regions?.country_code?.toLowerCase() || 'us';
+  const state = r.regions?.state_province || 'National';
+  if (!groupedRebates[rawCountry]) {
+    groupedRebates[rawCountry] = {};
+  }
+  if (!groupedRebates[rawCountry][state]) {
+    groupedRebates[rawCountry][state] = [];
+  }
+  groupedRebates[rawCountry][state].push(r);
+});
+
+// Format currency
+function formatValue(value: number, type: string, countryCode: string) {
+  const symbol = countryCode === 'de' ? '€' : countryCode === 'gb' || countryCode === 'uk' ? '£' : '$';
+  if (type === 'percentage') {
+    return `${value}%`;
+  }
+  if (type === 'per_watt') {
+    return `${symbol}${value}/W`;
+  }
+  if (type === 'fixed') {
+    return `${symbol}${value}`;
+  }
+  return `${symbol}${value} ${type}`;
+}
+
+// Breadcrumb Schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": l10n.home,
+      "item": `${siteUrl}/${lang}`
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": t.nav.directory,
+      "item": `${siteUrl}/${lang}/directory`
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": displayCategory,
+      "item": canonicalUrl
+    }
+  ]
+};
+
+// ItemList Schema for rebates
+const itemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": `${displayCategory} Rebates`,
+  "numberOfItems": rebates.length,
+  "itemListElement": rebates.map((r, idx) => ({
+    "@type": "ListItem",
+    "position": idx + 1,
+    "url": `${siteUrl}/${lang}/rebate/${r.slug}`
+  }))
+};
+---
+
+<!DOCTYPE html>
+<html lang={lang} data-theme="sage-minimalist">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <title>{pageTitle}</title>
+  <meta name="description" content={metaDescription} />
+
+  <!-- Canonical & hreflang Alternates -->
+  <link rel="canonical" href={canonicalUrl} />
+  {alternates.map(alt => (
+    <link rel="alternate" hreflang={alt.hreflang} href={alt.url} />
+  ))}
+
+  <ClientRouter />
+  <script is:inline>
+    // Theme Management
+    const savedTheme = localStorage.getItem('theme') || 'sage-minimalist';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    document.addEventListener('astro:page-load', () => {
+      const activeTheme = localStorage.getItem('theme') || 'sage-minimalist';
+      document.documentElement.setAttribute('data-theme', activeTheme);
+    });
+  </script>
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  {rebates.length > 0 && (
+    <script type="application/ld+json" set:html={JSON.stringify(itemListSchema)} />
+  )}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <Analytics />
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+  
+  <Navbar lang={lang} />
+
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 flex-grow w-full">
+    <!-- Breadcrumbs UI -->
+    <nav aria-label="Breadcrumb" class="mb-8">
+      <ol class="flex items-center gap-2 text-xs text-[var(--text-muted)] font-medium flex-wrap">
+        <li>
+          <a href={`/${lang}`} class="hover:text-[var(--text-main)] transition-colors">{l10n.home}</a>
+        </li>
+        <li class="flex items-center gap-2">
+          <span>/</span>
+          <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors">{t.nav.directory}</a>
+        </li>
+        <li class="flex items-center gap-2">
+          <span>/</span>
+          <span class="text-[var(--text-main)] font-semibold" aria-current="page">{displayCategory}</span>
+        </li>
+      </ol>
+    </nav>
+
+    <div class="mb-10 text-center md:text-left">
+      <h1 class="text-4xl font-black tracking-tight text-[var(--text-main)] mb-3 leading-tight">
+        {displayCategory} {lang === 'de-de' ? 'Rabatte & Anreize' : lang === 'fr-fr' ? 'Subventions' : 'Rebates & Incentives'}
+      </h1>
+      <p class="text-lg text-[var(--text-muted)]">
+        {lang === 'de-de' 
+          ? `Durchsuchen Sie ${rebatesCount} aktive Programme in ${countryCount} Ländern.` 
+          : lang === 'fr-fr' 
+            ? `Parcourez ${rebatesCount} programmes actifs dans ${countryCount} pays.` 
+            : `Explore ${rebatesCount} active programs across ${countryCount} countries.`
+        }
+      </p>
+    </div>
+
+    <!-- Rebates List Grouped by Country and State -->
+    {rebates.length === 0 ? (
+      <div class="bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-8 text-center text-[var(--text-muted)]">
+        {l10n.noRebates}
+      </div>
+    ) : (
+      <div class="space-y-10">
+        {Object.entries(groupedRebates).map(([countryCode, states]) => {
+          const meta = COUNTRY_METADATA[countryCode] || { name: countryCode.toUpperCase(), flag: '🌐' };
+          return (
+            <div class="bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-3xl p-6 md:p-8 shadow-sm">
+              <div class="flex items-center gap-3 mb-6 pb-4 border-b border-[var(--color-border)]">
+                <span class="text-3xl" role="img" aria-label={meta.name}>{meta.flag}</span>
+                <h2 class="text-2xl font-bold text-[var(--text-main)]">{meta.name}</h2>
+              </div>
+
+              <div class="space-y-8">
+                {Object.entries(states).map(([stateName, items]) => (
+                  <div>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-4">
+                      {stateName}
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {items.map((rebate) => {
+                        const countrySlug = countryCode;
+                        const stateSlug = rebate.regions?.state_province?.toLowerCase().replace(/\s+/g, '-');
+                        return (
+                          <div class="bg-[var(--bg-primary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow transition-all duration-300">
+                            <div>
+                              <div class="flex justify-between items-start gap-2 mb-2">
+                                <h4 class="font-extrabold text-[var(--text-main)] leading-snug">
+                                  {rebate.authority_name}
+                                </h4>
+                                <span class="text-xs font-bold px-2 py-0.5 rounded bg-[var(--bg-secondary)] border border-[var(--color-border)] text-[var(--text-muted)] whitespace-nowrap">
+                                  {formatValue(rebate.incentive_value, rebate.incentive_type, rebate.regions?.country_code)}
+                                </span>
+                              </div>
+                              <p class="text-xs text-[var(--text-muted)] mb-4 line-clamp-3">
+                                {rebate.description}
+                              </p>
+                            </div>
+                            <div class="flex justify-between items-center pt-2 mt-auto border-t border-[var(--color-border)]/50">
+                              <a 
+                                href={`/${lang}/directory/${countrySlug}/${stateSlug}`} 
+                                class="text-[10px] font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+                              >
+                                📍 {rebate.regions?.city}
+                              </a>
+                              <a 
+                                href={`/${lang}/rebate/${rebate.slug}`} 
+                                class="text-xs font-bold text-[var(--color-accent)] hover:underline transition-all"
+                              >
+                                {l10n.apply} →
+                              </a>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    )}
+
+    <div class="mt-12 text-center">
+      <a 
+        href={`/${lang}/directory`} 
+        class="inline-flex items-center gap-2 bg-[var(--bg-secondary)] hover:bg-[var(--bg-primary)] text-[var(--text-main)] border border-[var(--color-border)] hover:border-[var(--text-main)] font-semibold px-6 py-3 rounded-full shadow-sm transition-all duration-300"
+      >
+        ← {l10n.back}
+      </a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>{t.footer.copyright}</div>
+      <div class="flex gap-4 flex-wrap justify-center font-medium">
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)]">{t.footer.directory}</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">{t.footer.search}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">{t.footer.compare}</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">{t.footer.compliance}</a>
+        <a href={`/${lang}/blog`} class="hover:text-[var(--text-main)]">{t.footer.blog}</a>
+        <a href={`/${lang}/privacy`} class="hover:text-[var(--text-main)]">{t.footer.privacy}</a>
+        <a href={`/${lang}/terms`} class="hover:text-[var(--text-main)]">{t.footer.terms}</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
