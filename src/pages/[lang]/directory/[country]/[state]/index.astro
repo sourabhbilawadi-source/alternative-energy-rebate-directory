@@ -88,6 +88,14 @@ if (supabase) {
     console.error('Failed to query cities from Supabase regions. Using presets:', err);
   }
 }
+
+const siteUrl = 'https://incentivemapper.com';
+const canonicalUrl = `${siteUrl}/${lang}/directory/${country}/${state}`;
+const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
+  hreflang: l,
+  url: `${siteUrl}/${l}/directory/${country}/${state}`
+}));
+
 import Navbar from '../../../../../components/Navbar.astro';
 ---
 
@@ -96,9 +104,17 @@ import Navbar from '../../../../../components/Navbar.astro';
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <title>Alternative Energy Rebate Directory | {displayState} Cities</title>
   <meta name="description" content={`Browse alternative energy rebate directories in ${displayState}, ${displayCountry} to compute solar ROI.`} />
+
+  <!-- Canonical & hreflang Alternate Declarations -->
+  <link rel="canonical" href={canonicalUrl} />
+  {alternates.map(alt => (
+    <link rel="alternate" hreflang={alt.hreflang} href={alt.url} />
+  ))}
+
   <ClientRouter />
   <script is:inline>
     // 1. Immediately apply saved theme to avoid flashing
@@ -149,7 +165,6 @@ import Navbar from '../../../../../components/Navbar.astro';
 <body class="min-h-screen flex flex-col justify-between">
   <Navbar lang={lang} />
 
-
   <!-- Main Content -->
   <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow">
     <!-- Breadcrumbs -->
@@ -193,8 +208,8 @@ import Navbar from '../../../../../components/Navbar.astro';
         <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">{t.footer.search}</a>
         <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">{t.footer.compare}</a>
         <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">{t.footer.compliance}</a>
-                <a href={`/${lang}/blog`} class="hover:text-[var(--text-main)]">{t.footer.blog}</a>
-<a href={`/${lang}/privacy`} class="hover:text-[var(--text-main)]">{t.footer.privacy}</a>
+        <a href={`/${lang}/blog`} class="hover:text-[var(--text-main)]">{t.footer.blog}</a>
+        <a href={`/${lang}/privacy`} class="hover:text-[var(--text-main)]">{t.footer.privacy}</a>
         <a href={`/${lang}/terms`} class="hover:text-[var(--text-main)]">{t.footer.terms}</a>
       </div>
     </div>
