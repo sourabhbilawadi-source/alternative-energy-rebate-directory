@@ -1,0 +1,433 @@
+---
+import '../../../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { supabase } from '../../../lib/supabase';
+import { useTranslations } from '../../../lib/i18n';
+import Analytics from '../../../components/Analytics.astro';
+import Navbar from '../../../components/Navbar.astro';
+import { COUNTRY_METADATA } from '../../../data/regions';
+
+export async function getStaticPaths() {
+  const langs = ['en-us', 'de-de', 'fr-fr'];
+  const paths = [];
+
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from('rebates')
+        .select('slug');
+
+      if (data && data.length > 0) {
+        for (const lang of langs) {
+          for (const item of data) {
+            if (item.slug) {
+              paths.push({ params: { lang, rebate_slug: item.slug } });
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Failed to generate static paths for rebates:', err);
+    }
+  }
+
+  // Fallbacks if DB is empty or fails
+  if (paths.length === 0) {
+    const fallbackRebates = [
+      'federal-solar-tax-credit-los-angeles',
+      'california-sgip-battery-rebate-los-angeles',
+      'boiler-upgrade-scheme-grant-london'
+    ];
+    for (const lang of langs) {
+      for (const rebate_slug of fallbackRebates) {
+        paths.push({ params: { lang, rebate_slug } });
+      }
+    }
+  }
+
+  return paths;
+}
+
+const { lang, rebate_slug } = Astro.params;
+const t = useTranslations(lang || 'en-us');
+
+// Fetch database records
+let rebate: any = null;
+
+if (supabase) {
+  try {
+    const { data } = await supabase
+      .from('rebates')
+      .select('*, regions(*)')
+      .eq('slug', rebate_slug)
+      .limit(1)
+      .maybeSingle();
+      
+    if (data) {
+      rebate = data;
+    }
+  } catch (err) {
+    console.error('Failed to query rebate details:', err);
+  }
+}
+
+// Localized strings
+const l10n = {
+  'en-us': {
+    titleSuffix: 'Eligibility & How to Apply',
+    programDetails: 'Program Parameters',
+    eligibility: 'Eligibility Criteria',
+    officialSource: 'Official Source & Apply',
+    inactiveWarning: 'This program may no longer be active.',
+    value: 'Incentive Value',
+    type: 'Incentive Type',
+    limit: 'Maximum Limit',
+    category: 'Technology Category',
+    location: 'Location Served',
+    deadline: 'Application Deadline',
+    noDeadline: 'Ongoing / No Expiration Date',
+    home: 'Home'
+  },
+  'de-de': {
+    titleSuffix: 'Berechtigung & Bewerbung',
+    programDetails: 'Programm-Parameter',
+    eligibility: 'Berechtigungskriterien',
+    officialSource: 'Offizielle Quelle & Bewerbung',
+    inactiveWarning: 'Dieses Programm ist möglicherweise nicht mehr aktiv.',
+    value: 'Förderungswert',
+    type: 'Förderungsart',
+    limit: 'Maximale Grenze',
+    category: 'Technologiekategorie',
+    location: 'Einsatzort',
+    deadline: 'Bewerbungsfrist',
+    noDeadline: 'Laufend / Kein Ablaufdatum',
+    home: 'Startseite'
+  },
+  'fr-fr': {
+    titleSuffix: 'Éligibilité & Comment postuler',
+    programDetails: 'Paramètres du programme',
+    eligibility: 'Critères d\'éligibilité',
+    officialSource: 'Source officielle & Postuler',
+    inactiveWarning: 'Ce programme n\'est peut-être plus actif.',
+    value: 'Valeur de l\'aide',
+    type: 'Type d\'aide',
+    limit: 'Limite maximale',
+    category: 'Catégorie de technologie',
+    location: 'Lieu desservi',
+    deadline: 'Date limite d\'inscription',
+    noDeadline: 'En cours / Pas de date d\'expiration',
+    home: 'Accueil'
+  }
+}[lang as 'en-us' | 'de-de' | 'fr-fr'] || {
+  titleSuffix: 'Eligibility & How to Apply',
+  programDetails: 'Program Parameters',
+  eligibility: 'Eligibility Criteria',
+  officialSource: 'Official Source & Apply',
+  inactiveWarning: 'This program may no longer be active.',
+  value: 'Incentive Value',
+  type: 'Incentive Type',
+  limit: 'Maximum Limit',
+  category: 'Technology Category',
+  location: 'Location Served',
+  deadline: 'Application Deadline',
+  noDeadline: 'Ongoing / No Expiration Date',
+  home: 'Home'
+};
+
+// If no database match is found (shouldn't happen with getStaticPaths), provide fallbacks
+const displayRebateName = rebate?.authority_name || 'Government Green Energy Rebate';
+const displayDescription = rebate?.description || 'Learn about green energy incentives, eligibility requirements, and application guides.';
+const displayCategory = rebate?.technology_category || 'Clean Energy';
+const categorySlug = displayCategory.toLowerCase().replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-').replace(/-+/g, '-');
+
+const countryCode = rebate?.regions?.country_code === 'gb' ? 'uk' : rebate?.regions?.country_code?.toLowerCase() || 'us';
+const stateSlug = rebate?.regions?.state_province?.toLowerCase().replace(/\s+/g, '-');
+const displayCity = rebate?.regions?.city || '';
+const displayState = rebate?.regions?.state_province || '';
+const displayCountry = COUNTRY_METADATA[countryCode]?.name || countryCode.toUpperCase();
+
+// SEO URLs
+const siteUrl = 'https://incentivemapper.com';
+const canonicalUrl = `${siteUrl}/${lang}/rebate/${rebate_slug}`;
+const pageTitle = `${displayRebateName} — ${l10n.titleSuffix}`;
+
+// Alternates
+const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
+  hreflang: l,
+  url: `${siteUrl}/${l}/rebate/${rebate_slug}`
+}));
+
+// Currency and formatting helper
+function formatValue(value: number, type: string, code: string) {
+  const symbol = code === 'de' ? '€' : code === 'gb' || code === 'uk' ? '£' : '$';
+  if (type === 'percentage') {
+    return `${value}%`;
+  }
+  if (type === 'per_watt') {
+    return `${symbol}${value}/W`;
+  }
+  if (type === 'fixed') {
+    return `${symbol}${value}`;
+  }
+  return `${symbol}${value} ${type}`;
+}
+
+// Breadcrumbs Schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": l10n.home,
+      "item": `${siteUrl}/${lang}`
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": displayCountry,
+      "item": `${siteUrl}/${lang}/directory/${countryCode}`
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": displayState,
+      "item": `${siteUrl}/${lang}/directory/${countryCode}/${stateSlug}`
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": displayRebateName,
+      "item": canonicalUrl
+    }
+  ]
+};
+
+// GovernmentService Schema
+const serviceSchema: Record<string, any> = {
+  "@context": "https://schema.org",
+  "@type": "GovernmentService",
+  "name": displayRebateName,
+  "serviceType": displayCategory,
+  "description": displayDescription,
+  "provider": {
+    "@type": "GovernmentOrganization",
+    "name": displayRebateName.split(' ')[0] || "Government Agency"
+  },
+  "areaServed": {
+    "@type": "AdministrativeArea",
+    "name": `${displayCity}, ${displayState}`
+  }
+};
+
+if (rebate?.official_url) {
+  serviceSchema["url"] = rebate.official_url;
+}
+if (rebate?.eligibility) {
+  serviceSchema["serviceEligibility"] = {
+    "@type": "EligibilityRange",
+    "description": rebate.eligibility
+  };
+}
+---
+
+<!DOCTYPE html>
+<html lang={lang} data-theme="sage-minimalist">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <title>{pageTitle}</title>
+  <meta name="description" content={displayDescription.substring(0, 155)} />
+
+  <!-- Canonical & hreflang Alternates -->
+  <link rel="canonical" href={canonicalUrl} />
+  {alternates.map(alt => (
+    <link rel="alternate" hreflang={alt.hreflang} href={alt.url} />
+  ))}
+
+  <ClientRouter />
+  <script is:inline>
+    // Theme Management
+    const savedTheme = localStorage.getItem('theme') || 'sage-minimalist';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    document.addEventListener('astro:page-load', () => {
+      const activeTheme = localStorage.getItem('theme') || 'sage-minimalist';
+      document.documentElement.setAttribute('data-theme', activeTheme);
+    });
+  </script>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <Analytics />
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+  
+  <Navbar lang={lang} />
+
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 flex-grow w-full">
+    <!-- Breadcrumbs UI -->
+    <nav aria-label="Breadcrumb" class="mb-8">
+      <ol class="flex items-center gap-2 text-xs text-[var(--text-muted)] font-medium flex-wrap">
+        <li>
+          <a href={`/${lang}`} class="hover:text-[var(--text-main)] transition-colors">{l10n.home}</a>
+        </li>
+        <li class="flex items-center gap-2">
+          <span>/</span>
+          <a href={`/${lang}/directory/${countryCode}`} class="hover:text-[var(--text-main)] transition-colors">{displayCountry}</a>
+        </li>
+        <li class="flex items-center gap-2">
+          <span>/</span>
+          <a href={`/${lang}/directory/${countryCode}/${stateSlug}`} class="hover:text-[var(--text-main)] transition-colors">{displayState}</a>
+        </li>
+        <li class="flex items-center gap-2">
+          <span>/</span>
+          <span class="text-[var(--text-main)] font-semibold aria-current="page" class="line-clamp-1">{displayRebateName}</span>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Inactive Warning Alert -->
+    {rebate && !rebate.is_active && (
+      <div class="mb-6 p-4 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-900/50 text-amber-800 dark:text-amber-300 flex items-center gap-3 text-sm font-semibold animate-pulse">
+        ⚠️ {l10n.inactiveWarning}
+      </div>
+    )}
+
+    <!-- Rebate Detail Card -->
+    <div class="bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-3xl p-6 md:p-8 shadow-sm">
+      <div class="mb-6 pb-6 border-b border-[var(--color-border)]">
+        <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-4">
+          <span class="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-[var(--color-border)] bg-[var(--bg-primary)] text-[var(--text-muted)] w-max">
+            {displayCategory}
+          </span>
+          {rebate && (
+            <span class="text-lg font-black text-[var(--text-main)] px-4 py-1.5 rounded-2xl bg-[var(--bg-primary)] border border-[var(--color-border)] w-max">
+              {formatValue(rebate.incentive_value, rebate.incentive_type, rebate.regions?.country_code)}
+            </span>
+          )}
+        </div>
+        <h1 class="text-3xl font-black text-[var(--text-main)] tracking-tight leading-tight mb-4">
+          {displayRebateName}
+        </h1>
+        <p class="text-[var(--text-muted)] text-base leading-relaxed">
+          {displayDescription}
+        </p>
+      </div>
+
+      <!-- Program parameters table -->
+      <div class="mb-8">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-4">
+          {l10n.programDetails}
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {rebate && (
+            <div class="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 flex flex-col justify-center">
+              <span class="text-[10px] uppercase font-bold text-[var(--text-muted)]">{l10n.type}</span>
+              <span class="text-sm font-semibold text-[var(--text-main)] mt-1 capitalize">{rebate.incentive_type.replace('_', ' ')}</span>
+            </div>
+          )}
+          {rebate && rebate.max_limit !== null && (
+            <div class="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 flex flex-col justify-center">
+              <span class="text-[10px] uppercase font-bold text-[var(--text-muted)]">{l10n.limit}</span>
+              <span class="text-sm font-semibold text-[var(--text-main)] mt-1">
+                {formatValue(rebate.max_limit, 'fixed', rebate.regions?.country_code)}
+              </span>
+            </div>
+          )}
+          <div class="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 flex flex-col justify-center">
+            <span class="text-[10px] uppercase font-bold text-[var(--text-muted)]">{l10n.category}</span>
+            <a 
+              href={`/${lang}/category/${categorySlug}`}
+              class="text-sm font-semibold text-[var(--color-accent)] hover:underline mt-1"
+            >
+              {displayCategory} →
+            </a>
+          </div>
+          <div class="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 flex flex-col justify-center">
+            <span class="text-[10px] uppercase font-bold text-[var(--text-muted)]">{l10n.location}</span>
+            <a 
+              href={`/${lang}/directory/${countryCode}/${stateSlug}`}
+              class="text-sm font-semibold text-[var(--color-accent)] hover:underline mt-1"
+            >
+              📍 {displayCity}, {displayState}
+            </a>
+          </div>
+          <div class="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 flex flex-col justify-center sm:col-span-2">
+            <span class="text-[10px] uppercase font-bold text-[var(--text-muted)]">{l10n.deadline}</span>
+            <span class="text-sm font-semibold text-[var(--text-main)] mt-1">
+              {rebate && rebate.expiration_date 
+                ? new Date(rebate.expiration_date).toLocaleDateString(lang, { year: 'numeric', month: 'long', day: 'numeric' })
+                : l10n.noDeadline
+              }
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Eligibility section (Conditional rendering) -->
+      {rebate && rebate.eligibility && (
+        <div class="mb-8 border-t border-[var(--color-border)] pt-6">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">
+            {l10n.eligibility}
+          </h2>
+          <div class="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-5 text-sm text-[var(--text-main)] leading-relaxed">
+            {rebate.eligibility}
+          </div>
+        </div>
+      )}
+
+      <!-- Official Link (Conditional rendering) -->
+      {rebate && rebate.official_url && (
+        <div class="border-t border-[var(--color-border)] pt-6 text-center">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-4">
+            {l10n.officialSource}
+          </h2>
+          <a 
+            href={rebate.official_url} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="inline-block bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/80 text-white font-extrabold px-8 py-3.5 rounded-full shadow transition-all hover:scale-103"
+          >
+            {lang === 'de-de' ? 'Offizielle Website besuchen' : lang === 'fr-fr' ? 'Visiter le site officiel' : 'Visit Official Website'} ↗
+          </a>
+        </div>
+      )}
+    </div>
+
+    <!-- Back to State Directory link -->
+    <div class="mt-12 text-center">
+      <a 
+        href={`/${lang}/directory/${countryCode}/${stateSlug}`} 
+        class="inline-flex items-center gap-2 bg-[var(--bg-secondary)] hover:bg-[var(--bg-primary)] text-[var(--text-main)] border border-[var(--color-border)] hover:border-[var(--text-main)] font-semibold px-6 py-3 rounded-full shadow-sm transition-all duration-300"
+      >
+        ← {lang === 'de-de' ? 'Zurück zu' : lang === 'fr-fr' ? 'Retour à' : 'Back to'} {displayState}
+      </a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[var(--color-border)] bg-[var(--bg-primary)] py-8 text-center text-xs text-[var(--text-muted)]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>{t.footer.copyright}</div>
+      <div class="flex gap-4 flex-wrap justify-center font-medium">
+        <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)]">{t.footer.directory}</a>
+        <a href={`/${lang}/search`} class="hover:text-[var(--text-main)]">{t.footer.search}</a>
+        <a href={`/${lang}/compare`} class="hover:text-[var(--text-main)]">{t.footer.compare}</a>
+        <a href={`/${lang}/compliance`} class="hover:text-[var(--text-main)]">{t.footer.compliance}</a>
+        <a href={`/${lang}/blog`} class="hover:text-[var(--text-main)]">{t.footer.blog}</a>
+        <a href={`/${lang}/privacy`} class="hover:text-[var(--text-main)]">{t.footer.privacy}</a>
+        <a href={`/${lang}/terms`} class="hover:text-[var(--text-main)]">{t.footer.terms}</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

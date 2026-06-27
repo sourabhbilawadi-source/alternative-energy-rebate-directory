@@ -89,12 +89,61 @@ if (supabase) {
   }
 }
 
+let activeProgramsCount = 0;
+if (supabase) {
+  try {
+    const { count } = await supabase
+      .from('rebates')
+      .select('*, regions!inner(*)', { count: 'exact', head: true })
+      .eq('is_active', true)
+      .eq('regions.country_code', country === 'uk' ? 'gb' : country.toLowerCase())
+      .ilike('regions.state_province', (state || '').replace(/-/g, ' '));
+    if (count !== null) activeProgramsCount = count;
+  } catch (err) {
+    console.error('Failed to count active rebates for state:', err);
+  }
+}
+
 const siteUrl = 'https://incentivemapper.com';
 const canonicalUrl = `${siteUrl}/${lang}/directory/${country}/${state}`;
 const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
   hreflang: l,
   url: `${siteUrl}/${l}/directory/${country}/${state}`
 }));
+
+// Localized SEO titles & descriptions
+const seoTitle = `${displayState}, ${displayCountry} ${lang === 'de-de' ? 'Energieförderungen' : lang === 'fr-fr' ? 'Subventions d\'énergie' : 'Energy Rebates'} — 2026`;
+
+const seoDescription = lang === 'de-de'
+  ? `Finden Sie ${activeProgramsCount} aktive Energieförderungen, Solar- und Batterierabatte in ${displayState}, ${displayCountry}. Berechnen Sie Sizing und ROI.`
+  : lang === 'fr-fr'
+    ? `Trouvez ${activeProgramsCount} subventions d'énergie actives, aides solaires et batteries à ${displayState}, ${displayCountry}. Calculez votre ROI.`
+    : `Find ${activeProgramsCount} active energy rebates, solar incentives, and battery grants in ${displayState}, ${displayCountry}. Calculate your green sizing ROI.`;
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": lang === 'de-de' ? 'Startseite' : lang === 'fr-fr' ? 'Accueil' : 'Home',
+      "item": `${siteUrl}/${lang}`
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": displayCountry,
+      "item": `${siteUrl}/${lang}/directory/${country}`
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": displayState,
+      "item": canonicalUrl
+    }
+  ]
+};
 
 import Navbar from '../../../../../components/Navbar.astro';
 ---
@@ -106,14 +155,17 @@ import Navbar from '../../../../../components/Navbar.astro';
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="/favicon.ico" sizes="any" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <title>Alternative Energy Rebate Directory | {displayState} Cities</title>
-  <meta name="description" content={`Browse alternative energy rebate directories in ${displayState}, ${displayCountry} to compute solar ROI.`} />
+  <title>{seoTitle}</title>
+  <meta name="description" content={seoDescription} />
 
   <!-- Canonical & hreflang Alternate Declarations -->
   <link rel="canonical" href={canonicalUrl} />
   {alternates.map(alt => (
     <link rel="alternate" hreflang={alt.hreflang} href={alt.url} />
   ))}
+
+  <!-- Breadcrumb Schema -->
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
   <ClientRouter />
   <script is:inline>
@@ -168,12 +220,14 @@ import Navbar from '../../../../../components/Navbar.astro';
   <!-- Main Content -->
   <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow">
     <!-- Breadcrumbs -->
-    <nav class="text-sm text-[var(--text-muted)] mb-6 flex items-center gap-2" aria-label="Breadcrumb">
-      <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] capitalize">{t.nav.directory}</a>
+    <nav class="text-sm text-[var(--text-muted)] mb-6 flex items-center gap-2 flex-wrap" aria-label="Breadcrumb">
+      <a href={`/${lang}`} class="hover:text-[var(--text-main)] transition-colors">{lang === 'de-de' ? 'Startseite' : lang === 'fr-fr' ? 'Accueil' : 'Home'}</a>
       <span>/</span>
-      <a href={`/${lang}/directory/${country}`} class="hover:text-[var(--text-main)] uppercase">{country}</a>
+      <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors capitalize">{t.nav.directory}</a>
       <span>/</span>
-      <span class="text-[var(--text-main)] font-semibold capitalize">{displayState}</span>
+      <a href={`/${lang}/directory/${country}`} class="hover:text-[var(--text-main)] transition-colors uppercase">{country}</a>
+      <span>/</span>
+      <span class="text-[var(--text-main)] font-semibold capitalize" aria-current="page">{displayState}</span>
     </nav>
 
     <div class="text-center md:text-left mb-10">

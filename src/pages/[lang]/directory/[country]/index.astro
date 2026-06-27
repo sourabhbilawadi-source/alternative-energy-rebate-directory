@@ -85,12 +85,60 @@ if (supabase) {
   }
 }
 
+let activeProgramsCount = 0;
+if (supabase) {
+  try {
+    const { count } = await supabase
+      .from('rebates')
+      .select('*, regions!inner(*)', { count: 'exact', head: true })
+      .eq('is_active', true)
+      .eq('regions.country_code', country === 'uk' ? 'gb' : country.toLowerCase());
+    if (count !== null) activeProgramsCount = count;
+  } catch (err) {
+    console.error('Failed to count active rebates for country:', err);
+  }
+}
+
 const siteUrl = 'https://incentivemapper.com';
 const canonicalUrl = `${siteUrl}/${lang}/directory/${country}`;
 const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
   hreflang: l,
   url: `${siteUrl}/${l}/directory/${country}`
 }));
+
+// Localized SEO titles & descriptions
+const seoTitle = `${lang === 'de-de' ? 'Energieförderungen in' : lang === 'fr-fr' ? 'Subventions d\'énergie en' : 'Energy Rebates in'} ${displayCountry} — 2026 ${lang === 'de-de' ? 'Programme' : lang === 'fr-fr' ? 'Programmes' : 'Programs'}`;
+
+const seoDescription = lang === 'de-de'
+  ? `Vergleichen Sie ${activeProgramsCount} aktive Energieförderungen, Solarzuschüsse und Steuergutschriften in ${displayCountry} in ${statesList.length} Regionen.`
+  : lang === 'fr-fr'
+    ? `Comparez ${activeProgramsCount} subventions vertes actives en ${displayCountry} dans ${statesList.length} départements/régions.`
+    : `Compare ${activeProgramsCount} active green energy rebates, solar grants, and tax credits in ${displayCountry} across ${statesList.length} states/regions.`;
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": lang === 'de-de' ? 'Startseite' : lang === 'fr-fr' ? 'Accueil' : 'Home',
+      "item": `${siteUrl}/${lang}`
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": t.nav.directory,
+      "item": `${siteUrl}/${lang}/directory`
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": displayCountry,
+      "item": canonicalUrl
+    }
+  ]
+};
 
 import Navbar from '../../../../components/Navbar.astro';
 ---
@@ -102,14 +150,17 @@ import Navbar from '../../../../components/Navbar.astro';
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="/favicon.ico" sizes="any" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <title>Alternative Energy Rebate Directory | {displayCountry} States</title>
-  <meta name="description" content={`Browse alternative energy rebate directories in ${displayCountry} to find regional incentives.`} />
+  <title>{seoTitle}</title>
+  <meta name="description" content={seoDescription} />
 
   <!-- Canonical & hreflang Alternate Declarations -->
   <link rel="canonical" href={canonicalUrl} />
   {alternates.map(alt => (
     <link rel="alternate" hreflang={alt.hreflang} href={alt.url} />
   ))}
+
+  <!-- Breadcrumb Schema -->
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
   <ClientRouter />
   <script is:inline>
@@ -164,10 +215,12 @@ import Navbar from '../../../../components/Navbar.astro';
   <!-- Main Content -->
   <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex-grow">
     <!-- Breadcrumbs -->
-    <nav class="text-sm text-[var(--text-muted)] mb-6 flex items-center gap-2" aria-label="Breadcrumb">
-      <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] capitalize">{t.nav.directory}</a>
+    <nav class="text-sm text-[var(--text-muted)] mb-6 flex items-center gap-2 flex-wrap" aria-label="Breadcrumb">
+      <a href={`/${lang}`} class="hover:text-[var(--text-main)] transition-colors">{lang === 'de-de' ? 'Startseite' : lang === 'fr-fr' ? 'Accueil' : 'Home'}</a>
       <span>/</span>
-      <span class="text-[var(--text-main)] font-semibold uppercase">{country}</span>
+      <a href={`/${lang}/directory`} class="hover:text-[var(--text-main)] transition-colors capitalize">{t.nav.directory}</a>
+      <span>/</span>
+      <span class="text-[var(--text-main)] font-semibold uppercase" aria-current="page">{country}</span>
     </nav>
 
     <div class="text-center md:text-left mb-10">
