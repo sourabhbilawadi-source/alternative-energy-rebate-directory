@@ -10,16 +10,24 @@ if (supabase) {
   try {
     const { data, error } = await supabase
       .from('rebates')
-      .select('technology_category')
+      .select('technology_category, authority_name, regions(country_code)')
       .eq('is_active', true);
 
     if (error) {
       console.warn('Failed to query active rebates for homepage categories:', error.message);
     } else if (data && data.length > 0) {
       const counts: Record<string, number> = {};
+      const seenPrograms = new Set<string>();
+      
       for (const r of data) {
         const cat = r.technology_category;
-        counts[cat] = (counts[cat] || 0) + 1;
+        const country = r.regions?.country_code?.toLowerCase() || 'us';
+        const programKey = `${cat}:${country}:${r.authority_name}`;
+
+        if (!seenPrograms.has(programKey)) {
+          seenPrograms.add(programKey);
+          counts[cat] = (counts[cat] || 0) + 1;
+        }
       }
 
       const slugifyCategory = (category: string) => {

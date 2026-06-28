@@ -184,18 +184,80 @@ const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
   url: `${siteUrl}/${l}/category/${category_slug}`
 }));
 
-// Group rebates by country, then state
-const groupedRebates: Record<string, Record<string, any[]>> = {};
+// Group rebates by country, then state, grouping repeated national programs
+const processedGroupedRebates: Record<string, { national: any[], states: Record<string, any[]> }> = {};
+
+// 1. Group raw rebates by country code
+const countryGroups: Record<string, any[]> = {};
 rebates.forEach(r => {
-  const rawCountry = r.regions?.country_code === 'gb' ? 'uk' : r.regions?.country_code?.toLowerCase() || 'us';
-  const state = r.regions?.state_province || 'National';
-  if (!groupedRebates[rawCountry]) {
-    groupedRebates[rawCountry] = {};
+  const country = r.regions?.country_code === 'gb' ? 'uk' : r.regions?.country_code?.toLowerCase() || 'us';
+  if (!countryGroups[country]) {
+    countryGroups[country] = [];
   }
-  if (!groupedRebates[rawCountry][state]) {
-    groupedRebates[rawCountry][state] = [];
-  }
-  groupedRebates[rawCountry][state].push(r);
+  countryGroups[country].push(r);
+});
+
+// 2. Process each country's rebates
+Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
+  // Count frequency of authority names
+  const authorityCounts: Record<string, number> = {};
+  countryRebates.forEach(r => {
+    authorityCounts[r.authority_name] = (authorityCounts[r.authority_name] || 0) + 1;
+  });
+
+  const national: any[] = [];
+  const states: Record<string, any[]> = {};
+  const processedNames = new Set<string>();
+
+  countryRebates.forEach(r => {
+    const isRepeated = authorityCounts[r.authority_name] > 1;
+
+    if (isRepeated) {
+      if (processedNames.has(r.authority_name)) return;
+      processedNames.add(r.authority_name);
+
+      const matches = countryRebates.filter(m => m.authority_name === r.authority_name);
+      
+      // Sort matches alphabetically by city name to pick the first one as representative
+      const sortedMatches = [...matches].sort((a, b) => {
+        const cityA = a.regions?.city || '';
+        const cityB = b.regions?.city || '';
+        return cityA.localeCompare(cityB);
+      });
+      const representative = sortedMatches[0];
+
+      const uniqueStates = [...new Set(matches.map(m => m.regions?.state_province).filter(Boolean))];
+      const uniqueCities = [...new Set(matches.map(m => m.regions?.city).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+
+      const cleanedDesc = cleanDescription(representative.description, representative.regions?.city, representative.regions?.state_province);
+      const stateNameForSuffix = uniqueStates.length === 1 ? uniqueStates[0] : null;
+      const newDesc = `${cleanedDesc}${getGroupedSuffix(uniqueCities.length, countryCode, stateNameForSuffix, lang || 'en-us')}`;
+
+      const groupedCard = {
+        ...representative,
+        isGrouped: true,
+        citiesList: uniqueCities,
+        description: newDesc
+      };
+
+      if (uniqueStates.length === 1) {
+        const stateName = uniqueStates[0];
+        if (!states[stateName]) states[stateName] = [];
+        states[stateName].push(groupedCard);
+      } else {
+        national.push(groupedCard);
+      }
+    } else {
+      const stateName = r.regions?.state_province || 'National';
+      if (!states[stateName]) states[stateName] = [];
+      states[stateName].push({
+        ...r,
+        isGrouped: false
+      });
+    }
+  });
+
+  processedGroupedRebates[countryCode] = { national, states };
 });
 
 // Format currency
@@ -211,6 +273,98 @@ function formatValue(value: number, type: string, countryCode: string) {
     return `${symbol}${value}`;
   }
   return `${symbol}${value} ${type}`;
+}
+
+// Format city listing text
+function formatCitiesText(cities: string[]) {
+  if (cities.length <= 4) {
+    return `${cities.join(', ')}`;
+  }
+  return `${cities.slice(0, 3).join(', ')} +${cities.length - 3} more`;
+}
+
+// Clean description by removing location suffix
+function cleanDescription(desc: string, city: string, state: string) {
+  if (!desc) return desc;
+  
+  const suffixes = [
+    ` in ${city}, ${state}.`,
+    ` in ${city}, ${state}`,
+    ` in ${city}.`,
+    ` in ${city}`
+  ];
+  
+  let cleaned = desc;
+  for (const suffix of suffixes) {
+    if (cleaned.endsWith(suffix)) {
+      cleaned = cleaned.slice(0, -suffix.length);
+      break;
+    }
+  }
+  
+  if (cleaned.endsWith('.')) {
+    cleaned = cleaned.slice(0, -1);
+  }
+  
+  return cleaned;
+}
+
+// Localized in-country preposition and name helper
+function getInCountryPhrase(countryCode: string, lang: string): string {
+  const code = countryCode.toLowerCase();
+  if (lang === 'de-de') {
+    const mapping: Record<string, string> = {
+      us: 'in den USA',
+      uk: 'in Großbritannien',
+      de: 'in Deutschland',
+      ca: 'in Kanada',
+      au: 'in Australien',
+      fr: 'in Frankreich'
+    };
+    return mapping[code] || `in ${code.toUpperCase()}`;
+  }
+  if (lang === 'fr-fr') {
+    const mapping: Record<string, string> = {
+      us: 'aux États-Unis',
+      uk: 'au Royaume-Uni',
+      de: 'en Allemagne',
+      ca: 'au Canada',
+      au: 'en Australie',
+      fr: 'en France'
+    };
+    return mapping[code] || `en ${code.toUpperCase()}`;
+  }
+  const mapping: Record<string, string> = {
+    us: 'in the United States',
+    uk: 'in the United Kingdom',
+    de: 'in Germany',
+    ca: 'in Canada',
+    au: 'in Australia',
+    fr: 'in France'
+  };
+  return mapping[code] || `in ${code.toUpperCase()}`;
+}
+
+// Localized suffix helper
+function getGroupedSuffix(citiesCount: number, countryCode: string, stateName: string | null, lang: string) {
+  const locationPhrase = stateName ? `in ${stateName}` : getInCountryPhrase(countryCode, lang);
+  
+  if (lang === 'de-de') {
+    if (stateName) {
+      return `, bundeslandweit verfügbar in ${citiesCount} Städten ${locationPhrase}.`;
+    }
+    return `, landesweit verfügbar in ${citiesCount} Städten ${locationPhrase}.`;
+  }
+  if (lang === 'fr-fr') {
+    if (stateName) {
+      return `, disponible dans tout l'État dans ${citiesCount} villes ${locationPhrase}.`;
+    }
+    return `, disponible à l'échelle nationale dans ${citiesCount} villes ${locationPhrase}.`;
+  }
+  if (stateName) {
+    return `, available state-wide across ${citiesCount} cities in ${stateName}.`;
+  }
+  return `, available nationwide across ${citiesCount} cities ${locationPhrase}.`;
 }
 
 // Breadcrumb Schema
@@ -326,8 +480,10 @@ const itemListSchema = {
       </div>
     ) : (
       <div class="space-y-10">
-        {Object.entries(groupedRebates).map(([countryCode, states]) => {
+        {Object.entries(processedGroupedRebates).map(([countryCode, countryData]) => {
           const meta = COUNTRY_METADATA[countryCode] || { name: countryCode.toUpperCase(), flag: '🌐' };
+          const hasNational = countryData.national.length > 0;
+
           return (
             <div class="bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-3xl p-6 md:p-8 shadow-sm">
               <div class="flex items-center gap-3 mb-6 pb-4 border-b border-[var(--color-border)]">
@@ -336,7 +492,47 @@ const itemListSchema = {
               </div>
 
               <div class="space-y-8">
-                {Object.entries(states).map(([stateName, items]) => (
+                {/* 1. National Programs */}
+                {hasNational && (
+                  <div>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-4">
+                      {lang === 'de-de' ? 'Nationale Programme' : lang === 'fr-fr' ? 'Programmes Nationaux' : 'National Programs'}
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {countryData.national.map((rebate) => (
+                        <div class="bg-[var(--bg-primary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow transition-all duration-300">
+                          <div>
+                            <div class="flex justify-between items-start gap-2 mb-2">
+                              <h4 class="font-extrabold text-[var(--text-main)] leading-snug">
+                                {rebate.authority_name}
+                              </h4>
+                              <span class="text-xs font-bold px-2 py-0.5 rounded bg-[var(--bg-secondary)] border border-[var(--color-border)] text-[var(--text-muted)] whitespace-nowrap">
+                                {formatValue(rebate.incentive_value, rebate.incentive_type, rebate.regions?.country_code)}
+                              </span>
+                            </div>
+                            <p class="text-xs text-[var(--text-muted)] mb-4 line-clamp-3">
+                              {rebate.description}
+                            </p>
+                          </div>
+                          <div class="flex justify-between items-center pt-2 mt-auto border-t border-[var(--color-border)]/50">
+                            <span class="text-[10px] font-semibold text-[var(--text-muted)]">
+                              📍 Available in: {formatCitiesText(rebate.citiesList)}
+                            </span>
+                            <a 
+                              href={`/${lang}/rebate/${rebate.slug}`} 
+                              class="text-xs font-bold text-[var(--color-accent)] hover:underline transition-all"
+                            >
+                              {l10n.apply} →
+                            </a>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. State-Specific Programs */}
+                {Object.entries(countryData.states).map(([stateName, items]) => (
                   <div>
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-4">
                       {stateName}
@@ -361,12 +557,18 @@ const itemListSchema = {
                               </p>
                             </div>
                             <div class="flex justify-between items-center pt-2 mt-auto border-t border-[var(--color-border)]/50">
-                              <a 
-                                href={`/${lang}/directory/${countrySlug}/${stateSlug}`} 
-                                class="text-[10px] font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
-                              >
-                                📍 {rebate.regions?.city}
-                              </a>
+                              {rebate.isGrouped ? (
+                                <span class="text-[10px] font-semibold text-[var(--text-muted)]">
+                                  📍 Available in: {formatCitiesText(rebate.citiesList)}
+                                </span>
+                              ) : (
+                                <a 
+                                  href={`/${lang}/directory/${countrySlug}/${stateSlug}`} 
+                                  class="text-[10px] font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+                                >
+                                  📍 {rebate.regions?.city}
+                                </a>
+                              )}
                               <a 
                                 href={`/${lang}/rebate/${rebate.slug}`} 
                                 class="text-xs font-bold text-[var(--color-accent)] hover:underline transition-all"
