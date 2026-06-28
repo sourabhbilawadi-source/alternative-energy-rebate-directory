@@ -69,16 +69,26 @@ if (supabase) {
   try {
     const { data } = await supabase
       .from('regions')
-      .select('state_province')
+      .select('state_province, state_slug')
       .eq('country_code', country === 'uk' ? 'gb' : (country || 'us').toLowerCase());
     
     if (data && data.length > 0) {
-      const uniqueStates = [...new Set(data.map(r => r.state_province))];
-      statesList = uniqueStates.map(name => {
-        const slug = name.toLowerCase().replace(/\s+/g, '-');
-        const count = data.filter(r => r.state_province === name).length;
-        return { slug, name, citiesCount: count };
-      });
+      const stateMap = new Map<string, { slug: string; count: number }>();
+      for (const r of data) {
+        const name = r.state_province;
+        const slug = r.state_slug || name.toLowerCase().replace(/\s+/g, '-');
+        const existing = stateMap.get(name);
+        if (existing) {
+          existing.count += 1;
+        } else {
+          stateMap.set(name, { slug, count: 1 });
+        }
+      }
+      statesList = Array.from(stateMap.entries()).map(([name, info]) => ({
+        slug: info.slug,
+        name,
+        citiesCount: info.count
+      }));
     }
   } catch (err) {
     console.error('Failed to query states from Supabase regions. Using presets:', err);

@@ -24,13 +24,13 @@ export async function getStaticPaths() {
     try {
       const { data } = await supabase
         .from('regions')
-        .select('country_code, state_province');
+        .select('country_code, state_province, state_slug');
       
       if (data && data.length > 0) {
         const seenKeys = new Set(regions.map(r => `${r.country}:${r.state}`));
         for (const r of data) {
           const country = r.country_code === 'gb' ? 'uk' : r.country_code.toLowerCase();
-          const state = r.state_province.toLowerCase().replace(/\s+/g, '-');
+          const state = r.state_slug || r.state_province.toLowerCase().replace(/\s+/g, '-');
           const key = `${country}:${state}`;
           if (!seenKeys.has(key)) {
             seenKeys.add(key);
@@ -75,7 +75,7 @@ if (supabase) {
       .from('regions')
       .select('city')
       .eq('country_code', country === 'uk' ? 'gb' : (country || 'us').toLowerCase())
-      .ilike('state_province', (state || '').replace(/-/g, ' '));
+      .eq('state_slug', state);
     
     if (data && data.length > 0) {
       const uniqueCities = [...new Set(data.map(r => r.city))];
@@ -97,7 +97,7 @@ if (supabase) {
       .select('*, regions!inner(*)', { count: 'exact', head: true })
       .eq('is_active', true)
       .eq('regions.country_code', country === 'uk' ? 'gb' : country.toLowerCase())
-      .ilike('regions.state_province', (state || '').replace(/-/g, ' '));
+      .eq('regions.state_slug', state);
     if (count !== null) activeProgramsCount = count;
   } catch (err) {
     console.error('Failed to count active rebates for state:', err);
