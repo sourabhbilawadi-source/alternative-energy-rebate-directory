@@ -315,17 +315,8 @@ const itemListSchema = {
     </nav>
 
     <div class="mb-10 text-center md:text-left">
-      <h1 class="text-4xl font-black tracking-tight text-[var(--text-main)] mb-3 leading-tight">
-        {displayCategory} {lang === 'de-de' ? 'Rabatte & Anreize' : lang === 'fr-fr' ? 'Subventions' : 'Rebates & Incentives'}
-      </h1>
-      <p class="text-lg text-[var(--text-muted)]">
-        {lang === 'de-de' 
-          ? `Durchsuchen Sie ${rebatesCount} aktive Programme in ${countryCount} Ländern.` 
-          : lang === 'fr-fr' 
-            ? `Parcourez ${rebatesCount} programmes actifs dans ${countryCount} pays.` 
-            : `Explore ${rebatesCount} active programs across ${countryCount} countries.`
-        }
-      </p>
+      <h1 class="text-4xl font-black tracking-tight text-[var(--text-main)] mb-3 leading-tight">{displayCategory} {lang === 'de-de' ? 'Rabatte & Anreize' : lang === 'fr-fr' ? 'Subventions' : 'Rebates & Incentives'}</h1>
+      <p class="text-lg text-[var(--text-muted)]">{lang === 'de-de' ? `Durchsuchen Sie ${rebatesCount} aktive Programme in ${countryCount} Ländern.` : lang === 'fr-fr' ? `Parcourez ${rebatesCount} programmes actifs dans ${countryCount} pays.` : `Explore ${rebatesCount} active programs across ${countryCount} countries.`}</p>
     </div>
 
     <!-- Rebates List Grouped by Country and State -->
