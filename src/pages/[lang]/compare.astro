@@ -16,6 +16,36 @@ export async function getStaticPaths() {
 const { lang } = Astro.params;
 const t = useTranslations(lang || 'en-us');
 import Navbar from '../../components/Navbar.astro';
+import { supabase } from '../../lib/supabase';
+
+let serverRebates = [];
+if (supabase) {
+  try {
+    const { data } = await supabase
+      .from('rebates')
+      .select(`
+        id,
+        authority_name,
+        technology_category,
+        incentive_value,
+        incentive_type,
+        max_limit,
+        regions (
+          id,
+          country_code,
+          state_province,
+          city,
+          postal_code
+        )
+      `)
+      .eq('is_active', true);
+    if (data) {
+      serverRebates = data;
+    }
+  } catch (err) {
+    console.error('Failed to query rebates for Compare page:', err);
+  }
+}
 ---
 
 <!DOCTYPE html>
@@ -99,7 +129,7 @@ import Navbar from '../../components/Navbar.astro';
     </div>
 
     <!-- Comparison Engine React Island -->
-    <ComparisonEngine client:load lang={lang} />
+    <ComparisonEngine client:load lang={lang} databaseRebates={serverRebates} />
   </main>
 
   <!-- Footer -->

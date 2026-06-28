@@ -35,81 +35,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
   const [filteredResults, setFilteredResults] = useState<SearchRebate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Preset mock database records for offline fallbacks
-  const mockRebates: SearchRebate[] = [
-    {
-      id: 'mock-1',
-      authority_name: 'Federal Solar Tax Credit',
-      technology_category: 'Federal Tax Incentive',
-      incentive_value: 30,
-      incentive_type: 'percentage',
-      max_limit: null,
-      region: { country_code: 'us', state_province: 'California', city: 'Los Angeles', postal_code: '90210' }
-    },
-    {
-      id: 'mock-2',
-      authority_name: 'California SGIP Battery Rebate',
-      technology_category: 'Battery Storage Program',
-      incentive_value: 2000,
-      incentive_type: 'fixed',
-      max_limit: 5000,
-      region: { country_code: 'us', state_province: 'California', city: 'Los Angeles', postal_code: '90210' }
-    },
-    {
-      id: 'mock-3',
-      authority_name: 'LADWP Solar Net Incentive',
-      technology_category: 'Local Utility Rebate',
-      incentive_value: 0.50,
-      incentive_type: 'per_watt',
-      max_limit: 1500,
-      region: { country_code: 'us', state_province: 'California', city: 'Los Angeles', postal_code: '90210' }
-    },
-    {
-      id: 'mock-4',
-      authority_name: 'CenterPoint Energy Solar Rebate',
-      technology_category: 'Local Utility Rebate',
-      incentive_value: 0.75,
-      incentive_type: 'per_watt',
-      max_limit: 2500,
-      region: { country_code: 'us', state_province: 'Texas', city: 'Houston', postal_code: '77001' }
-    },
-    {
-      id: 'mock-5',
-      authority_name: 'UK Smart Export Guarantee (SEG)',
-      technology_category: 'National Feed-in Tariff',
-      incentive_value: 0.05,
-      incentive_type: 'per_watt',
-      max_limit: null,
-      region: { country_code: 'gb', state_province: 'England', city: 'London', postal_code: 'EC1A' }
-    },
-    {
-      id: 'mock-6',
-      authority_name: 'Boiler Upgrade Scheme Grant',
-      technology_category: 'Heat Pump Subsidy',
-      incentive_value: 7500,
-      incentive_type: 'fixed',
-      max_limit: 7500,
-      region: { country_code: 'gb', state_province: 'England', city: 'London', postal_code: 'EC1A' }
-    },
-    {
-      id: 'mock-7',
-      authority_name: 'German EEG Solar Feed-in Tariff',
-      technology_category: 'National Feed-in Tariff',
-      incentive_value: 0.08,
-      incentive_type: 'per_watt',
-      max_limit: null,
-      region: { country_code: 'de', state_province: 'Berlin', city: 'Berlin', postal_code: '10115' }
-    },
-    {
-      id: 'mock-8',
-      authority_name: 'Berlin Solarplus Battery Grant',
-      technology_category: 'State Storage Incentive',
-      incentive_value: 1500,
-      incentive_type: 'fixed',
-      max_limit: 3000,
-      region: { country_code: 'de', state_province: 'Berlin', city: 'Berlin', postal_code: '10115' }
-    }
-  ];
+  // Offline mocks removed to guarantee live database data only
 
   // Load data and parse URL search params on mount
   useEffect(() => {
@@ -174,9 +100,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
         }
       }
 
-      if (fetchedRebates.length === 0) {
-        fetchedRebates = [...mockRebates];
-      }
+
 
       // Merge localstorage additions/modifications (Admin Sandbox additions)
       try {
