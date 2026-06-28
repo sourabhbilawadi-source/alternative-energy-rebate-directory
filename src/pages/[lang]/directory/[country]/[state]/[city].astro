@@ -363,9 +363,7 @@ import Navbar from '../../../../../components/Navbar.astro';
 
     <!-- Page Title Header Section -->
     <div class="mb-10 text-center md:text-left">
-      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">
-        {lang === 'de-de' ? 'Amortisations- & Fördermittelportal für alternative Energien' : lang === 'fr-fr' ? "Portail de dimensionnement et de subventions pour l'énergie alternative" : "Alternative Energy Sizing & Rebate Portal"}
-      </h1>
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">{lang === 'de-de' ? 'Amortisations- & Fördermittelportal für alternative Energien' : lang === 'fr-fr' ? "Portail de dimensionnement et de subventions pour l'énergie alternative" : "Alternative Energy Sizing & Rebate Portal"}</h1>
       <p class="text-lg text-[var(--text-muted)] max-w-3xl">
         {lang === 'de-de' ? 'Entdecken Sie lokale Versorgungsanreize, bundesstaatliche Steuerprogramme und Größenbestimmungstools für' : lang === 'fr-fr' ? "Découvrez les incitations locales, les programmes fiscaux fédéraux et les outils de dimensionnement pour les" : "Explore local utility incentives, federal tax programs, and sizing tools for"} residential & enterprise solar setups in <strong class="text-[var(--text-main)]">{displayCity}, {displayState}</strong>.
       </p>
