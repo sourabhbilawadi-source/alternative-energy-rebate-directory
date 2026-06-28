@@ -6,7 +6,6 @@ import { useTranslations } from '../../lib/i18n';
 import Analytics from '../../components/Analytics.astro';
 
 import { supabase } from '../../lib/supabase';
-import { regionsData } from '../../data/regions';
 
 export async function getStaticPaths() {
   return [
@@ -63,58 +62,9 @@ if (supabase) {
   }
 }
 
-// Fallback to static regionsData rebates compilation if DB is unconfigured/empty
+// Log build warning if no active records are returned
 if (serverRebates.length === 0) {
-  regionsData.forEach((r, idx) => {
-    if (r.federalTaxCreditPct && r.federalTaxCreditPct > 0) {
-      serverRebates.push({
-        id: `static-fed-${idx}`,
-        authority_name: 'Federal Solar Tax Credit',
-        technology_category: 'Federal Tax Incentive',
-        incentive_value: r.federalTaxCreditPct,
-        incentive_type: 'percentage',
-        max_limit: null,
-        region: {
-          country_code: r.countryCode,
-          state_province: r.stateName,
-          city: r.cityName,
-          postal_code: ''
-        }
-      });
-    }
-    if (r.stateRebate && r.stateRebate > 0) {
-      serverRebates.push({
-        id: `static-state-${idx}`,
-        authority_name: `${r.stateName} Clean Energy Rebate`,
-        technology_category: 'State Solar Rebate',
-        incentive_value: r.stateRebate,
-        incentive_type: 'fixed',
-        max_limit: null,
-        region: {
-          country_code: r.countryCode,
-          state_province: r.stateName,
-          city: r.cityName,
-          postal_code: ''
-        }
-      });
-    }
-    if (r.utilityRebate && r.utilityRebate > 0) {
-      serverRebates.push({
-        id: `static-util-${idx}`,
-        authority_name: `${r.cityName} Utility Sizing Offset`,
-        technology_category: 'Local Utility Rebate',
-        incentive_value: r.utilityRebate,
-        incentive_type: 'fixed',
-        max_limit: null,
-        region: {
-          country_code: r.countryCode,
-          state_province: r.stateName,
-          city: r.cityName,
-          postal_code: ''
-        }
-      });
-    }
-  });
+  console.error("WARNING: Supabase rebates query returned 0 results, search page will be empty!");
 }
 ---
 
