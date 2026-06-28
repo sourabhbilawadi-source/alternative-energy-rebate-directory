@@ -42,7 +42,11 @@ export const COUNTRY_METADATA: Record<string, { name: string; flag: string }> = 
   de: { name: 'Germany', flag: '🇩🇪' },
   ca: { name: 'Canada', flag: '🇨🇦' },
   au: { name: 'Australia', flag: '🇦🇺' },
-  fr: { name: 'France', flag: '🇫🇷' }
+  fr: { name: 'France', flag: '🇫🇷' },
+  ie: { name: 'Ireland', flag: '🇮🇪' },
+  nl: { name: 'Netherlands', flag: '🇳🇱' },
+  nz: { name: 'New Zealand', flag: '🇳🇿' },
+  jp: { name: 'Japan', flag: '🇯🇵' }
 };
 
 const TODO_SOURCES = {

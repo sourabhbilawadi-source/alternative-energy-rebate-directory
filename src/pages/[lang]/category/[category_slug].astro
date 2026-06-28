@@ -262,7 +262,16 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
 
 // Format currency
 function formatValue(value: number, type: string, countryCode: string) {
-  const symbol = countryCode === 'de' ? '€' : countryCode === 'gb' || countryCode === 'uk' ? '£' : '$';
+  const code = countryCode.toLowerCase();
+  const symbol = (code === 'de' || code === 'fr' || code === 'ie' || code === 'nl')
+    ? '€'
+    : (code === 'gb' || code === 'uk')
+      ? '£'
+      : (code === 'jp')
+        ? '¥'
+        : (code === 'nz')
+          ? 'NZ$'
+          : '$';
   if (type === 'percentage') {
     return `${value}%`;
   }
