@@ -40,14 +40,17 @@ const US_STATE_EMISSIONS: Record<string, number> = {
   missouri: 0.65
 };
 
-// Global default grid rates ($/kWh) and solar installation costs ($/W) by country
 const COUNTRY_DEFAULTS: Record<string, { gridRate: number; costPerWatt: number; emissions: number }> = {
   us: { gridRate: 0.18, costPerWatt: 3.00, emissions: 0.36 },
   uk: { gridRate: 0.30, costPerWatt: 3.20, emissions: 0.15 },
   de: { gridRate: 0.36, costPerWatt: 2.80, emissions: 0.38 },
   ca: { gridRate: 0.14, costPerWatt: 2.70, emissions: 0.12 },
   au: { gridRate: 0.25, costPerWatt: 1.90, emissions: 0.68 },
-  fr: { gridRate: 0.23, costPerWatt: 3.10, emissions: 0.05 }
+  fr: { gridRate: 0.25, costPerWatt: 2.40, emissions: 0.05 },
+  ie: { gridRate: 0.38, costPerWatt: 2.20, emissions: 0.24 },
+  nl: { gridRate: 0.28, costPerWatt: 1.60, emissions: 0.23 },
+  nz: { gridRate: 0.35, costPerWatt: 2.80, emissions: 0.09 },
+  jp: { gridRate: 31.00, costPerWatt: 270.00, emissions: 0.45 }
 };
 
 export async function queryLocationSpecs(
@@ -92,6 +95,10 @@ export async function queryLocationSpecs(
     else if (countryLower.includes('canada') || countryLower === 'ca') countryCode = 'ca';
     else if (countryLower.includes('australia') || countryLower === 'au') countryCode = 'au';
     else if (countryLower.includes('france') || countryLower === 'fr') countryCode = 'fr';
+    else if (countryLower.includes('ireland') || countryLower === 'ie') countryCode = 'ie';
+    else if (countryLower.includes('netherlands') || countryLower === 'holland' || countryLower === 'nl') countryCode = 'nl';
+    else if (countryLower.includes('new zealand') || countryLower === 'nz') countryCode = 'nz';
+    else if (countryLower.includes('japan') || countryLower === 'nippon' || countryLower === 'jp') countryCode = 'jp';
 
     // 2. Fetch Solar Insolation (MJ/m2) from Open-Meteo
     let sunHours = 1450; // Standard fallback

@@ -31,6 +31,9 @@ const getCountryConfig = (code: string) => {
   const c = code.toLowerCase();
   switch (c) {
     case 'de':
+    case 'fr':
+    case 'ie':
+    case 'nl':
       return { symbol: '€', area: 'm²', carbon: 't', isMetric: true };
     case 'uk':
       return { symbol: '£', area: 'm²', carbon: 't', isMetric: true };
@@ -38,6 +41,10 @@ const getCountryConfig = (code: string) => {
       return { symbol: 'A$', area: 'm²', carbon: 't', isMetric: true };
     case 'ca':
       return { symbol: 'C$', area: 'm²', carbon: 't', isMetric: true };
+    case 'nz':
+      return { symbol: 'NZ$', area: 'm²', carbon: 't', isMetric: true };
+    case 'jp':
+      return { symbol: '¥', area: 'm²', carbon: 't', isMetric: true };
     default:
       return { symbol: '$', area: 'sq ft', carbon: 'Tons', isMetric: false };
   }

@@ -158,8 +158,17 @@ const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
 }));
 
 // Currency and formatting helper
-function formatValue(value: number, type: string, code: string) {
-  const symbol = code === 'de' ? '€' : code === 'gb' || code === 'uk' ? '£' : '$';
+function formatValue(value: number, type: string, countryCode: string) {
+  const code = countryCode.toLowerCase();
+  const symbol = (code === 'de' || code === 'fr' || code === 'ie' || code === 'nl')
+    ? '€'
+    : (code === 'gb' || code === 'uk')
+      ? '£'
+      : (code === 'jp')
+        ? '¥'
+        : (code === 'nz')
+          ? 'NZ$'
+          : '$';
   if (type === 'percentage') {
     return `${value}%`;
   }

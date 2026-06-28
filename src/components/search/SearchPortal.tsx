@@ -290,6 +290,11 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
             <option value="de">Germany</option>
             <option value="ca">Canada</option>
             <option value="au">Australia</option>
+            <option value="fr">France</option>
+            <option value="ie">Ireland</option>
+            <option value="nl">Netherlands</option>
+            <option value="nz">New Zealand</option>
+            <option value="jp">Japan</option>
           </select>
           <Globe className="absolute left-4 top-4 w-5 h-5 text-[var(--text-muted)] pointer-events-none" />
         </div>

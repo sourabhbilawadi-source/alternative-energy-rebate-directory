@@ -600,6 +600,10 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
                     <option value="ca">CA (Canada)</option>
                     <option value="au">AU (Australia)</option>
                     <option value="fr">FR (France)</option>
+                    <option value="ie">IE (Ireland)</option>
+                    <option value="nl">NL (Netherlands)</option>
+                    <option value="nz">NZ (New Zealand)</option>
+                    <option value="jp">JP (Japan)</option>
                   </select>
                 </div>
 
