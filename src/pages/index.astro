@@ -2,6 +2,50 @@
 import '../styles/global.css';
 import Analytics from '../components/Analytics.astro';
 import Navbar from '../components/Navbar.astro';
+import { supabase } from '../lib/supabase';
+
+let categories: { name: string; slug: string; count: number }[] = [];
+
+if (supabase) {
+  try {
+    const { data, error } = await supabase
+      .from('rebates')
+      .select('technology_category')
+      .eq('is_active', true);
+
+    if (error) {
+      console.warn('Failed to query active rebates for homepage categories:', error.message);
+    } else if (data && data.length > 0) {
+      const counts: Record<string, number> = {};
+      for (const r of data) {
+        const cat = r.technology_category;
+        counts[cat] = (counts[cat] || 0) + 1;
+      }
+
+      const slugifyCategory = (category: string) => {
+        return category
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .trim()
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-');
+      };
+
+      categories = Object.entries(counts)
+        .map(([name, count]) => ({
+          name,
+          slug: slugifyCategory(name),
+          count
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 8);
+    }
+  } catch (err: any) {
+    console.warn('Failed to fetch categories from Supabase at build time:', err?.message || err);
+  }
+} else {
+  console.warn('Supabase client is not initialized at build time.');
+}
 ---
 
 <!DOCTYPE html>
@@ -163,6 +207,22 @@ import Navbar from '../components/Navbar.astro';
           </a>
         </div>
       </div>
+
+      {categories.length > 0 && (
+        <div class="pt-8 space-y-3">
+          <h3 class="text-sm font-bold text-[var(--text-muted)] uppercase tracking-wider">Browse by Technology</h3>
+          <div class="flex flex-wrap justify-center gap-3">
+            {categories.map((cat) => (
+              <a 
+                href={`/en-us/category/${cat.slug}`}
+                class="bg-[var(--bg-secondary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] px-4 py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105 inline-block text-[var(--text-main)] animate-fade-in"
+              >
+                {cat.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   </main>
 
