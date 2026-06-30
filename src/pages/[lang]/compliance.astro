@@ -16,6 +16,7 @@ export async function getStaticPaths() {
 const { lang } = Astro.params;
 const t = useTranslations(lang || 'en-us');
 import Navbar from '../../components/Navbar.astro';
+import ThemeFonts from '../../components/ThemeFonts.astro';
 ---
 
 <!DOCTYPE html>
@@ -46,45 +47,14 @@ import Navbar from '../../components/Navbar.astro';
     const savedTheme = localStorage.getItem('theme') || 'sage-minimalist';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
-    // 2. Re-bind event handlers on Astro page loads (ClientRouter compatibility)
+    // 2. Re-bind theme on Astro page loads (ClientRouter compatibility)
     document.addEventListener('astro:page-load', () => {
       const activeTheme = localStorage.getItem('theme') || 'sage-minimalist';
       document.documentElement.setAttribute('data-theme', activeTheme);
-
-      const themeSelect = document.getElementById('theme-select');
-      if (themeSelect) {
-        themeSelect.value = activeTheme;
-        themeSelect.addEventListener('change', (e) => {
-          const theme = e.target.value;
-          localStorage.setItem('theme', theme);
-          document.documentElement.setAttribute('data-theme', theme);
-        });
-      }
-
-      const langSelect = document.getElementById('lang-select');
-      if (langSelect) {
-        langSelect.addEventListener('change', (e) => {
-          const targetLang = e.target.value;
-          const pathParts = window.location.pathname.split('/').filter(Boolean);
-          
-          if (pathParts.length === 0) {
-            window.location.href = `/${targetLang}/directory`;
-          } else {
-            const supportedLangs = ['en-us', 'de-de', 'fr-fr'];
-            if (supportedLangs.includes(pathParts[0])) {
-              pathParts[0] = targetLang;
-            } else {
-              pathParts.unshift(targetLang);
-            }
-            window.location.href = `/${pathParts.join('/')}${window.location.search}`;
-          }
-        });
-      }
     });
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Open+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <ThemeFonts />
   <Analytics />
 </head>
 <body class="min-h-screen flex flex-col justify-between">

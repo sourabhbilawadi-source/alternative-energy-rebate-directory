@@ -31,6 +31,7 @@ const t = useTranslations(lang);
       <select 
         id="lang-select" 
         class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
+        aria-label="Select Language"
       >
         <option value="en-us" selected={lang === 'en-us'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">EN-US</option>
         <option value="de-de" selected={lang === 'de-de'} class="bg-[var(--bg-primary)] text-[var(--text-main)]">DE-DE</option>
@@ -41,6 +42,7 @@ const t = useTranslations(lang);
       <select 
         id="theme-select"
         class="bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none font-semibold cursor-pointer transition-all hover:border-[var(--color-accent)]"
+        aria-label="Select Theme"
       >
         <option value="sage-minimalist" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Sage Minimalist</option>
         <option value="dark-forest" class="bg-[var(--bg-primary)] text-[var(--text-main)]">Dark Forest</option>
@@ -54,7 +56,7 @@ const t = useTranslations(lang);
     </div>
 
     <!-- Mobile Menu Button -->
-    <button id="mobile-menu-btn" class="md:hidden p-2 text-[var(--text-main)] focus:outline-none">
+    <button id="mobile-menu-btn" class="md:hidden p-2 text-[var(--text-main)] focus:outline-none" aria-label="Toggle Menu">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
     </button>
   </div>
@@ -73,6 +75,7 @@ const t = useTranslations(lang);
         <select 
           id="lang-select-mobile" 
           class="bg-[var(--bg-secondary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none"
+          aria-label="Select Language"
         >
           <option value="en-us" selected={lang === 'en-us'}>EN-US</option>
           <option value="de-de" selected={lang === 'de-de'}>DE-DE</option>
@@ -84,6 +87,7 @@ const t = useTranslations(lang);
         <select 
           id="theme-select-mobile"
           class="bg-[var(--bg-secondary)] border border-[var(--color-border)] text-[var(--text-main)] text-sm rounded-xl px-2.5 py-1.5 outline-none"
+          aria-label="Select Theme"
         >
           <option value="sage-minimalist">Sage Minimalist</option>
           <option value="dark-forest">Dark Forest</option>
@@ -101,6 +105,7 @@ const t = useTranslations(lang);
 
 <script is:inline>
   function initNavbar() {
+    // 1. Mobile menu toggle
     const btn = document.getElementById('mobile-menu-btn');
     const menu = document.getElementById('mobile-menu');
     if (btn && menu) {
@@ -112,8 +117,28 @@ const t = useTranslations(lang);
       }
     }
     
-    // Sync mobile selectors with main logic
     const activeTheme = localStorage.getItem('theme') || 'sage-minimalist';
+
+    // 2. Desktop Theme Selector
+    const themeSelect = document.getElementById('theme-select');
+    if (themeSelect) {
+      themeSelect.value = activeTheme;
+      if (!themeSelect.dataset.hasListener) {
+        themeSelect.addEventListener('change', (e) => {
+          const theme = e.target.value;
+          localStorage.setItem('theme', theme);
+          document.documentElement.setAttribute('data-theme', theme);
+          const mobileSelect = document.getElementById('theme-select-mobile');
+          if (mobileSelect) mobileSelect.value = theme;
+          if (typeof window.loadThemeFonts === 'function') {
+            window.loadThemeFonts(theme);
+          }
+        });
+        themeSelect.dataset.hasListener = 'true';
+      }
+    }
+
+    // 3. Mobile Theme Selector
     const themeSelectMobile = document.getElementById('theme-select-mobile');
     if (themeSelectMobile) {
       themeSelectMobile.value = activeTheme;
@@ -124,31 +149,46 @@ const t = useTranslations(lang);
           document.documentElement.setAttribute('data-theme', theme);
           const mainSelect = document.getElementById('theme-select');
           if (mainSelect) mainSelect.value = theme;
+          if (typeof window.loadThemeFonts === 'function') {
+            window.loadThemeFonts(theme);
+          }
         });
         themeSelectMobile.dataset.hasListener = 'true';
       }
     }
 
-    const langSelectMobile = document.getElementById('lang-select-mobile');
-    if (langSelectMobile) {
-      if (!langSelectMobile.dataset.hasListener) {
-        langSelectMobile.addEventListener('change', (e) => {
-          const targetLang = e.target.value;
-          const pathParts = window.location.pathname.split('/').filter(Boolean);
-          if (pathParts.length === 0) {
-            window.location.href = `/${targetLang}/directory`;
-          } else {
-            const supportedLangs = ['en-us', 'de-de', 'fr-fr'];
-            if (supportedLangs.includes(pathParts[0])) {
-              pathParts[0] = targetLang;
-            } else {
-              pathParts.unshift(targetLang);
-            }
-            window.location.href = `/${pathParts.join('/')}${window.location.search}`;
-          }
-        });
-        langSelectMobile.dataset.hasListener = 'true';
+    // Helper to redirect to language
+    function handleLangChange(targetLang) {
+      const pathParts = window.location.pathname.split('/').filter(Boolean);
+      if (pathParts.length === 0) {
+        window.location.href = `/${targetLang}/directory`;
+      } else {
+        const supportedLangs = ['en-us', 'de-de', 'fr-fr'];
+        if (supportedLangs.includes(pathParts[0])) {
+          pathParts[0] = targetLang;
+        } else {
+          pathParts.unshift(targetLang);
+        }
+        window.location.href = `/${pathParts.join('/')}${window.location.search}`;
       }
+    }
+
+    // 4. Desktop Lang Selector
+    const langSelect = document.getElementById('lang-select');
+    if (langSelect && !langSelect.dataset.hasListener) {
+      langSelect.addEventListener('change', (e) => {
+        handleLangChange(e.target.value);
+      });
+      langSelect.dataset.hasListener = 'true';
+    }
+
+    // 5. Mobile Lang Selector
+    const langSelectMobile = document.getElementById('lang-select-mobile');
+    if (langSelectMobile && !langSelectMobile.dataset.hasListener) {
+      langSelectMobile.addEventListener('change', (e) => {
+        handleLangChange(e.target.value);
+      });
+      langSelectMobile.dataset.hasListener = 'true';
     }
   }
 

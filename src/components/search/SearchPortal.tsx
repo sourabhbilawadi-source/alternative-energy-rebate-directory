@@ -261,6 +261,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t.search.placeholder}
             className="w-full bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] rounded-2xl py-3.5 px-4 pl-12 outline-none focus:border-[var(--color-accent)] transition-all font-semibold shadow-sm focus:shadow-md"
+            aria-label="Search rebates by keywords"
           />
           <Search className="absolute left-4 top-4 w-5 h-5 text-[var(--text-muted)]" />
         </div>
@@ -273,6 +274,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
             onChange={(e) => setPostalQuery(e.target.value)}
             placeholder="Postal / ZIP code..."
             className="w-full bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] rounded-2xl py-3.5 px-4 pl-12 outline-none focus:border-[var(--color-accent)] transition-all font-semibold shadow-sm focus:shadow-md"
+            aria-label="Search rebates by postal or ZIP code"
           />
           <MapPin className="absolute left-4 top-4 w-5 h-5 text-[var(--text-muted)]" />
         </div>
@@ -283,6 +285,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
             value={selectedCountry}
             onChange={(e) => setSelectedCountry(e.target.value)}
             className="w-full bg-[var(--bg-primary)] border border-[var(--color-border)] text-[var(--text-main)] rounded-2xl py-3.5 px-4 pl-12 outline-none focus:border-[var(--color-accent)] transition-all font-semibold shadow-sm focus:shadow-md appearance-none cursor-pointer"
+            aria-label="Filter rebates by country"
           >
             <option value="all">{t.search.allCountries}</option>
             <option value="us">United States</option>

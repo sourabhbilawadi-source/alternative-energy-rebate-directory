@@ -414,6 +414,7 @@ const itemListSchema = {
     "url": `${siteUrl}/${lang}/rebate/${r.slug}`
   }))
 };
+import ThemeFonts from '../../../components/ThemeFonts.astro';
 ---
 
 <!DOCTYPE html>
@@ -450,9 +451,8 @@ const itemListSchema = {
     <script type="application/ld+json" set:html={JSON.stringify(itemListSchema)} />
   )}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <ThemeFonts />
   <Analytics />
 </head>
 <body class="min-h-screen flex flex-col justify-between">

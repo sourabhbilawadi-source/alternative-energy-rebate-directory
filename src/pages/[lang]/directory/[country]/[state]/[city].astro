@@ -19,9 +19,16 @@ export async function getStaticPaths() {
 
   if (supabase) {
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('regions')
         .select('country_code, state_province, state_slug, city');
+      
+      if (error) {
+        console.error("DEBUG: Supabase query error in [city].astro getStaticPaths:", error);
+      } else {
+        console.log(`DEBUG: [city].astro getStaticPaths returned ${data?.length || 0} regions.`);
+        console.log("DEBUG: DB query French regions:", data?.filter(r => r.country_code === 'fr'));
+      }
       
       if (data && data.length > 0) {
         const dbCities = data.map(r => ({
@@ -39,6 +46,7 @@ export async function getStaticPaths() {
           }
         }
       }
+      console.log("DEBUG: citiesList French entries:", citiesList.filter(c => c.country === 'fr'));
     } catch (err) {
       console.error('Failed to query regions for static paths. Using fallbacks:', err);
     }
@@ -50,6 +58,7 @@ export async function getStaticPaths() {
       paths.push({ params: { lang, ...item } });
     }
   }
+  console.log("DEBUG: final paths French entries:", paths.filter(p => p.params.country === 'fr'));
   return paths;
 }
 
@@ -73,9 +82,11 @@ const getLocalSpecs = () => {
     sunHours: 1050,
     gridEmissions: 0.40,
     costPerWatt: 3.40,
-    federalTaxCreditPct: 0.0,
-    stateRebate: 1200,
-    utilityRebate: 300
+    incentives: {
+      federalTaxCreditPct: 0.0,
+      stateRebate: 1200,
+      utilityRebate: 300
+    }
   };
 
   if (!match) {
@@ -88,9 +99,9 @@ const getLocalSpecs = () => {
     gridEmissions: match.gridEmissions !== null ? match.gridEmissions : DEFAULT_FALLBACK.gridEmissions,
     costPerWatt: match.costPerWatt !== null ? match.costPerWatt : DEFAULT_FALLBACK.costPerWatt,
     incentives: {
-      federalTaxCreditPct: match.federalTaxCreditPct !== null ? match.federalTaxCreditPct : DEFAULT_FALLBACK.federalTaxCreditPct,
-      stateRebate: match.stateRebate !== null ? match.stateRebate : DEFAULT_FALLBACK.stateRebate,
-      utilityRebate: match.utilityRebate !== null ? match.utilityRebate : DEFAULT_FALLBACK.utilityRebate
+      federalTaxCreditPct: match.federalTaxCreditPct !== null ? match.federalTaxCreditPct : DEFAULT_FALLBACK.incentives.federalTaxCreditPct,
+      stateRebate: match.stateRebate !== null ? match.stateRebate : DEFAULT_FALLBACK.incentives.stateRebate,
+      utilityRebate: match.utilityRebate !== null ? match.utilityRebate : DEFAULT_FALLBACK.incentives.utilityRebate
     }
   };
 };
@@ -257,6 +268,7 @@ if (lang === 'de-de') {
     : `Save on solar in ${displayCity}, ${displayState} with a ${fedPctText}% federal tax credit and utility rates of ${currencySymbol}${rateText}/kWh. Estimated payback period: ${paybackText} years. Calculate your solar ROI today!`;
 }
 import Navbar from '../../../../../components/Navbar.astro';
+import ThemeFonts from '../../../../../components/ThemeFonts.astro';
 ---
 
 <!DOCTYPE html>
@@ -301,45 +313,14 @@ import Navbar from '../../../../../components/Navbar.astro';
     const savedTheme = localStorage.getItem('theme') || 'sage-minimalist';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
-    // 2. Re-bind event handlers on Astro page loads (ClientRouter compatibility)
+    // 2. Re-bind theme on Astro page loads (ClientRouter compatibility)
     document.addEventListener('astro:page-load', () => {
       const activeTheme = localStorage.getItem('theme') || 'sage-minimalist';
       document.documentElement.setAttribute('data-theme', activeTheme);
-
-      const themeSelect = document.getElementById('theme-select');
-      if (themeSelect) {
-        themeSelect.value = activeTheme;
-        themeSelect.addEventListener('change', (e) => {
-          const theme = e.target.value;
-          localStorage.setItem('theme', theme);
-          document.documentElement.setAttribute('data-theme', theme);
-        });
-      }
-
-      const langSelect = document.getElementById('lang-select');
-      if (langSelect) {
-        langSelect.addEventListener('change', (e) => {
-          const targetLang = e.target.value;
-          const pathParts = window.location.pathname.split('/').filter(Boolean);
-          
-          if (pathParts.length === 0) {
-            window.location.href = `/${targetLang}/directory`;
-          } else {
-            const supportedLangs = ['en-us', 'de-de', 'fr-fr'];
-            if (supportedLangs.includes(pathParts[0])) {
-              pathParts[0] = targetLang;
-            } else {
-              pathParts.unshift(targetLang);
-            }
-            window.location.href = `/${pathParts.join('/')}${window.location.search}`;
-          }
-        });
-      }
     });
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Open+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <ThemeFonts />
   <Analytics />
 </head>
 <body class="min-h-screen pb-16">

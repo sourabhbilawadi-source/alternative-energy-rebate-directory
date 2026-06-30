@@ -1,0 +1,57 @@
+---
+// src/components/ThemeFonts.astro
+---
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<script is:inline>
+  (function() {
+    // 1. Determine active theme from localStorage or default to 'sage-minimalist'
+    const savedTheme = localStorage.getItem('theme') || 'sage-minimalist';
+
+    // 2. Map themes to their specific font requirements
+    let families = [];
+    if (savedTheme === 'dark-forest') {
+      families.push('family=Inter:wght@300;400;500;600;700');
+      families.push('family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400');
+    } else if (savedTheme === 'mint-tech') {
+      families.push('family=Inter:wght@300;400;500;600;700');
+      families.push('family=Poppins:wght@300;400;500;600;700');
+      families.push('family=JetBrains+Mono:wght@400;500;700');
+    } else {
+      // Default: sage-minimalist
+      families.push('family=Inter:wght@300;400;500;600;700');
+      families.push('family=Open+Sans:wght@300;400;500;600;700');
+    }
+
+    // 3. Inject stylesheet link
+    const fontUrl = `https://fonts.googleapis.com/css2?${families.join('&')}&display=swap`;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = fontUrl;
+    document.head.appendChild(link);
+
+    // 4. Expose loadThemeFonts helper on window for dynamic runtime changes
+    window.loadThemeFonts = function(theme) {
+      let extraFamilies = [];
+      if (theme === 'dark-forest' && !window.darkForestFontsLoaded) {
+        extraFamilies.push('family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400');
+        window.darkForestFontsLoaded = true;
+      } else if (theme === 'mint-tech' && !window.mintTechFontsLoaded) {
+        extraFamilies.push('family=Poppins:wght@300;400;500;600;700');
+        extraFamilies.push('family=JetBrains+Mono:wght@400;500;700');
+        window.mintTechFontsLoaded = true;
+      } else if (theme === 'sage-minimalist' && !window.sageMinimalistFontsLoaded) {
+        extraFamilies.push('family=Open+Sans:wght@300;400;500;600;700');
+        window.sageMinimalistFontsLoaded = true;
+      }
+
+      if (extraFamilies.length > 0) {
+        const linkEl = document.createElement('link');
+        linkEl.rel = 'stylesheet';
+        linkEl.href = `https://fonts.googleapis.com/css2?${extraFamilies.join('&')}&display=swap`;
+        document.head.appendChild(linkEl);
+      }
+    };
+  })();
+</script>

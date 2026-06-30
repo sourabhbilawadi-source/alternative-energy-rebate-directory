@@ -4,23 +4,49 @@ const gaId = import.meta.env.PUBLIC_GA_TRACKING_ID || '';
 ---
 
 {gaId && (
-  <>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
-    <script define:vars={{ gaId }}>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+  <script define:vars={{ gaId }}>
+    (function() {
+      const loadGA = () => {
+        if (window.gaLoaded) return;
+        window.gaLoaded = true;
 
-      // Initial configuration
-      gtag('config', gaId);
+        // Clean up listeners
+        window.removeEventListener('scroll', loadGA);
+        window.removeEventListener('mousemove', loadGA);
+        window.removeEventListener('touchstart', loadGA);
+        window.removeEventListener('click', loadGA);
 
-      // Track views when using Astro View Transitions (ClientRouter)
-      document.addEventListener('astro:page-load', () => {
-        gtag('config', gaId, {
-          page_path: window.location.pathname + window.location.search
+        // Create script tag
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function() { window.dataLayer.push(arguments); };
+        window.gtag('js', new Date());
+        window.gtag('config', gaId);
+
+        // Track page views on Astro page transition
+        document.addEventListener('astro:page-load', () => {
+          if (typeof window.gtag === 'function') {
+            window.gtag('config', gaId, {
+              page_path: window.location.pathname + window.location.search
+            });
+          }
         });
+      };
+
+      // Load on interaction
+      window.addEventListener('scroll', loadGA, { passive: true });
+      window.addEventListener('mousemove', loadGA, { passive: true });
+      window.addEventListener('touchstart', loadGA, { passive: true });
+      window.addEventListener('click', loadGA, { passive: true });
+
+      // Fallback: load after page onload + 4s delay
+      window.addEventListener('load', () => {
+        setTimeout(loadGA, 4000);
       });
-    </script>
-  </>
+    })();
+  </script>
 )}
