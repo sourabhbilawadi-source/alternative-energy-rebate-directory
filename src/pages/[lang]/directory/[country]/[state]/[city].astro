@@ -276,6 +276,130 @@ if (lang === 'de-de') {
   h1Title = `${displayCity}, ${displayState} Solar & Energy Rebates ${currentYear}`;
   introParagraph = `With average local utility rates of ${currencySymbol}${rateText}/kWh and ${localSpecs.sunHours} peak sun hours per year, a typical 6 kW solar installation in ${displayCity}, ${displayState} has an estimated payback period of ${paybackText} years. Explore active incentives and calculate your custom ROI below.`;
 }
+
+// FAQ Schema definition
+let faqSchema = {};
+const annualGenFormatted = Math.round(annualGen).toLocaleString(lang === 'de-de' ? 'de-DE' : lang === 'fr-fr' ? 'fr-FR' : 'en-US');
+const annualSavingsFormatted = Math.round(annualSavings).toLocaleString(lang === 'de-de' ? 'de-DE' : lang === 'fr-fr' ? 'fr-FR' : 'en-US');
+
+if (lang === 'de-de') {
+  faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": `Wie viel kann ich in ${displayCity} mit Solarstrom sparen?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Durch die Installation von Solarmodulen in ${displayCity} können Sie Ihre Stromkosten erheblich senken. Bei einem lokalen Stromtarif von ${currencySymbol}${rateText}/kWh und durchschnittlich ${localSpecs.sunHours} Sonnenstunden pro Jahr erzeugt eine typische 6-kW-Solaranlage jährlich etwa ${annualGenFormatted} kWh Strom. Dies entspricht einer geschätzten Ersparnis von ${currencySymbol}${annualSavingsFormatted} im ersten Jahr.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Welche Solarförderungen gibt es in ${displayState}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `In ${displayState} können Sie von verschiedenen Anreizen profitieren. Dazu gehören eine Bundessteuergutschrift von ${fedPctText}%, staatliche Zuschüsse von bis zu ${currencySymbol}${stRebate} und Fördermittel von Versorgungsunternehmen von bis zu ${currencySymbol}${utRebate}. In unserer Datenbank sind für diese Region derzeit ${dbRebates.length} aktive Förderprogramme registriert.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Wie lange ist die Amortisationszeit für Solarstrom in ${displayCity}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Die geschätzte Amortisationszeit für Solaranlagen in ${displayCity}, ${displayState} beträgt etwa ${paybackText} Jahre. Dies basiert auf den Nettosystemkosten nach Abzug aller anwendbaren Förderungen (wie der ${fedPctText}% Bundessteuergutschrift, staatlichen Zuschüssen von ${currencySymbol}${stRebate} und Zuschüssen von Versorgungsbetrieben von ${currencySymbol}${utRebate}) im Vergleich zu Ihren jährlichen Stromeinsparungen von ${currencySymbol}${annualSavingsFormatted}.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Gibt es in ${displayCity} Net Metering (Netzeinspeisung)?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Ja, Netzeinspeisung oder entsprechende Einspeisevergütungen sind in ${displayCity}, ${displayState} über die lokalen Netzbetreiber verfügbar. Dadurch können Sie überschüssigen Solarstrom in das öffentliche Netz einspeisen und erhalten dafür Gutschriften oder Vergütungen, die Ihre Energiekosten weiter senken.`
+        }
+      }
+    ]
+  };
+} else if (lang === 'fr-fr') {
+  faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": `Combien puis-je économiser grâce au solaire à ${displayCity} ?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `L'installation de panneaux solaires à ${displayCity} permet de réduire considérablement vos factures d'électricité. Avec un tarif d'électricité local de ${currencySymbol}${rateText}/kWh et une moyenne de ${localSpecs.sunHours} heures d'ensoleillement par an, un système solaire standard de 6 kW produit environ ${annualGenFormatted} kWh par an, ce qui représente une économie estimée à ${currencySymbol}${annualSavingsFormatted} la première année.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Quelles subventions solaires sont disponibles en ${displayState} ?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `En ${displayState}, vous pouvez bénéficier de plusieurs incitations financières : un crédit d'impôt de ${fedPctText}%, des subventions de l'État allant jusqu'à ${currencySymbol}${stRebate}, et des aides des fournisseurs d'énergie de ${currencySymbol}${utRebate}. Actuellement, ${dbRebates.length} programmes d'aides actifs sont enregistrés dans notre base de données pour cette région.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Quelle est la durée d'amortissement des panneaux solaires à ${displayCity} ?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `La période d'amortissement estimée pour une installation solaire à ${displayCity}, ${displayState} est d'environ ${paybackText} ans. Ce calcul prend en compte le coût net du système après déduction du crédit d'impôt de ${fedPctText}% et des subventions (d'une valeur de ${currencySymbol}${stRebate} pour l'État et ${currencySymbol}${utRebate} pour le fournisseur d'énergie), divisé par vos économies annuelles d'électricité de ${currencySymbol}${annualSavingsFormatted}.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Est-ce que le net metering (facturation nette) est disponible à ${displayCity} ?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Oui, le net metering ou des dispositifs d'achat de l'électricité (comme l'obligation d'achat) sont généralement disponibles à ${displayCity}, ${displayState} via les distributeurs d'énergie locaux. Cela vous permet d'injecter votre surplus d'électricité sur le réseau en échange de crédits ou de tarifs de rachat pour réduire vos coûts.`
+        }
+      }
+    ]
+  };
+} else {
+  faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": `How much can I save on solar in ${displayCity}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `By installing solar panels in ${displayCity}, you can save significantly on your electricity bills. With a local utility rate of ${currencySymbol}${rateText}/kWh and an average of ${localSpecs.sunHours} peak sun hours annually, a standard 6 kW solar system generates approximately ${annualGenFormatted} kWh of electricity per year. This translates to an estimated first-year savings of ${currencySymbol}${annualSavingsFormatted}.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `What solar rebates are available in ${displayState}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `In ${displayState}, you can take advantage of various solar incentives. These include a federal tax credit of ${fedPctText}%, local state rebates of up to ${currencySymbol}${stRebate}, and utility rebates of up to ${currencySymbol}${utRebate}. There are also ${dbRebates.length} active rebate programs registered in our database for this region.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `How long is the solar payback period in ${displayCity}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `The estimated solar payback period in ${displayCity}, ${displayState} is approximately ${paybackText} years. This is calculated based on the net system cost after applying the ${fedPctText}% federal tax credit, state rebates of ${currencySymbol}${stRebate}, and utility rebates of ${currencySymbol}${utRebate}, divided by your projected annual electricity savings of ${currencySymbol}${annualSavingsFormatted}.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Does ${displayCity} have net metering?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Yes, net metering or export billing options are typically available in ${displayCity}, ${displayState} through local utility providers. This program allows you to send surplus electricity produced by your solar panels back to the power grid, earning utility bill credits that offset your energy costs during periods of low solar generation.`
+        }
+      }
+    ]
+  };
+}
 import Navbar from '../../../../../components/Navbar.astro';
 import ThemeFonts from '../../../../../components/ThemeFonts.astro';
 ---
@@ -314,6 +438,7 @@ import ThemeFonts from '../../../../../components/ThemeFonts.astro';
   <script type="application/ld+json" set:html={JSON.stringify(governmentBenefitSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   <!-- Astro View Transitions -->
   <ClientRouter />
