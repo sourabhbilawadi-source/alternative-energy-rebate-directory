@@ -465,6 +465,9 @@ export default function RebateCalculator({
       let otherIncentivesVal = 0;
 
       dbRebates.forEach((rebate) => {
+        if (rebate.technology_category === 'Clean Energy Loan') {
+          return;
+        }
         let value = 0;
         if (rebate.incentive_type === 'percentage') {
           value = capitalCost * (Number(rebate.incentive_value) / 100);

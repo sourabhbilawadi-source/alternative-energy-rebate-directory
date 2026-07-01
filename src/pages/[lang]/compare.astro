@@ -18,6 +18,13 @@ const t = useTranslations(lang || 'en-us');
 import Navbar from '../../components/Navbar.astro';
 import { supabase } from '../../lib/supabase';
 
+const siteUrl = 'https://incentivemapper.com';
+const canonicalUrl = `${siteUrl}/${lang}/compare`;
+const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
+  hreflang: l,
+  url: `${siteUrl}/${l}/compare`
+}));
+
 let serverRebates = [];
 if (supabase) {
   try {
@@ -58,6 +65,12 @@ import ThemeFonts from '../../components/ThemeFonts.astro';
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <title>{t.compare.title} | IncentiveMapper</title>
   <meta name="description" content="Compare alternative energy utility rates, solar resource coefficients, and rebate payback timelines side by side." />
+
+  <!-- Canonical & hreflang Alternate Declarations -->
+  <link rel="canonical" href={canonicalUrl} />
+  {alternates.map(alt => (
+    <link rel="alternate" hreflang={alt.hreflang} href={alt.url} />
+  ))}
 
   <!-- Open Graph / Facebook Preview Metadata -->
   <meta property="og:title" content={`${t.compare.title} | IncentiveMapper`} />

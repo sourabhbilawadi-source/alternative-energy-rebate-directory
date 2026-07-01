@@ -15,6 +15,13 @@ export async function getStaticPaths() {
 const { lang } = Astro.params;
 const t = useTranslations(lang || 'en-us');
 
+const siteUrl = 'https://incentivemapper.com';
+const canonicalUrl = `${siteUrl}/${lang}/terms`;
+const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
+  hreflang: l,
+  url: `${siteUrl}/${l}/terms`
+}));
+
 // Define localized content for Terms of Service
 const content = {
   'en-us': {
@@ -144,6 +151,12 @@ import ThemeFonts from '../../components/ThemeFonts.astro';
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <title>{currentContent.title} | IncentiveMapper</title>
   <meta name="description" content={currentContent.subtitle} />
+
+  <!-- Canonical & hreflang Alternate Declarations -->
+  <link rel="canonical" href={canonicalUrl} />
+  {alternates.map(alt => (
+    <link rel="alternate" hreflang={alt.hreflang} href={alt.url} />
+  ))}
 
   <!-- Open Graph -->
   <meta property="og:title" content={`${currentContent.title} | IncentiveMapper`} />

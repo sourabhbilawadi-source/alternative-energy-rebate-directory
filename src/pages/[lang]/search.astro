@@ -19,6 +19,13 @@ const { lang } = Astro.params;
 const t = useTranslations(lang || 'en-us');
 import Navbar from '../../components/Navbar.astro';
 
+const siteUrl = 'https://incentivemapper.com';
+const canonicalUrl = `${siteUrl}/${lang}/search`;
+const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
+  hreflang: l,
+  url: `${siteUrl}/${l}/search`
+}));
+
 // Fetch active rebates on the server side
 let serverRebates = [];
 if (supabase) {
@@ -78,6 +85,12 @@ import ThemeFonts from '../../components/ThemeFonts.astro';
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <title>{t.search.title} | IncentiveMapper</title>
   <meta name="description" content="Search federal, state, and local utility rebate programs, solar tax credits, and battery incentives dynamically." />
+
+  <!-- Canonical & hreflang Alternate Declarations -->
+  <link rel="canonical" href={canonicalUrl} />
+  {alternates.map(alt => (
+    <link rel="alternate" hreflang={alt.hreflang} href={alt.url} />
+  ))}
 
   <!-- Open Graph / Facebook Preview Metadata -->
   <meta property="og:title" content={`${t.search.title} | IncentiveMapper`} />

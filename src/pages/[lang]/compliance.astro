@@ -17,6 +17,13 @@ const { lang } = Astro.params;
 const t = useTranslations(lang || 'en-us');
 import Navbar from '../../components/Navbar.astro';
 import ThemeFonts from '../../components/ThemeFonts.astro';
+
+const siteUrl = 'https://incentivemapper.com';
+const canonicalUrl = `${siteUrl}/${lang}/compliance`;
+const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
+  hreflang: l,
+  url: `${siteUrl}/${l}/compliance`
+}));
 ---
 
 <!DOCTYPE html>
@@ -28,6 +35,12 @@ import ThemeFonts from '../../components/ThemeFonts.astro';
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <title>{t.nav.compliance} | IncentiveMapper</title>
   <meta name="description" content="Access guides on Federal Tax Credits, Net Metering rules (NEM 3.0), MACRS depreciation, and USDA REAP grants." />
+
+  <!-- Canonical & hreflang Alternate Declarations -->
+  <link rel="canonical" href={canonicalUrl} />
+  {alternates.map(alt => (
+    <link rel="alternate" hreflang={alt.hreflang} href={alt.url} />
+  ))}
 
   <!-- Open Graph / Facebook Preview Metadata -->
   <meta property="og:title" content={`${t.nav.compliance} | IncentiveMapper`} />

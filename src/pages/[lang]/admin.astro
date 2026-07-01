@@ -4,6 +4,8 @@ import { ClientRouter } from 'astro:transitions';
 import AdminDashboard from '../../components/admin/AdminDashboard';
 import { useTranslations } from '../../lib/i18n';
 import Analytics from '../../components/Analytics.astro';
+import Navbar from '../../components/Navbar.astro';
+import ThemeFonts from '../../components/ThemeFonts.astro';
 
 export async function getStaticPaths() {
   return [
@@ -15,8 +17,6 @@ export async function getStaticPaths() {
 
 const { lang } = Astro.params;
 const t = useTranslations(lang || 'en-us');
-import Navbar from '../../components/Navbar.astro';
-import ThemeFonts from '../../components/ThemeFonts.astro';
 ---
 
 <!DOCTYPE html>
@@ -28,6 +28,7 @@ import ThemeFonts from '../../components/ThemeFonts.astro';
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <title>{t.nav.admin} | IncentiveMapper</title>
   <meta name="description" content="Manage regions, cities, rates, and active rebate policies dynamically." />
+  <meta name="robots" content="noindex, nofollow" />
   <ClientRouter />
   <script is:inline>
     // 1. Immediately apply saved theme to avoid flashing
