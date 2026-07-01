@@ -246,26 +246,35 @@ const currencySymbol = getCurrencySymbol(country);
 
 let seoTitle = '';
 let seoDescription = '';
+let h1Title = '';
+let introParagraph = '';
 const fedPctText = Math.round((localSpecs.incentives?.federalTaxCreditPct || 0.0) * 100);
 const rateText = (localSpecs.gridRate || 0.32).toFixed(2);
 const isUs = country === 'us';
+const currentYear = 2026;
 
 if (lang === 'de-de') {
   seoTitle = `${displayCity}, ${displayState} Solarförderung 2026 — Berechnen Sie Ihre Amortisationszeit | IncentiveMapper`;
   seoDescription = isUs 
     ? `Sparen Sie bei Solarstrom in ${displayCity}, ${displayState} mit Stromtarifen von ${currencySymbol}${rateText}/kWh. Berechnen Sie Ihre Amortisationszeit, Solareinsparungen und lokale Solarförderungen!`
     : `Sparen Sie bei Solarstrom in ${displayCity}, ${displayState} mit ${fedPctText}% Bundessteuergutschrift und Stromtarifen von ${currencySymbol}${rateText}/kWh. Geschätzte Amortisation: ${paybackText} Jahre. Berechnen Sie Ihren ROI!`;
+  h1Title = `${displayCity}, ${displayState} Solar- & Energieförderung ${currentYear}`;
+  introParagraph = `Mit einem durchschnittlichen Strompreis von ${currencySymbol}${rateText}/kWh und ${localSpecs.sunHours} Sonnenstunden pro Jahr amortisiert sich eine typische 6-kW-Solaranlage in ${displayCity}, ${displayState} in ca. ${paybackText} Jahren. Entdecken Sie unten alle aktiven Fördermittel und berechnen Sie Ihre Rendite!`;
 } else if (lang === 'fr-fr') {
   seoTitle = `Subventions Solaires ${displayCity}, ${displayState} 2026 — Calculez Votre Période d'Amortissement | IncentiveMapper`;
   seoDescription = isUs
     ? `Économisez sur l'énergie solaire à ${displayCity}, ${displayState} avec des tarifs d'électricité de ${currencySymbol}${rateText}/kWh. Calculez votre amortissement, vos économies et vos subventions locales!`
     : `Économisez sur l'énergie solaire à ${displayCity}, ${displayState} avec un crédit d'impôt fédéral de ${fedPctText}% et des tarifs de ${currencySymbol}${rateText}/kWh. Période d'amortissement estimée : ${paybackText} ans.`;
+  h1Title = `${displayCity}, ${displayState} : Subventions Solaires & Énergétiques ${currentYear}`;
+  introParagraph = `Avec un tarif moyen de ${currencySymbol}${rateText}/kWh et ${localSpecs.sunHours} heures d'ensoleillement par an, une installation solaire type de 6 kW à ${displayCity}, ${displayState} s'amortit en environ ${paybackText} ans. Découvrez toutes les aides et simulez votre ROI ci-dessous !`;
 } else {
   // Default to English
   seoTitle = `${displayCity}, ${displayState} Solar Rebates 2026 — Calculate Your Payback Period | IncentiveMapper`;
   seoDescription = isUs
     ? `Save on solar in ${displayCity}, ${displayState} with local utility rates of ${currencySymbol}${rateText}/kWh. Calculate your estimated payback, solar savings, and active rebates today!`
     : `Save on solar in ${displayCity}, ${displayState} with a ${fedPctText}% federal tax credit and utility rates of ${currencySymbol}${rateText}/kWh. Estimated payback period: ${paybackText} years. Calculate your solar ROI today!`;
+  h1Title = `${displayCity}, ${displayState} Solar & Energy Rebates ${currentYear}`;
+  introParagraph = `With average local utility rates of ${currencySymbol}${rateText}/kWh and ${localSpecs.sunHours} peak sun hours per year, a typical 6 kW solar installation in ${displayCity}, ${displayState} has an estimated payback period of ${paybackText} years. Explore active incentives and calculate your custom ROI below.`;
 }
 import Navbar from '../../../../../components/Navbar.astro';
 import ThemeFonts from '../../../../../components/ThemeFonts.astro';
@@ -344,9 +353,9 @@ import ThemeFonts from '../../../../../components/ThemeFonts.astro';
 
     <!-- Page Title Header Section -->
     <div class="mb-10 text-center md:text-left">
-      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">{lang === 'de-de' ? 'Amortisations- & Fördermittelportal für alternative Energien' : lang === 'fr-fr' ? "Portail de dimensionnement et de subventions pour l'énergie alternative" : "Alternative Energy Sizing & Rebate Portal"}</h1>
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">{h1Title}</h1>
       <p class="text-lg text-[var(--text-muted)] max-w-3xl">
-        {lang === 'de-de' ? 'Entdecken Sie lokale Versorgungsanreize, bundesstaatliche Steuerprogramme und Größenbestimmungstools für' : lang === 'fr-fr' ? "Découvrez les incitations locales, les programmes fiscaux fédéraux et les outils de dimensionnement pour les" : "Explore local utility incentives, federal tax programs, and sizing tools for"} residential & enterprise solar setups in <strong class="text-[var(--text-main)]">{displayCity}, {displayState}</strong>.
+        {introParagraph}
       </p>
       {cityCategories.length > 0 && (
         <div class="mt-4 flex flex-wrap gap-2 justify-center md:justify-start items-center">
