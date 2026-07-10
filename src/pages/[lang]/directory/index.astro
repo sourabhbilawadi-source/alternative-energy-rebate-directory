@@ -72,6 +72,7 @@ const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
   hreflang: l,
   url: `${siteUrl}/${l}/directory`
 }));
+alternates.push({ hreflang: 'x-default', url: `${siteUrl}/en-us/directory` });
 
 import Navbar from '../../../components/Navbar.astro';
 import ThemeFonts from '../../../components/ThemeFonts.astro';
