@@ -21,19 +21,20 @@ export async function getStaticPaths() {
       if (data && data.length > 0) {
         // Extract distinct category values and slugify them
         const categories = [...new Set(data.map(r => r.technology_category))];
+        const category_slugs = categories.map(cat =>
+          cat
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .trim()
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+        );
         
-        for (const lang of langs) {
-          for (const cat of categories) {
-            const category_slug = cat
-              .toLowerCase()
-              .replace(/[^a-z0-9\s-]/g, '')
-              .trim()
-              .replace(/\s+/g, '-')
-              .replace(/-+/g, '-');
-            
-            paths.push({ params: { lang, category_slug } });
-          }
-        }
+        paths.push(
+          ...langs.flatMap(lang =>
+            category_slugs.map(category_slug => ({ params: { lang, category_slug } }))
+          )
+        );
       }
     } catch (err) {
       console.error('Failed to generate static paths for categories:', err);
@@ -50,11 +51,11 @@ export async function getStaticPaths() {
       'federal-tax-incentive',
       'local-utility-rebate'
     ];
-    for (const lang of langs) {
-      for (const category_slug of fallbackCategories) {
-        paths.push({ params: { lang, category_slug } });
-      }
-    }
+    paths.push(
+      ...langs.flatMap(lang =>
+        fallbackCategories.map(category_slug => ({ params: { lang, category_slug } }))
+      )
+    );
   }
 
   return paths;
