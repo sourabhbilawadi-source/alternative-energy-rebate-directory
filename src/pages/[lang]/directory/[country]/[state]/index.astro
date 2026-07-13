@@ -116,9 +116,10 @@ const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
   hreflang: l,
   url: `${siteUrl}/${l}/directory/${country}/${state}`
 }));
+alternates.push({ hreflang: 'x-default', url: `${siteUrl}/en-us/directory/${country}/${state}` });
 
 // Localized SEO titles & descriptions
-const seoTitle = `${displayState}, ${displayCountry} ${lang === 'de-de' ? 'Energieförderungen' : lang === 'fr-fr' ? 'Subventions d\'énergie' : 'Energy Rebates'} — 2026`;
+const seoTitle = `${displayState}, ${displayCountry} ${lang === 'de-de' ? 'Energieförderungen' : lang === 'fr-fr' ? 'Subventions d\'énergie' : 'Energy Rebates'} — 2026 | IncentiveMapper`;
 
 const seoDescription = lang === 'de-de'
   ? `Finden Sie ${activeProgramsCount} aktive Energieförderungen, Solar- und Batterierabatte in ${displayState}, ${displayCountry}. Berechnen Sie Sizing und ROI.`

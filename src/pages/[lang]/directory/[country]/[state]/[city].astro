@@ -161,6 +161,7 @@ const alternates = languages.map(l => ({
   hreflang: l,
   url: `${siteUrl}/${l}/directory/${country}/${state}/${city}`
 }));
+alternates.push({ hreflang: 'x-default', url: `${siteUrl}/en-us/directory/${country}/${state}/${city}` });
 
 // Resolve unique category types for local page links
 const cityCategories = dbRebates ? [...new Set(dbRebates.map(r => r.technology_category))] : [];
