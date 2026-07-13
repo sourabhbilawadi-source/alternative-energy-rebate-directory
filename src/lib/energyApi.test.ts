@@ -6,15 +6,8 @@ describe('queryLocationSpecs', () => {
     // Reset fetch mocks
     global.fetch = vi.fn();
   });
-
   afterEach(() => {
     vi.restoreAllMocks();
-  });
-
-  it('should return null for an empty query', async () => {
-    const result = await queryLocationSpecs('   ');
-    expect(result).toBeNull();
-    expect(global.fetch).not.toHaveBeenCalled();
   });
 
   it('should return null if Nominatim geocoding API fails', async () => {
@@ -258,5 +251,17 @@ describe('queryLocationSpecs', () => {
       expect(result.gridEmissions).toBe(0.40); // COUNTRY_DEFAULTS default fallback
       expect(result.gridRate).toBe(0.18); // Fallback to 'us' default
     }
+  });
+
+  it('should return null and not make network requests when query is empty or whitespace', async () => {
+    const fetchSpy = vi.spyOn(global, 'fetch');
+
+    const result1 = await queryLocationSpecs('');
+    expect(result1).toBeNull();
+
+    const result2 = await queryLocationSpecs('   ');
+    expect(result2).toBeNull();
+
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });

@@ -63,6 +63,24 @@ export async function getStaticPaths() {
 const { lang, category_slug } = Astro.params;
 const t = useTranslations(lang || 'en-us');
 
+interface Rebate {
+  id?: string;
+  slug: string;
+  authority_name: string;
+  technology_category?: string;
+  incentive_value: number;
+  incentive_type: string;
+  description: string;
+  is_active?: boolean;
+  regions?: {
+    country_code?: string;
+    state_province?: string;
+    city?: string;
+  };
+  isGrouped?: boolean;
+  citiesList?: string[];
+}
+
 // Helper to slugify categories
 function slugifyCategory(category: string): string {
   return category
@@ -74,7 +92,7 @@ function slugifyCategory(category: string): string {
 }
 
 // Fetch database records
-let rebates: any[] = [];
+let rebates: Rebate[] = [];
 let matchedCategory = '';
 
 if (supabase) {
@@ -170,7 +188,7 @@ const l10n = {
 const siteUrl = 'https://incentivemapper.com';
 const currentPath = `/${lang}/category/${category_slug}`;
 const canonicalUrl = `${siteUrl}${currentPath}`;
-const pageTitle = `${displayCategory} ${l10n.titleSuffix}`;
+const pageTitle = `${displayCategory} ${l10n.titleSuffix} | IncentiveMapper`;
 
 const uniqueCountries = [...new Set(rebates.map(r => r.regions?.country_code?.toLowerCase() || 'us'))];
 const countryCount = uniqueCountries.length;
@@ -183,12 +201,13 @@ const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
   hreflang: l,
   url: `${siteUrl}/${l}/category/${category_slug}`
 }));
+alternates.push({ hreflang: 'x-default', url: `${siteUrl}/en-us/category/${category_slug}` });
 
 // Group rebates by country, then state, grouping repeated national programs
-const processedGroupedRebates: Record<string, { national: any[], states: Record<string, any[]> }> = {};
+const processedGroupedRebates: Record<string, { national: Rebate[], states: Record<string, Rebate[]> }> = {};
 
 // 1. Group raw rebates by country code
-const countryGroups: Record<string, any[]> = {};
+const countryGroups: Record<string, Rebate[]> = {};
 rebates.forEach(r => {
   const country = r.regions?.country_code === 'gb' ? 'uk' : r.regions?.country_code?.toLowerCase() || 'us';
   if (!countryGroups[country]) {
@@ -205,8 +224,8 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
     authorityCounts[r.authority_name] = (authorityCounts[r.authority_name] || 0) + 1;
   });
 
-  const national: any[] = [];
-  const states: Record<string, any[]> = {};
+  const national: Rebate[] = [];
+  const states: Record<string, Rebate[]> = {};
   const processedNames = new Set<string>();
 
   countryRebates.forEach(r => {
