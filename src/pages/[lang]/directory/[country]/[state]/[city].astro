@@ -25,9 +25,6 @@ export async function getStaticPaths() {
       
       if (error) {
         console.error("DEBUG: Supabase query error in [city].astro getStaticPaths:", error);
-      } else {
-        console.log(`DEBUG: [city].astro getStaticPaths returned ${data?.length || 0} regions.`);
-        console.log("DEBUG: DB query French regions:", data?.filter(r => r.country_code === 'fr'));
       }
       
       if (data && data.length > 0) {
@@ -46,7 +43,6 @@ export async function getStaticPaths() {
           }
         }
       }
-      console.log("DEBUG: citiesList French entries:", citiesList.filter(c => c.country === 'fr'));
     } catch (err) {
       console.error('Failed to query regions for static paths. Using fallbacks:', err);
     }
@@ -58,7 +54,6 @@ export async function getStaticPaths() {
       paths.push({ params: { lang, ...item } });
     }
   }
-  console.log("DEBUG: final paths French entries:", paths.filter(p => p.params.country === 'fr'));
   return paths;
 }
 

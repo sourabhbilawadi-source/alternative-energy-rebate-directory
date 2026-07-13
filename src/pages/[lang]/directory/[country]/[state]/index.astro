@@ -28,8 +28,6 @@ export async function getStaticPaths() {
       
       if (error) {
         console.error("DEBUG: Supabase query error in state index getStaticPaths:", error);
-      } else {
-        console.log(`DEBUG: state index getStaticPaths returned ${data?.length || 0} regions.`);
       }
       
       if (data && data.length > 0) {
