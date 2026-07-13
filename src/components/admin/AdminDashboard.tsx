@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Building, 
@@ -529,6 +529,10 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
     ? rebates 
     : rebates.filter(r => String(r.region_id) === String(selectedRegionId));
 
+  const regionMap = useMemo(() => {
+    return new Map(regions.map(r => [String(r.id), r]));
+  }, [regions]);
+
   return (
     <div className="space-y-8 pb-16">
       {/* Toast Notification */}
@@ -826,7 +830,7 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
                 </thead>
                 <tbody className="divide-y divide-[var(--color-border)]/50 font-semibold text-[var(--text-main)]">
                   {filteredRebates.map(r => {
-                    const matchedRegion = regions.find(reg => String(reg.id) === String(r.region_id));
+                    const matchedRegion = regionMap.get(String(r.region_id));
                     const isEditing = editingRebateId === r.id;
 
                     return (
