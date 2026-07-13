@@ -49,5 +49,13 @@ describe('i18n', () => {
       const t = useTranslations('');
       expect(t.nav.directory).toBe('Directory');
     });
+
+    it('should fallback to "en-us" for invalid inputs (e.g., null, undefined as string)', () => {
+      // Note: TypeScript might complain if we pass non-string, but if called from JS:
+      // We are simulating what happens if a bad string or untyped value gets through
+      expect(useTranslations('null')).toBe(translations['en-us']);
+      expect(useTranslations('undefined')).toBe(translations['en-us']);
+      expect(useTranslations(' ')).toBe(translations['en-us']);
+    });
   });
 });
