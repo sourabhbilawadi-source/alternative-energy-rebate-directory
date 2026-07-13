@@ -1,7 +1,7 @@
 ---
 import '../../../../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
-import RebateCalculator from '../../../../../components/calculator/RebateCalculator';
+import RebateCalculator, { type DbRebate } from '../../../../../components/calculator/RebateCalculator';
 import SmeHub from '../../../../../components/calculator/SmeHub';
 import { supabase } from '../../../../../lib/supabase';
 import { useTranslations } from '../../../../../lib/i18n';
@@ -110,7 +110,7 @@ const presets = getLocalSpecs();
 let localSpecs = { ...presets };
 
 // Query dynamic regional rebates & energy specifications from Supabase
-let dbRebates: any[] = [];
+let dbRebates: DbRebate[] = [];
 let dbPostalCode = '';
 
 if (supabase) {
