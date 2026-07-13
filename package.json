@@ -6,6 +6,7 @@
     "node": ">=22.12.0"
   },
   "scripts": {
+    "test": "vitest run",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "npm run build && wrangler dev",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@astrojs/cloudflare": "^13.7.0",
+    "vitest": "^4.1.10",
     "wrangler": "^4.103.0"
   },
   "overrides": {
