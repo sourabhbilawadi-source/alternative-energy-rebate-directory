@@ -1,43 +1,61 @@
 import { describe, it, expect } from 'vitest';
-import { useTranslations, translations } from './i18n';
+import { translations, useTranslations } from './i18n';
 
-describe('useTranslations', () => {
-  it('should return English translations for "en-us"', () => {
-    const t = useTranslations('en-us');
-    expect(t).toBe(translations['en-us']);
+describe('i18n', () => {
+  describe('translations object', () => {
+    it('should contain keys for all supported languages', () => {
+      expect(translations).toHaveProperty('en-us');
+      expect(translations).toHaveProperty('de-de');
+      expect(translations).toHaveProperty('fr-fr');
+    });
+
+    it('should have consistent translation keys across languages', () => {
+      const enKeys = Object.keys(translations['en-us']);
+      expect(Object.keys(translations['de-de'])).toEqual(enKeys);
+      expect(Object.keys(translations['fr-fr'])).toEqual(enKeys);
+    });
   });
 
-  it('should return German translations for "de-de"', () => {
-    const t = useTranslations('de-de');
-    expect(t).toBe(translations['de-de']);
-  });
+  describe('useTranslations', () => {
+    it('should return English translations when passed "en-us"', () => {
+      const t = useTranslations('en-us');
+      expect(t.nav.directory).toBe('Directory');
+    });
 
-  it('should return French translations for "fr-fr"', () => {
-    const t = useTranslations('fr-fr');
-    expect(t).toBe(translations['fr-fr']);
-  });
+    it('should return German translations when passed "de-de"', () => {
+      const t = useTranslations('de-de');
+      expect(t.nav.directory).toBe('Verzeichnis');
+    });
 
-  it('should handle case-insensitivity correctly', () => {
-    expect(useTranslations('EN-US')).toBe(translations['en-us']);
-    expect(useTranslations('De-De')).toBe(translations['de-de']);
-    expect(useTranslations('FR-fr')).toBe(translations['fr-fr']);
-  });
+    it('should return French translations when passed "fr-fr"', () => {
+      const t = useTranslations('fr-fr');
+      expect(t.nav.directory).toBe('Annuaire');
+    });
 
-  it('should fallback to "en-us" for unsupported languages', () => {
-    const t = useTranslations('it-it');
-    expect(t).toBe(translations['en-us']);
-  });
+    it('should be case-insensitive', () => {
+      const t1 = useTranslations('EN-US');
+      expect(t1.nav.directory).toBe('Directory');
 
-  it('should fallback to "en-us" for an empty string', () => {
-    const t = useTranslations('');
-    expect(t).toBe(translations['en-us']);
-  });
+      const t2 = useTranslations('De-dE');
+      expect(t2.nav.directory).toBe('Verzeichnis');
+    });
 
-  it('should fallback to "en-us" for invalid inputs (e.g., null, undefined as string)', () => {
-    // Note: TypeScript might complain if we pass non-string, but if called from JS:
-    // We are simulating what happens if a bad string or untyped value gets through
-    expect(useTranslations('null')).toBe(translations['en-us']);
-    expect(useTranslations('undefined')).toBe(translations['en-us']);
-    expect(useTranslations(' ')).toBe(translations['en-us']);
+    it('should fallback to "en-us" for unsupported languages', () => {
+      const t = useTranslations('es-es');
+      expect(t.nav.directory).toBe('Directory');
+    });
+
+    it('should fallback to "en-us" for empty string', () => {
+      const t = useTranslations('');
+      expect(t.nav.directory).toBe('Directory');
+    });
+
+    it('should fallback to "en-us" for invalid inputs (e.g., null, undefined as string)', () => {
+      // Note: TypeScript might complain if we pass non-string, but if called from JS:
+      // We are simulating what happens if a bad string or untyped value gets through
+      expect(useTranslations('null')).toBe(translations['en-us']);
+      expect(useTranslations('undefined')).toBe(translations['en-us']);
+      expect(useTranslations(' ')).toBe(translations['en-us']);
+    });
   });
 });
