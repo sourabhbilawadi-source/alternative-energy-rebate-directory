@@ -66,7 +66,6 @@ export default function ComparisonEngine({
   const t = useTranslations(lang);
 
   const initialCities: CitySpecs[] = regionsData
-    .filter(r => r.gridRate !== null)
     .map(r => {
       const matchedRebates = databaseRebates
         .filter((dbR: any) => {
