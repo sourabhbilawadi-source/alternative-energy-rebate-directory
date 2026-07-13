@@ -49,15 +49,7 @@ export const COUNTRY_METADATA: Record<string, { name: string; flag: string }> = 
   jp: { name: 'Japan', flag: '🇯🇵' }
 };
 
-const TODO_SOURCES = {
-  gridRateSource: { sourceName: 'EIA / Local Authorities', sourceUrl: 'https://www.eia.gov/electricity/data.php', lastVerified: '2024-05-01' },
-  sunHoursSource: { sourceName: 'Global Solar Atlas', sourceUrl: 'https://globalsolaratlas.info/', lastVerified: '2024-05-01' },
-  gridEmissionsSource: { sourceName: 'EPA eGRID / IEA', sourceUrl: 'https://www.epa.gov/egrid', lastVerified: '2024-05-01' },
-  costPerWattSource: { sourceName: 'EnergySage', sourceUrl: 'https://www.energysage.com/local-data/solar-panel-cost/', lastVerified: '2024-05-01' },
-  federalTaxCreditSource: { sourceName: 'U.S. Department of Energy', sourceUrl: 'https://www.energy.gov/eere/solar/homeowners-guide-federal-tax-credit-solar-photovoltaics', lastVerified: '2024-05-01' },
-  stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2024-05-01' },
-  utilityRebateSource: { sourceName: 'Local Utility Provider', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2024-05-01' }
-};
+
 
 export const regionsData: RegionEntry[] = [
   // ==========================================
@@ -80,7 +72,7 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 0,
     utilityRebate: 0,
-    ...TODO_SOURCES,
+
     gridRateSource: { sourceName: 'LADWP', sourceUrl: 'https://www.ladwp.com/ladwp/faces/ladwp/residential/r-customerservice/r-cs-ratesandbilling/r-cs-rb-residentialrates', lastVerified: '2026-06-24' },
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
     stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
@@ -101,7 +93,7 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 0,
     utilityRebate: 0,
-    ...TODO_SOURCES,
+
     gridRateSource: { sourceName: 'PG&E', sourceUrl: 'https://www.pge.com', lastVerified: '2026-06-24' },
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
     stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
@@ -122,7 +114,7 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 0,
     utilityRebate: 0,
-    ...TODO_SOURCES,
+
     gridRateSource: { sourceName: 'EIA', sourceUrl: 'https://www.eia.gov/electricity/monthly/epm_table_grapher.php?t=epmt_5_6_a', lastVerified: '2026-06-24' },
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
     stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
@@ -143,7 +135,7 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 0,
     utilityRebate: 0,
-    ...TODO_SOURCES,
+
     gridRateSource: { sourceName: 'Con Edison', sourceUrl: 'https://www.coned.com', lastVerified: '2026-06-24' },
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
     stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
@@ -164,7 +156,7 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 0,
     utilityRebate: 3000,
-    ...TODO_SOURCES,
+
     gridRateSource: { sourceName: 'ComEd', sourceUrl: 'https://www.comed.com', lastVerified: '2026-06-24' },
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
     stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
@@ -185,7 +177,7 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 0,
     utilityRebate: 0,
-    ...TODO_SOURCES,
+
     gridRateSource: { sourceName: 'APS', sourceUrl: 'https://www.aps.com', lastVerified: '2026-06-24' },
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
     stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
@@ -206,7 +198,7 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 0,
     utilityRebate: 0,
-    ...TODO_SOURCES,
+
     gridRateSource: { sourceName: 'FPL', sourceUrl: 'https://www.fpl.com', lastVerified: '2026-06-24' },
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
     stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
@@ -227,7 +219,7 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 0,
     utilityRebate: 0,
-    ...TODO_SOURCES,
+
     gridRateSource: { sourceName: 'Seattle City Light', sourceUrl: 'https://www.seattle.gov/city-light', lastVerified: '2026-06-24' },
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
     stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
@@ -248,7 +240,7 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 0,
     utilityRebate: 0,
-    ...TODO_SOURCES,
+
     gridRateSource: { sourceName: 'Eversource', sourceUrl: 'https://www.eversource.com', lastVerified: '2026-06-24' },
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
     stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
@@ -269,7 +261,7 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 0,
     utilityRebate: 0,
-    ...TODO_SOURCES,
+
     gridRateSource: { sourceName: 'Xcel Energy', sourceUrl: 'https://www.xcelenergy.com', lastVerified: '2026-06-24' },
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
     stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2026-06-24' },
@@ -292,7 +284,6 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
     utilityRebate: 300,
-    ...TODO_SOURCES
   },
   {
     countryCode: 'uk',
@@ -309,7 +300,6 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
     utilityRebate: 300,
-    ...TODO_SOURCES
   },
 
   // Germany
@@ -328,7 +318,6 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 1500,
     utilityRebate: 400,
-    ...TODO_SOURCES
   },
   {
     countryCode: 'de',
@@ -345,7 +334,6 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
     utilityRebate: 300,
-    ...TODO_SOURCES
   },
 
   // Australia
@@ -364,7 +352,6 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 2000,
     utilityRebate: 800,
-    ...TODO_SOURCES
   },
   {
     countryCode: 'au',
@@ -381,7 +368,6 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
     utilityRebate: 300,
-    ...TODO_SOURCES
   },
 
   // Canada
@@ -400,7 +386,6 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 2500,
     utilityRebate: 600,
-    ...TODO_SOURCES
   },
   {
     countryCode: 'ca',
@@ -417,7 +402,6 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.0,
     stateRebate: 1200,
     utilityRebate: 300,
-    ...TODO_SOURCES
   },
 
   // ==========================================

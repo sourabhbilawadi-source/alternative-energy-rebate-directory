@@ -260,6 +260,7 @@ export default function RebateCalculator({
 }: RebateCalculatorProps) {
   const t = useTranslations(lang);
 
+
   const hasAnyRealSource = regionEntry && (
     isValidSource(regionEntry.gridRateSource) ||
     isValidSource(regionEntry.costPerWattSource) ||
@@ -818,7 +819,7 @@ export default function RebateCalculator({
           <EnergyFlowVisualizer batteryEnabled={batteryEnabled} sunHours={sunHours} systemSize={systemSizeCapped} lang={lang} />
         </motion.div>
 
-        {/* TEMPORARY: Only show the Data Sources block if at least one real (non-TODO) source is backfilled */}
+        {/* Only show the Data Sources block if at least one real source is present */}
         {hasAnyRealSource && (
           <motion.div 
             variants={itemVariants}
