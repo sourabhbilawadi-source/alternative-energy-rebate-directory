@@ -223,19 +223,11 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
           return;
         }
       } catch (err) {
-        console.warn('Supabase authentication failed, attempting offline credentials fallback.');
+        console.warn('Supabase authentication failed.');
       }
     }
 
-    // Offline / Mock credentials fallback
-    if (email === 'admin@incentivemapper.com' && password === 'admin123') {
-      setIsLoggedIn(true);
-      setIsMockMode(true);
-      sessionStorage.setItem('admin_session', 'mock');
-      triggerToast('Offline Mock Mode active. Changes will write to LocalStorage.');
-    } else {
-      setErrorMsg(t.admin.loginError);
-    }
+    setErrorMsg(t.admin.loginError);
   };
 
   const handleLogout = () => {
