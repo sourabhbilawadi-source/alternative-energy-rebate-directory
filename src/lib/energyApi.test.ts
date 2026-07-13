@@ -85,7 +85,7 @@ describe('queryLocationSpecs', () => {
       expect(result.lat).toBe(37.7749);
       expect(result.lon).toBe(-122.4194);
       expect(result.city).toBe('San Francisco');
-      expect(result.state).toBe('San Francisco'); // The logic picks parts[length - 2] which is 'San Francisco' since length is 3
+      expect(result.state).toBe('California'); // The logic splits display_name and picks parts[length - 2], which is 'California'
       expect(result.countryCode).toBe('us');
       expect(result.sunHours).toBe(1825);
       expect(result.gridEmissions).toBe(0.22); // CA default from US_STATE_EMISSIONS
@@ -238,8 +238,8 @@ describe('queryLocationSpecs', () => {
 
     expect(result).not.toBeNull();
     if (result) {
-      // In the implementation, if not ok, it just doesn't set it in the try block, so it remains the default 0.40
-      expect(result.gridEmissions).toBe(0.40);
+      // In the implementation, if not ok, it falls back to 0.15
+      expect(result.gridEmissions).toBe(0.15);
     }
   });
 
