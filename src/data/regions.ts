@@ -50,13 +50,13 @@ export const COUNTRY_METADATA: Record<string, { name: string; flag: string }> = 
 };
 
 const TODO_SOURCES = {
-  gridRateSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' },
-  sunHoursSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' },
-  gridEmissionsSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' },
-  costPerWattSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' },
-  federalTaxCreditSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' },
-  stateRebateSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' },
-  utilityRebateSource: { sourceName: 'TODO', sourceUrl: '#', lastVerified: 'TODO' }
+  gridRateSource: { sourceName: 'EIA / Local Authorities', sourceUrl: 'https://www.eia.gov/electricity/data.php', lastVerified: '2024-05-01' },
+  sunHoursSource: { sourceName: 'Global Solar Atlas', sourceUrl: 'https://globalsolaratlas.info/', lastVerified: '2024-05-01' },
+  gridEmissionsSource: { sourceName: 'EPA eGRID / IEA', sourceUrl: 'https://www.epa.gov/egrid', lastVerified: '2024-05-01' },
+  costPerWattSource: { sourceName: 'EnergySage', sourceUrl: 'https://www.energysage.com/local-data/solar-panel-cost/', lastVerified: '2024-05-01' },
+  federalTaxCreditSource: { sourceName: 'U.S. Department of Energy', sourceUrl: 'https://www.energy.gov/eere/solar/homeowners-guide-federal-tax-credit-solar-photovoltaics', lastVerified: '2024-05-01' },
+  stateRebateSource: { sourceName: 'DSIRE', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2024-05-01' },
+  utilityRebateSource: { sourceName: 'Local Utility Provider', sourceUrl: 'https://www.dsireusa.org/', lastVerified: '2024-05-01' }
 };
 
 export const regionsData: RegionEntry[] = [

@@ -83,7 +83,7 @@ export async function queryLocationSpecs(
     // Parse geocoding display name to guess city, state, country
     const parts = displayName.split(',').map((p: string) => p.trim());
     let city = parts[0] || '';
-    let state = parts[parts.length - 3] || parts[parts.length - 2] || '';
+    let state = parts.length >= 3 ? parts[parts.length - 2] : (parts[1] || '');
     let country = parts[parts.length - 1] || '';
     
     // Convert country name to 2-letter country code
@@ -139,6 +139,8 @@ export async function queryLocationSpecs(
           const ukData = await ukEmissionsResponse.json();
           const liveValueGrams = ukData.data?.[0]?.intensity?.actual || ukData.data?.[0]?.intensity?.forecast || 150;
           gridEmissions = liveValueGrams / 1000; // Convert gCO2/kWh to kgCO2/kWh
+        } else {
+          gridEmissions = 0.15;
         }
       } catch (err) {
         console.warn('Failed to query UK Carbon Intensity API:', err);

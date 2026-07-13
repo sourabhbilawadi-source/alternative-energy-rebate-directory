@@ -42,6 +42,17 @@ interface Rebate {
   is_active: boolean;
 }
 
+interface RawRebateData {
+  id: string;
+  region_id: string | number;
+  authority_name: string;
+  technology_category: string;
+  incentive_value: string | number;
+  incentive_type: string;
+  max_limit: string | number | null;
+  is_active: boolean;
+}
+
 interface AdminDashboardProps {
   lang: string;
 }
@@ -141,7 +152,7 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
         
         if (regionsData) activeRegions = regionsData;
         if (rebatesData) {
-          activeRebates = rebatesData.map((item: any) => ({
+          activeRebates = rebatesData.map((item: RawRebateData) => ({
             id: item.id,
             region_id: String(item.region_id),
             authority_name: item.authority_name,

@@ -110,10 +110,11 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
           const localRegions = localRegionsRaw ? JSON.parse(localRegionsRaw) : [];
           const localRebates = JSON.parse(localRebatesRaw);
 
+          const regionMap = new Map(localRegions.map((r: any) => [String(r.id), r]));
           const formattedLocalRebates = localRebates
             .filter((item: any) => item.is_active !== false)
             .map((item: any) => {
-              const matchedRegion = localRegions.find((r: any) => String(r.id) === String(item.region_id));
+              const matchedRegion = regionMap.get(String(item.region_id));
               return {
                 id: item.id || `local-${Math.random()}`,
                 authority_name: item.authority_name,
