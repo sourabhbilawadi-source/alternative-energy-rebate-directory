@@ -149,13 +149,14 @@ const displayCountry = COUNTRY_METADATA[countryCode]?.name || countryCode.toUppe
 // SEO URLs
 const siteUrl = 'https://incentivemapper.com';
 const canonicalUrl = `${siteUrl}/${lang}/rebate/${rebate_slug}`;
-const pageTitle = `${displayRebateName} — ${l10n.titleSuffix}`;
+const pageTitle = `${displayRebateName} — ${l10n.titleSuffix} | IncentiveMapper`;
 
 // Alternates
 const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
   hreflang: l,
   url: `${siteUrl}/${l}/rebate/${rebate_slug}`
 }));
+alternates.push({ hreflang: 'x-default', url: `${siteUrl}/en-us/rebate/${rebate_slug}` });
 
 // Currency and formatting helper
 function formatValue(value: number, type: string, countryCode: string) {
