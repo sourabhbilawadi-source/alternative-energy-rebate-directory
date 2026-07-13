@@ -49,7 +49,6 @@ export default function LeadCaptureCta({ region, calculatorType }: LeadCaptureCt
     try {
       if (!endpoint) {
         // Mock simulation mode when endpoint is not configured (development fallback)
-        await new Promise((resolve) => setTimeout(resolve, 1500));
         setStatus('success');
         return;
       }
