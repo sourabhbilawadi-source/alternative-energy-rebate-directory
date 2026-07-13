@@ -19,6 +19,21 @@ interface SearchRebate {
   };
 }
 
+interface SupabaseRebateItem {
+  id: string;
+  authority_name: string;
+  technology_category: string;
+  incentive_value: string | number;
+  incentive_type: string;
+  max_limit: string | number | null;
+  regions?: {
+    country_code: string;
+    state_province: string;
+    city: string;
+    postal_code: string;
+  } | null;
+}
+
 interface SearchPortalProps {
   initialQuery?: string;
   lang: string;
@@ -79,7 +94,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
               .eq('is_active', true);
 
             if (rebatesData && !error) {
-              fetchedRebates = rebatesData.map((item: any) => ({
+              fetchedRebates = rebatesData.map((item: SupabaseRebateItem) => ({
                 id: item.id,
                 authority_name: item.authority_name,
                 technology_category: item.technology_category,
