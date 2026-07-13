@@ -37,7 +37,10 @@ export async function getStaticPaths() {
           city: r.city.toLowerCase().replace(/\s+/g, '-')
         }));
         
-        const seen = new Set(citiesList.map(c => `${c.country}:${c.state}:${c.city}`));
+        const seen = new Set();
+        for (const c of citiesList) {
+          seen.add(`${c.country}:${c.state}:${c.city}`);
+        }
         for (const dbc of dbCities) {
           const key = `${dbc.country}:${dbc.state}:${dbc.city}`;
           if (!seen.has(key)) {
