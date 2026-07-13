@@ -13,6 +13,22 @@ interface DatabaseRebate {
   max_limit: number | null;
 }
 
+export interface RawDatabaseRebate {
+  id: string;
+  authority_name: string;
+  technology_category: string;
+  incentive_value: number | string;
+  incentive_type: string;
+  max_limit: number | string | null;
+  regions: {
+    id: string;
+    country_code: string;
+    state_province: string;
+    city: string;
+    postal_code: string | null;
+  } | null;
+}
+
 interface CitySpecs {
   key: string;
   name: string;
@@ -61,7 +77,7 @@ export default function ComparisonEngine({
   databaseRebates = [] 
 }: { 
   lang?: string; 
-  databaseRebates?: any[];
+  databaseRebates?: RawDatabaseRebate[];
 }) {
   const t = useTranslations(lang);
 
@@ -69,7 +85,7 @@ export default function ComparisonEngine({
     .filter(r => r.gridRate !== null)
     .map(r => {
       const matchedRebates = databaseRebates
-        .filter((dbR: any) => {
+        .filter((dbR: RawDatabaseRebate) => {
           const reg = dbR.regions;
           if (!reg) return false;
           const countryMatch = matchCountry(reg.country_code, r.countryCode);
@@ -77,7 +93,7 @@ export default function ComparisonEngine({
                             reg.city.toLowerCase().replace(/\s+/g, '-') === r.citySlug.toLowerCase();
           return countryMatch && cityMatch;
         })
-        .map((dbR: any) => ({
+        .map((dbR: RawDatabaseRebate) => ({
           id: dbR.id,
           authority_name: dbR.authority_name,
           technology_category: dbR.technology_category,
