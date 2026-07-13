@@ -246,17 +246,14 @@ export default function RebateCalculator({
 }: RebateCalculatorProps) {
   const t = useTranslations(lang);
 
-  // Helper to validate and hide temporary "TODO" source values
-  // TEMPORARY: Mark this as temporary until real data is backfilled
+  // Helper to validate metric source values
   const isValidSource = (source: any) => {
     return !!(
       source &&
       source.sourceName &&
       source.sourceName.trim() !== '' &&
-      source.sourceName.trim() !== 'TODO' &&
       source.lastVerified &&
-      source.lastVerified.trim() !== '' &&
-      source.lastVerified.trim() !== 'TODO'
+      source.lastVerified.trim() !== ''
     );
   };
 
@@ -818,7 +815,7 @@ export default function RebateCalculator({
           <EnergyFlowVisualizer batteryEnabled={batteryEnabled} sunHours={sunHours} systemSize={systemSizeCapped} lang={lang} />
         </motion.div>
 
-        {/* TEMPORARY: Only show the Data Sources block if at least one real (non-TODO) source is backfilled */}
+        {/* Only show the Data Sources block if at least one real source is present */}
         {hasAnyRealSource && (
           <motion.div 
             variants={itemVariants}
