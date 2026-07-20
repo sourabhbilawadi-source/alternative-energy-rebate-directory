@@ -273,6 +273,39 @@ describe('queryLocationSpecs', () => {
     }
   });
 
+
+
+  it('should handle Open-Meteo API throwing an error gracefully', async () => {
+    const error = new Error('Network timeout');
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    (global.fetch as any).mockImplementation((url: string) => {
+      if (url.includes('nominatim')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [{
+            lat: '37.7749',
+            lon: '-122.4194',
+            display_name: 'San Francisco, California, United States',
+          }],
+        });
+      }
+
+      if (url.includes('open-meteo')) {
+        return Promise.reject(error);
+      }
+
+      return Promise.resolve({ ok: false });
+    });
+
+    const result = await queryLocationSpecs('San Francisco', 'us');
+
+    expect(result).not.toBeNull();
+    if (result) {
+      expect(result.sunHours).toBe(1450); // Fallback standard value
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Failed to fetch solar hours from Open-Meteo, using default:', error);
+    }
+  });
   it('should return null and not make network requests when query is empty or whitespace', async () => {
     const fetchSpy = vi.spyOn(global, 'fetch');
 
