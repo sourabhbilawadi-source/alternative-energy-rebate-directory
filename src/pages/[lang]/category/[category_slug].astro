@@ -219,10 +219,13 @@ rebates.forEach(r => {
 
 // 2. Process each country's rebates
 Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
-  // Count frequency of authority names
-  const authorityCounts: Record<string, number> = {};
+  // Group rebates by authority name
+  const authorityMatches: Record<string, Rebate[]> = {};
   countryRebates.forEach(r => {
-    authorityCounts[r.authority_name] = (authorityCounts[r.authority_name] || 0) + 1;
+    if (!authorityMatches[r.authority_name]) {
+      authorityMatches[r.authority_name] = [];
+    }
+    authorityMatches[r.authority_name].push(r);
   });
 
   const national: Rebate[] = [];
@@ -230,13 +233,12 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
   const processedNames = new Set<string>();
 
   countryRebates.forEach(r => {
-    const isRepeated = authorityCounts[r.authority_name] > 1;
+    const matches = authorityMatches[r.authority_name];
+    const isRepeated = matches.length > 1;
 
     if (isRepeated) {
       if (processedNames.has(r.authority_name)) return;
       processedNames.add(r.authority_name);
-
-      const matches = countryRebates.filter(m => m.authority_name === r.authority_name);
       
       // Sort matches alphabetically by city name to pick the first one as representative
       const sortedMatches = [...matches].sort((a, b) => {
