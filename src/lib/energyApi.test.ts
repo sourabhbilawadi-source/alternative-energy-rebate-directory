@@ -284,4 +284,17 @@ describe('queryLocationSpecs', () => {
 
     expect(fetchSpy).not.toHaveBeenCalled();
   });
+
+  it('should handle generic uncaught errors and return null', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    // Passing undefined will cause query.trim() to throw a TypeError,
+    // which will be caught by the outer catch block.
+    const result = await queryLocationSpecs(undefined as any, 'us');
+
+    expect(result).toBeNull();
+    expect(consoleSpy).toHaveBeenCalledWith('Error fetching location specs from APIs:', expect.any(TypeError));
+
+    consoleSpy.mockRestore();
+  });
 });
