@@ -1,0 +1,854 @@
+Getting diagnostics for Astro files in /app...
+[96msrc/content.config.ts[0m:[93m11[0m:[93m12[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m11[0m     draft: z.boolean().default(false)
+[7m  [0m [93m           ~[0m
+[96msrc/content.config.ts[0m:[93m10[0m:[93m29[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m10[0m     relatedRegions: z.array(z.string()).default([]),
+[7m  [0m [93m                            ~[0m
+[96msrc/content.config.ts[0m:[93m10[0m:[93m21[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m10[0m     relatedRegions: z.array(z.string()).default([]),
+[7m  [0m [93m                    ~[0m
+[96msrc/content.config.ts[0m:[93m9[0m:[93m18[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m9[0m     publishDate: z.coerce.date(),
+[7m [0m [93m                 ~[0m
+[96msrc/content.config.ts[0m:[93m8[0m:[93m18[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m8[0m     description: z.string(),
+[7m [0m [93m                 ~[0m
+[96msrc/content.config.ts[0m:[93m7[0m:[93m12[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m7[0m     title: z.string(),
+[7m [0m [93m           ~[0m
+[96msrc/content.config.ts[0m:[93m6[0m:[93m11[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m6[0m   schema: z.object({
+[7m [0m [93m          ~[0m
+[96msrc/content.config.ts[0m:[93m1[0m:[93m28[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m1[0m import { defineCollection, z } from 'astro:content';
+[7m [0m [93m                           ~[0m
+
+[96msrc/components/Analytics.astro[0m:[93m7[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m7[0m   <script define:vars={{ gaId }}>
+[7m [0m [93m          ~~~~~~~~~~~[0m
+
+[96msrc/components/admin/AdminDashboard.tsx[0m:[93m309[0m:[93m43[0m - [93mwarning[0m[90m ts(6385): [0m'FormEvent' is deprecated.
+
+[7m309[0m   const handleAddRebate = async (e: React.FormEvent) => {
+[7m   [0m [93m                                          ~~~~~~~~~[0m
+[96msrc/components/admin/AdminDashboard.tsx[0m:[93m279[0m:[93m17[0m - [93mwarning[0m[90m ts(6133): [0m'data' is declared but its value is never read.
+
+[7m279[0m         const { data, error } = await supabase
+[7m   [0m [93m                ~~~~[0m
+[96msrc/components/admin/AdminDashboard.tsx[0m:[93m258[0m:[93m43[0m - [93mwarning[0m[90m ts(6385): [0m'FormEvent' is deprecated.
+
+[7m258[0m   const handleAddRegion = async (e: React.FormEvent) => {
+[7m   [0m [93m                                          ~~~~~~~~~[0m
+[96msrc/components/admin/AdminDashboard.tsx[0m:[93m218[0m:[93m39[0m - [93mwarning[0m[90m ts(6385): [0m'FormEvent' is deprecated.
+
+[7m218[0m   const handleLogin = async (e: React.FormEvent) => {
+[7m   [0m [93m                                      ~~~~~~~~~[0m
+[96msrc/components/admin/AdminDashboard.tsx[0m:[93m13[0m:[93m3[0m - [93mwarning[0m[90m ts(6133): [0m'Tag' is declared but its value is never read.
+
+[7m13[0m   Tag,
+[7m  [0m [93m  ~~~[0m
+[96msrc/components/admin/AdminDashboard.tsx[0m:[93m5[0m:[93m3[0m - [93mwarning[0m[90m ts(6133): [0m'MapPin' is declared but its value is never read.
+
+[7m5[0m   MapPin,
+[7m [0m [93m  ~~~~~~[0m
+
+[96msrc/components/calculator/LeadCaptureCta.tsx[0m:[93m32[0m:[93m40[0m - [93mwarning[0m[90m ts(6385): [0m'FormEvent' is deprecated.
+
+[7m32[0m   const handleSubmit = async (e: React.FormEvent) => {
+[7m  [0m [93m                                       ~~~~~~~~~[0m
+
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m1087[0m:[93m13[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m1087[0m             variants={itemVariants}
+[7m    [0m [91m            ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m1018[0m:[93m11[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m1018[0m           variants={itemVariants}
+[7m    [0m [91m          ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m972[0m:[93m11[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m972[0m           variants={itemVariants}
+[7m   [0m [91m          ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m949[0m:[93m13[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m949[0m             variants={itemVariants}
+[7m   [0m [91m            ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m928[0m:[93m13[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m928[0m             variants={itemVariants}
+[7m   [0m [91m            ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m892[0m:[93m11[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m892[0m           variants={itemVariants}
+[7m   [0m [91m          ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m885[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m885[0m         <motion.div variants={itemVariants}>
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m825[0m:[93m13[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m825[0m             variants={itemVariants}
+[7m   [0m [91m            ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m818[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m818[0m         <motion.div variants={itemVariants}>
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m802[0m:[93m11[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m802[0m           variants={itemVariants}
+[7m   [0m [91m          ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m744[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m744[0m         <motion.div variants={itemVariants} className="space-y-3">
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m722[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m722[0m         <motion.div variants={itemVariants} className="space-y-3">
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m700[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m700[0m         <motion.div variants={itemVariants} className="space-y-3">
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m668[0m:[93m23[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m668[0m           <motion.div variants={itemVariants} className="space-y-2">
+[7m   [0m [91m                      ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m626[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m626[0m         <motion.div variants={itemVariants} className="space-y-2">
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m620[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m620[0m         <motion.div variants={itemVariants}>
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m526[0m:[93m11[0m - [93mwarning[0m[90m ts(6133): [0m'fedTaxCredit' is declared but its value is never read.
+
+[7m526[0m   const { fedTaxCredit, totalIncentives } = calculateIncentives();
+[7m   [0m [93m          ~~~~~~~~~~~~[0m
+[96msrc/components/calculator/RebateCalculator.tsx[0m:[93m1[0m:[93m8[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React, { useState, useEffect } from 'react';
+[7m [0m [93m       ~~~~~[0m
+
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m580[0m:[93m11[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m580[0m           variants={itemVariants}
+[7m   [0m [91m          ~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m558[0m:[93m13[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m558[0m             variants={itemVariants}
+[7m   [0m [91m            ~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m541[0m:[93m13[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m541[0m             variants={itemVariants}
+[7m   [0m [91m            ~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m479[0m:[93m11[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m479[0m           variants={itemVariants}
+[7m   [0m [91m          ~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m472[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m472[0m         <motion.div variants={itemVariants}>
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m457[0m:[93m108[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.stateRebateSource' is possibly 'undefined'.
+
+[7m457[0m                   {regionEntry.stateRebateSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.stateRebateSource.lastVerified})</span>}
+[7m   [0m [91m                                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m457[0m:[93m20[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.stateRebateSource' is possibly 'undefined'.
+
+[7m457[0m                   {regionEntry.stateRebateSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.stateRebateSource.lastVerified})</span>}
+[7m   [0m [91m                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m455[0m:[93m54[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.stateRebateSource' is possibly 'undefined'.
+
+[7m455[0m                     <span className="font-semibold">{regionEntry.stateRebateSource.sourceName}</span>
+[7m   [0m [91m                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m453[0m:[93m183[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.stateRebateSource' is possibly 'undefined'.
+
+[7m453[0m                     <a href={regionEntry.stateRebateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.stateRebateSource.sourceName}</a>
+[7m   [0m [91m                                                                                                                                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m453[0m:[93m30[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.stateRebateSource' is possibly 'undefined'.
+
+[7m453[0m                     <a href={regionEntry.stateRebateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.stateRebateSource.sourceName}</a>
+[7m   [0m [91m                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m452[0m:[93m34[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.stateRebateSource' is possibly 'undefined'.
+
+[7m452[0m                   State Rebate: {regionEntry.stateRebateSource.sourceUrl !== '#' ? (
+[7m   [0m [91m                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m447[0m:[93m113[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.federalTaxCreditSource' is possibly 'undefined'.
+
+[7m447[0m                   {regionEntry.federalTaxCreditSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.federalTaxCreditSource.lastVerified})</span>}
+[7m   [0m [91m                                                                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m447[0m:[93m20[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.federalTaxCreditSource' is possibly 'undefined'.
+
+[7m447[0m                   {regionEntry.federalTaxCreditSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.federalTaxCreditSource.lastVerified})</span>}
+[7m   [0m [91m                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m445[0m:[93m54[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.federalTaxCreditSource' is possibly 'undefined'.
+
+[7m445[0m                     <span className="font-semibold">{regionEntry.federalTaxCreditSource.sourceName}</span>
+[7m   [0m [91m                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m443[0m:[93m188[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.federalTaxCreditSource' is possibly 'undefined'.
+
+[7m443[0m                     <a href={regionEntry.federalTaxCreditSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.federalTaxCreditSource.sourceName}</a>
+[7m   [0m [91m                                                                                                                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m443[0m:[93m30[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.federalTaxCreditSource' is possibly 'undefined'.
+
+[7m443[0m                     <a href={regionEntry.federalTaxCreditSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.federalTaxCreditSource.sourceName}</a>
+[7m   [0m [91m                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m442[0m:[93m36[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.federalTaxCreditSource' is possibly 'undefined'.
+
+[7m442[0m                   Federal Credit: {regionEntry.federalTaxCreditSource.sourceUrl !== '#' ? (
+[7m   [0m [91m                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m437[0m:[93m108[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.costPerWattSource' is possibly 'undefined'.
+
+[7m437[0m                   {regionEntry.costPerWattSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.costPerWattSource.lastVerified})</span>}
+[7m   [0m [91m                                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m437[0m:[93m20[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.costPerWattSource' is possibly 'undefined'.
+
+[7m437[0m                   {regionEntry.costPerWattSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.costPerWattSource.lastVerified})</span>}
+[7m   [0m [91m                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m435[0m:[93m54[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.costPerWattSource' is possibly 'undefined'.
+
+[7m435[0m                     <span className="font-semibold">{regionEntry.costPerWattSource.sourceName}</span>
+[7m   [0m [91m                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m433[0m:[93m183[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.costPerWattSource' is possibly 'undefined'.
+
+[7m433[0m                     <a href={regionEntry.costPerWattSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.costPerWattSource.sourceName}</a>
+[7m   [0m [91m                                                                                                                                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m433[0m:[93m30[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.costPerWattSource' is possibly 'undefined'.
+
+[7m433[0m                     <a href={regionEntry.costPerWattSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.costPerWattSource.sourceName}</a>
+[7m   [0m [91m                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m432[0m:[93m28[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.costPerWattSource' is possibly 'undefined'.
+
+[7m432[0m                   Cost/W: {regionEntry.costPerWattSource.sourceUrl !== '#' ? (
+[7m   [0m [91m                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m427[0m:[93m105[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.gridRateSource' is possibly 'undefined'.
+
+[7m427[0m                   {regionEntry.gridRateSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.gridRateSource.lastVerified})</span>}
+[7m   [0m [91m                                                                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m427[0m:[93m20[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.gridRateSource' is possibly 'undefined'.
+
+[7m427[0m                   {regionEntry.gridRateSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.gridRateSource.lastVerified})</span>}
+[7m   [0m [91m                   ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m425[0m:[93m54[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.gridRateSource' is possibly 'undefined'.
+
+[7m425[0m                     <span className="font-semibold">{regionEntry.gridRateSource.sourceName}</span>
+[7m   [0m [91m                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m423[0m:[93m180[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.gridRateSource' is possibly 'undefined'.
+
+[7m423[0m                     <a href={regionEntry.gridRateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.gridRateSource.sourceName}</a>
+[7m   [0m [91m                                                                                                                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m423[0m:[93m30[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.gridRateSource' is possibly 'undefined'.
+
+[7m423[0m                     <a href={regionEntry.gridRateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.gridRateSource.sourceName}</a>
+[7m   [0m [91m                             ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m422[0m:[93m31[0m - [91merror[0m[90m ts(18048): [0m'regionEntry.gridRateSource' is possibly 'undefined'.
+
+[7m422[0m                   Grid Rate: {regionEntry.gridRateSource.sourceUrl !== '#' ? (
+[7m   [0m [91m                              ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m412[0m:[93m13[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m412[0m             variants={itemVariants}
+[7m   [0m [91m            ~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m394[0m:[93m11[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m394[0m           variants={itemVariants}
+[7m   [0m [91m          ~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m353[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m353[0m         <motion.div variants={itemVariants} className="space-y-2.5">
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m335[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m335[0m         <motion.div variants={itemVariants} className="space-y-3">
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m313[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m313[0m         <motion.div variants={itemVariants} className="space-y-3">
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m286[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m286[0m         <motion.div variants={itemVariants} className="space-y-2">
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m280[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m280[0m         <motion.div variants={itemVariants}>
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m7[0m:[93m3[0m - [93mwarning[0m[90m ts(6133): [0m'Zap' is declared but its value is never read.
+
+[7m7[0m   Zap,
+[7m [0m [93m  ~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m6[0m:[93m3[0m - [93mwarning[0m[90m ts(6133): [0m'DollarSign' is declared but its value is never read.
+
+[7m6[0m   DollarSign,
+[7m [0m [93m  ~~~~~~~~~~[0m
+[96msrc/components/calculator/SmeHub.tsx[0m:[93m2[0m:[93m18[0m - [93mwarning[0m[90m ts(6133): [0m'AnimatePresence' is declared but its value is never read.
+
+[7m2[0m import { motion, AnimatePresence } from 'framer-motion';
+[7m [0m [93m                 ~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/compare/ComparisonEngine.tsx[0m:[93m1[0m:[93m8[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React, { useState, useEffect } from 'react';
+[7m [0m [93m       ~~~~~[0m
+
+[96msrc/components/search/SearchPortal.tsx[0m:[93m439[0m:[93m17[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; scale: number; y: number; }; show: { opacity: number; scale: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; exit: { opacity: number; scale: number; y: number; transition: { ...; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; scale: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; scale: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; scale: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m439[0m                 variants={itemVariants}
+[7m   [0m [91m                ~~~~~~~~[0m
+[96msrc/components/search/SearchPortal.tsx[0m:[93m380[0m:[93m21[0m - [91merror[0m[90m ts(2322): [0mType '{ hidden: { opacity: number; scale: number; y: number; }; show: { opacity: number; scale: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; exit: { opacity: number; scale: number; y: number; transition: { ...; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; scale: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; scale: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; scale: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m380[0m                     variants={itemVariants}
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/search/SearchPortal.tsx[0m:[93m144[0m:[93m47[0m - [91merror[0m[90m ts(2339): [0mProperty 'postal_code' does not exist on type '{}'.
+
+[7m144[0m                   postal_code: matchedRegion?.postal_code || ''
+[7m   [0m [91m                                              ~~~~~~~~~~~[0m
+[96msrc/components/search/SearchPortal.tsx[0m:[93m143[0m:[93m40[0m - [91merror[0m[90m ts(2339): [0mProperty 'city' does not exist on type '{}'.
+
+[7m143[0m                   city: matchedRegion?.city || '',
+[7m   [0m [91m                                       ~~~~[0m
+[96msrc/components/search/SearchPortal.tsx[0m:[93m142[0m:[93m50[0m - [91merror[0m[90m ts(2339): [0mProperty 'state_province' does not exist on type '{}'.
+
+[7m142[0m                   state_province: matchedRegion?.state_province || '',
+[7m   [0m [91m                                                 ~~~~~~~~~~~~~~[0m
+[96msrc/components/search/SearchPortal.tsx[0m:[93m141[0m:[93m48[0m - [91merror[0m[90m ts(2339): [0mProperty 'country_code' does not exist on type '{}'.
+
+[7m141[0m                   country_code: matchedRegion?.country_code || 'us',
+[7m   [0m [91m                                               ~~~~~~~~~~~~[0m
+[96msrc/components/search/SearchPortal.tsx[0m:[93m97[0m:[93m48[0m - [91merror[0m[90m ts(2345): [0mArgument of type '(item: SupabaseRebateItem) => { id: string; authority_name: string; technology_category: string; incentive_value: number; incentive_type: string; max_limit: number | null; region: { country_code: string; state_province: string; city: string; postal_code: string; }; }' is not assignable to parameter of type '(value: { id: any; authority_name: any; technology_category: any; incentive_value: any; incentive_type: any; max_limit: any; regions: { country_code: any; state_province: any; city: any; postal_code: any; }[]; }, index: number, array: { ...; }[]) => { ...; }'.
+  Types of parameters 'item' and 'value' are incompatible.
+    Type '{ id: any; authority_name: any; technology_category: any; incentive_value: any; incentive_type: any; max_limit: any; regions: { country_code: any; state_province: any; city: any; postal_code: any; }[]; }' is not assignable to type 'SupabaseRebateItem'.
+      Types of property 'regions' are incompatible.
+        Type '{ country_code: any; state_province: any; city: any; postal_code: any; }[]' is missing the following properties from type '{ country_code: string; state_province: string; city: string; postal_code: string; }': country_code, state_province, city, postal_code
+
+[7m 97[0m               fetchedRebates = rebatesData.map((item: SupabaseRebateItem) => ({
+[7m   [0m [91m                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 98[0m                 id: item.id,
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m
+[7m109[0m                 }
+[7m   [0m [91m~~~~~~~~~~~~~~~~~[0m
+[7m110[0m               }));
+[7m   [0m [91m~~~~~~~~~~~~~~~~[0m
+[96msrc/components/search/SearchPortal.tsx[0m:[93m1[0m:[93m8[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React, { useState, useEffect } from 'react';
+[7m [0m [93m       ~~~~~[0m
+
+[96msrc/pages/index.astro[0m:[93m25[0m:[93m36[0m - [91merror[0m[90m ts(2339): [0mProperty 'country_code' does not exist on type '{ country_code: any; }[]'.
+
+[7m25[0m         const country = r.regions?.country_code?.toLowerCase() || 'us';
+[7m  [0m [91m                                   ~~~~~~~~~~~~[0m
+
+[96msrc/pages/[lang]/compare.astro[0m:[93m115[0m:[93m64[0m - [91merror[0m[90m ts(7005): [0mVariable 'serverRebates' implicitly has an 'any[]' type.
+
+[7m115[0m     <ComparisonEngine client:load lang={lang} databaseRebates={serverRebates} />
+[7m   [0m [91m                                                               ~~~~~~~~~~~~~[0m
+[96msrc/pages/[lang]/compare.astro[0m:[93m28[0m:[93m5[0m - [91merror[0m[90m ts(7034): [0mVariable 'serverRebates' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m28[0m let serverRebates = [];
+[7m  [0m [91m    ~~~~~~~~~~~~~[0m
+
+[96msrc/pages/[lang]/search.astro[0m:[93m134[0m:[93m59[0m - [91merror[0m[90m ts(7005): [0mVariable 'serverRebates' implicitly has an 'any[]' type.
+
+[7m134[0m     <SearchPortal client:load lang={lang} initialRebates={serverRebates} />
+[7m   [0m [91m                                                          ~~~~~~~~~~~~~[0m
+[96msrc/pages/[lang]/search.astro[0m:[93m30[0m:[93m5[0m - [91merror[0m[90m ts(7034): [0mVariable 'serverRebates' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m30[0m let serverRebates = [];
+[7m  [0m [91m    ~~~~~~~~~~~~~[0m
+
+[96msrc/pages/[lang]/blog/[slug].astro[0m:[93m25[0m:[93m15[0m - [93mwarning[0m[90m ts(6133): [0m'slug' is declared but its value is never read.
+
+[7m25[0m const { lang, slug } = Astro.params;
+[7m  [0m [93m              ~~~~[0m
+
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m591[0m:[93m70[0m - [91merror[0m[90m ts(2345): [0mArgument of type 'string[] | undefined' is not assignable to parameter of type 'string[]'.
+  Type 'undefined' is not assignable to type 'string[]'.
+
+[7m591[0m                                   📍 Available in: {formatCitiesText(rebate.citiesList)}
+[7m   [0m [91m                                                                     ~~~~~~~~~~~~~~~~~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m581[0m:[93m95[0m - [91merror[0m[90m ts(2345): [0mArgument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+[7m581[0m                                   {formatValue(rebate.incentive_value, rebate.incentive_type, rebate.regions?.country_code)}
+[7m   [0m [91m                                                                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m548[0m:[93m66[0m - [91merror[0m[90m ts(2345): [0mArgument of type 'string[] | undefined' is not assignable to parameter of type 'string[]'.
+  Type 'undefined' is not assignable to type 'string[]'.
+
+[7m548[0m                               📍 Available in: {formatCitiesText(rebate.citiesList)}
+[7m   [0m [91m                                                                 ~~~~~~~~~~~~~~~~~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m539[0m:[93m93[0m - [91merror[0m[90m ts(2345): [0mArgument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+[7m539[0m                                 {formatValue(rebate.incentive_value, rebate.incentive_type, rebate.regions?.country_code)}
+[7m   [0m [91m                                                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m268[0m:[93m23[0m - [91merror[0m[90m ts(2345): [0mArgument of type '{ isGrouped: boolean; citiesList: (string | undefined)[]; description: string; id?: string; slug: string; authority_name: string; technology_category?: string; incentive_value: number; incentive_type: string; is_active?: boolean; regions?: { country_code?: string; state_province?: string; city?: string; }; }' is not assignable to parameter of type 'Rebate'.
+  Types of property 'citiesList' are incompatible.
+    Type '(string | undefined)[]' is not assignable to type 'string[]'.
+      Type 'string | undefined' is not assignable to type 'string'.
+        Type 'undefined' is not assignable to type 'string'.
+
+[7m268[0m         national.push(groupedCard);
+[7m   [0m [91m                      ~~~~~~~~~~~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m266[0m:[93m16[0m - [91merror[0m[90m ts(2538): [0mType 'undefined' cannot be used as an index type.
+
+[7m266[0m         states[stateName].push(groupedCard);
+[7m   [0m [91m               ~~~~~~~~~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m265[0m:[93m40[0m - [91merror[0m[90m ts(2538): [0mType 'undefined' cannot be used as an index type.
+
+[7m265[0m         if (!states[stateName]) states[stateName] = [];
+[7m   [0m [91m                                       ~~~~~~~~~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m265[0m:[93m21[0m - [91merror[0m[90m ts(2538): [0mType 'undefined' cannot be used as an index type.
+
+[7m265[0m         if (!states[stateName]) states[stateName] = [];
+[7m   [0m [91m                    ~~~~~~~~~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m254[0m:[93m91[0m - [91merror[0m[90m ts(2345): [0mArgument of type 'string | null | undefined' is not assignable to parameter of type 'string | null'.
+  Type 'undefined' is not assignable to type 'string | null'.
+
+[7m254[0m       const newDesc = `${cleanedDesc}${getGroupedSuffix(uniqueCities.length, countryCode, stateNameForSuffix, lang || 'en-us')}`;
+[7m   [0m [91m                                                                                          ~~~~~~~~~~~~~~~~~~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m252[0m:[93m72[0m - [91merror[0m[90m ts(2345): [0mArgument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+[7m252[0m       const cleanedDesc = cleanDescription(representative.description, representative.regions?.city, representative.regions?.state_province);
+[7m   [0m [91m                                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m250[0m:[93m123[0m - [91merror[0m[90m ts(2769): [0mNo overload matches this call.
+  Overload 1 of 3, '(that: string, locales?: LocalesArgument, options?: CollatorOptions | undefined): number', gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+  Overload 2 of 3, '(that: string, locales?: string | string[] | undefined, options?: CollatorOptions | undefined): number', gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+  Overload 3 of 3, '(that: string): number', gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+
+[7m250[0m       const uniqueCities = [...new Set(matches.map(m => m.regions?.city).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+[7m   [0m [91m                                                                                                                          ~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m250[0m:[93m107[0m - [91merror[0m[90m ts(18048): [0m'a' is possibly 'undefined'.
+
+[7m250[0m       const uniqueCities = [...new Set(matches.map(m => m.regions?.city).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+[7m   [0m [91m                                                                                                          ~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m131[0m:[93m90[0m - [91merror[0m[90m ts(7006): [0mParameter 'w' implicitly has an 'any' type.
+
+[7m131[0m const displayCategory = matchedCategory || (category_slug ? category_slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Energy');
+[7m   [0m [91m                                                                                         ~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m471[0m:[93m13[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m471[0m     <script type="application/ld+json" set:html={JSON.stringify(itemListSchema)} />
+[7m   [0m [93m            ~~~~[0m
+[96msrc/pages/[lang]/category/[category_slug].astro[0m:[93m469[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m469[0m   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+[7m   [0m [93m          ~~~~[0m
+
+[96msrc/pages/[lang]/directory/[country]/index.astro[0m:[93m175[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m175[0m   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+[7m   [0m [93m          ~~~~[0m
+
+[96msrc/pages/[lang]/directory/[country]/[state]/[city].astro[0m:[93m594[0m:[93m9[0m - [91merror[0m[90m ts(2322): [0mType '{ "client:visible": true; key: string; defaultGridRate: number; defaultSunHours: number; defaultGridEmissions: number; defaultCostPerWatt: number; state: string; city: string; lang: string; regionEntry: RegionEntry | undefined; }' is not assignable to type 'IntrinsicAttributes & SmeHubProps'.
+  Property 'key' does not exist on type 'IntrinsicAttributes & SmeHubProps'.
+
+[7m594[0m         key={`${country}-${state}-${city}`}
+[7m   [0m [91m        ~~~[0m
+[96msrc/pages/[lang]/directory/[country]/[state]/[city].astro[0m:[93m526[0m:[93m11[0m - [91merror[0m[90m ts(2322): [0mType '{ children: any; "client:visible": true; key: string; defaultPostalCode: string; defaultGridRate: number; defaultSunHours: number; defaultGridEmissions: number; defaultCostPerWatt: number; ... 7 more ...; regionEntry: RegionEntry | undefined; }' is not assignable to type 'IntrinsicAttributes & RebateCalculatorProps'.
+  Property 'key' does not exist on type 'IntrinsicAttributes & RebateCalculatorProps'.
+
+[7m526[0m           key={`${country}-${state}-${city}`}
+[7m   [0m [91m          ~~~[0m
+[96msrc/pages/[lang]/directory/[country]/[state]/[city].astro[0m:[93m77[0m:[93m9[0m - [93mwarning[0m[90m ts(6133): [0m'isUs' is declared but its value is never read.
+
+[7m77[0m   const isUs = country === 'us';
+[7m  [0m [93m        ~~~~[0m
+[96msrc/pages/[lang]/directory/[country]/[state]/[city].astro[0m:[93m440[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m440[0m   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+[7m   [0m [93m          ~~~~[0m
+[96msrc/pages/[lang]/directory/[country]/[state]/[city].astro[0m:[93m439[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m439[0m   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+[7m   [0m [93m          ~~~~[0m
+[96msrc/pages/[lang]/directory/[country]/[state]/[city].astro[0m:[93m438[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m438[0m   <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+[7m   [0m [93m          ~~~~[0m
+[96msrc/pages/[lang]/directory/[country]/[state]/[city].astro[0m:[93m437[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m437[0m   <script type="application/ld+json" set:html={JSON.stringify(governmentBenefitSchema)} />
+[7m   [0m [93m          ~~~~[0m
+
+[96msrc/pages/[lang]/directory/[country]/[state]/index.astro[0m:[93m174[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m174[0m   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+[7m   [0m [93m          ~~~~[0m
+
+[96msrc/pages/[lang]/rebate/[rebate_slug].astro[0m:[93m276[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m276[0m   <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
+[7m   [0m [93m          ~~~~[0m
+[96msrc/pages/[lang]/rebate/[rebate_slug].astro[0m:[93m275[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m275[0m   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+[7m   [0m [93m          ~~~~[0m
+
+Result (34 files):
+- 79 errors
+- 0 warnings
+- 35 hints
