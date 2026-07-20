@@ -15,13 +15,13 @@ export interface RegionEntry {
   citySlug: string;      // e.g. 'los-angeles'
   cityName: string;      // e.g. 'Los Angeles'
 
-  // Sizing/rate parameters (using null for TODO/placeholder values)
-  gridRate: number | null;
-  sunHours: number | null;
-  gridEmissions: number | null;
-  costPerWatt: number | null;
+  // Sizing/rate parameters
+  gridRate: number;
+  sunHours: number;
+  gridEmissions: number;
+  costPerWatt: number;
 
-  // Incentives (using null for TODO/placeholder values)
+  // Incentives
   federalTaxCreditPct: number;
   stateRebate: number;
   utilityRebate: number;

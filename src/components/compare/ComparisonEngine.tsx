@@ -82,7 +82,6 @@ export default function ComparisonEngine({
   const t = useTranslations(lang);
 
   const initialCities: CitySpecs[] = regionsData
-    .filter(r => r.gridRate !== null)
     .map(r => {
       const matchedRebates = databaseRebates
         .filter((dbR: RawDatabaseRebate) => {
@@ -108,10 +107,10 @@ export default function ComparisonEngine({
         state: r.stateName,
         country: r.countryName,
         countryCode: r.countryCode,
-        gridRate: r.gridRate!,
-        sunHours: r.sunHours!,
-        gridEmissions: r.gridEmissions!,
-        costPerWatt: r.costPerWatt!,
+        gridRate: r.gridRate,
+        sunHours: r.sunHours,
+        gridEmissions: r.gridEmissions,
+        costPerWatt: r.costPerWatt,
         rebates: matchedRebates,
         hasActiveRebates: matchedRebates.length > 0
       };
