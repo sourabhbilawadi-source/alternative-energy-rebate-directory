@@ -5,9 +5,6 @@ const rawSupabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || import.meta.env.SU
 const supabaseUrl = rawSupabaseUrl ? rawSupabaseUrl.replace(/\/$/, '').replace(/\/rest\/v1$/, '') : '';
 const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.SUPABASE_ANON_KEY || '';
 
-console.log('Build-time Supabase URL:', supabaseUrl);
-console.log('Build-time Supabase Anon Key length:', supabaseAnonKey ? supabaseAnonKey.length : 0);
-
 // Export client instance (gracefully handles empty credentials with local fallbacks)
 export const supabase = (supabaseUrl && supabaseAnonKey && supabaseAnonKey !== 'YOUR_SUPABASE_ANON_KEY' && !supabaseUrl.includes('your-project-id')) 
   ? createClient(supabaseUrl, supabaseAnonKey)
