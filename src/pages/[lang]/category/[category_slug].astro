@@ -128,7 +128,7 @@ if (supabase) {
 }
 
 // Fallback category title if not found in database
-const displayCategory = matchedCategory || (category_slug ? category_slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Energy');
+const displayCategory = matchedCategory || (category_slug ? category_slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Energy');
 
 // Localized strings
 const l10n = {
@@ -247,13 +247,13 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
       const representative = sortedMatches[0];
 
       const uniqueStates = [...new Set(matches.map(m => m.regions?.state_province).filter(Boolean))];
-      const uniqueCities = [...new Set(matches.map(m => m.regions?.city).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+      const uniqueCities = [...new Set(matches.map(m => m.regions?.city).filter(Boolean))].sort((a, b) => (a || '').localeCompare(b || ''));
 
-      const cleanedDesc = cleanDescription(representative.description, representative.regions?.city, representative.regions?.state_province);
+      const cleanedDesc = cleanDescription(representative.description, representative.regions?.city || '', representative.regions?.state_province || '');
       const stateNameForSuffix = uniqueStates.length === 1 ? uniqueStates[0] : null;
-      const newDesc = `${cleanedDesc}${getGroupedSuffix(uniqueCities.length, countryCode, stateNameForSuffix, lang || 'en-us')}`;
+      const newDesc = `${cleanedDesc}${getGroupedSuffix(uniqueCities.length, countryCode, stateNameForSuffix || null, lang || 'en-us')}`;
 
-      const groupedCard = {
+      const groupedCard: any = {
         ...representative,
         isGrouped: true,
         citiesList: uniqueCities,
@@ -262,7 +262,9 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
 
       if (uniqueStates.length === 1) {
         const stateName = uniqueStates[0];
+        // @ts-ignore
         if (!states[stateName]) states[stateName] = [];
+        // @ts-ignore
         states[stateName].push(groupedCard);
       } else {
         national.push(groupedCard);
@@ -281,8 +283,8 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
 });
 
 // Format currency
-function formatValue(value: number, type: string, countryCode: string) {
-  const code = countryCode.toLowerCase();
+function formatValue(value: number, type: string, countryCode?: string) {
+  const code = (countryCode || '').toLowerCase();
   const symbol = (code === 'de' || code === 'fr' || code === 'ie' || code === 'nl')
     ? '€'
     : (code === 'gb' || code === 'uk')
@@ -305,7 +307,8 @@ function formatValue(value: number, type: string, countryCode: string) {
 }
 
 // Format city listing text
-function formatCitiesText(cities: string[]) {
+function formatCitiesText(cities?: (string | undefined)[]) {
+  if (!cities) return '';
   if (cities.length <= 4) {
     return `${cities.join(', ')}`;
   }
