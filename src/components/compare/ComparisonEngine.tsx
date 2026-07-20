@@ -160,9 +160,12 @@ export default function ComparisonEngine({
         }));
 
         const merged = [...initialCities];
+        const existingNames = new Set(merged.map(c => c.name.toLowerCase()));
         formattedLocal.forEach(localCity => {
-          if (!merged.some(c => c.name.toLowerCase() === localCity.name.toLowerCase())) {
+          const lowerName = localCity.name.toLowerCase();
+          if (!existingNames.has(lowerName)) {
             merged.push(localCity);
+            existingNames.add(lowerName);
           }
         });
         setCities(merged);
