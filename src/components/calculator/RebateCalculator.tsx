@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
 import { queryLocationSpecs } from '../../lib/energyApi';
+import { isValidSource } from '../../data/regions';
 import type { RegionEntry, MetricSource } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
 
@@ -44,19 +45,6 @@ interface RebateCalculatorProps {
   defaultPostalCode?: string;
 }
 
-// Helper to validate and hide temporary "TODO" source values
-// TEMPORARY: Mark this as temporary until real data is backfilled
-const isValidSource = (source: any): source is MetricSource => {
-  return !!(
-    source &&
-    source.sourceName &&
-    source.sourceName.trim() !== '' &&
-    source.sourceName.trim() !== 'TODO' &&
-    source.lastVerified &&
-    source.lastVerified.trim() !== '' &&
-    source.lastVerified.trim() !== 'TODO'
-  );
-};
 
 // Custom animated counter using requestAnimationFrame for high performance
 function AnimatedNumber({ value, formatter }: { value: number; formatter?: (v: number) => string }) {

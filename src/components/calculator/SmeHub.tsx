@@ -12,6 +12,7 @@ import {
   Flame 
 } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
+import { isValidSource } from '../../data/regions';
 import type { RegionEntry } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
 
@@ -87,17 +88,6 @@ export default function SmeHub({
   regionEntry
 }: SmeHubProps) {
   const t = useTranslations(lang);
-
-  // Helper to validate metric source values
-  const isValidSource = (source: any) => {
-    return !!(
-      source &&
-      source.sourceName &&
-      source.sourceName.trim() !== '' &&
-      source.lastVerified &&
-      source.lastVerified.trim() !== ''
-    );
-  };
 
   const hasAnyRealSource = regionEntry && (
     isValidSource(regionEntry.gridRateSource) ||
