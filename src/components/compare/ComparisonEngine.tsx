@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRightLeft, Info } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
 import { regionsData } from '../../data/regions';
+import { getCountryConfig } from '../../utils/countryConfig';
 
 interface DatabaseRebate {
   id: string;
@@ -42,29 +43,6 @@ interface CitySpecs {
   rebates: DatabaseRebate[];
   hasActiveRebates: boolean;
 }
-
-const getCountryConfig = (code: string) => {
-  const c = code.toLowerCase();
-  switch (c) {
-    case 'de':
-    case 'fr':
-    case 'ie':
-    case 'nl':
-      return { symbol: '€', area: 'm²', carbon: 't', isMetric: true };
-    case 'uk':
-      return { symbol: '£', area: 'm²', carbon: 't', isMetric: true };
-    case 'au':
-      return { symbol: 'A$', area: 'm²', carbon: 't', isMetric: true };
-    case 'ca':
-      return { symbol: 'C$', area: 'm²', carbon: 't', isMetric: true };
-    case 'nz':
-      return { symbol: 'NZ$', area: 'm²', carbon: 't', isMetric: true };
-    case 'jp':
-      return { symbol: '¥', area: 'm²', carbon: 't', isMetric: true };
-    default:
-      return { symbol: '$', area: 'sq ft', carbon: 'Tons', isMetric: false };
-  }
-};
 
 const matchCountry = (c1: string, c2: string) => {
   const cc1 = c1.toLowerCase();

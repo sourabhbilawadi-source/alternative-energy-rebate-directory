@@ -14,8 +14,10 @@ import {
 import { useTranslations } from '../../lib/i18n';
 import type { RegionEntry } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
+import { getCountryConfig } from '../../utils/countryConfig';
 
 interface SmeHubProps {
+  key?: string;
   defaultGridRate: number;
   defaultSunHours: number;
   defaultGridEmissions: number;
@@ -59,22 +61,6 @@ function AnimatedNumber({ value, formatter }: { value: number; formatter?: (v: n
 
   return <span>{formatter ? formatter(displayValue) : Math.round(displayValue)}</span>;
 }
-
-const getCountryConfig = (code: string) => {
-  const c = code.toLowerCase();
-  switch (c) {
-    case 'de':
-      return { symbol: '€', area: 'm²', carbon: 't', land: 'Hektar', isMetric: true };
-    case 'uk':
-      return { symbol: '£', area: 'm²', carbon: 't', land: 'Acres', isMetric: true };
-    case 'au':
-      return { symbol: 'A$', area: 'm²', carbon: 't', land: 'Hectares', isMetric: true };
-    case 'ca':
-      return { symbol: 'C$', area: 'm²', carbon: 't', land: 'Acres', isMetric: true };
-    default:
-      return { symbol: '$', area: 'sq ft', carbon: 'Tons', land: 'Acres', isMetric: false };
-  }
-};
 
 export default function SmeHub({
   defaultGridRate: initialGridRate,

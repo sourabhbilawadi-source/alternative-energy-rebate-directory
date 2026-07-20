@@ -18,6 +18,7 @@ import { useTranslations } from '../../lib/i18n';
 import { queryLocationSpecs } from '../../lib/energyApi';
 import type { RegionEntry, MetricSource } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
+import { getCountryConfig } from '../../utils/countryConfig';
 
 export interface DbRebate {
   id: string;
@@ -29,6 +30,7 @@ export interface DbRebate {
 }
 
 interface RebateCalculatorProps {
+  key?: string;
   defaultGridRate: number;
   defaultSunHours: number;
   defaultGridEmissions: number;
@@ -226,22 +228,6 @@ function EnergyFlowVisualizer({ batteryEnabled, sunHours, systemSize, lang }: { 
     </div>
   );
 }
-
-const getCountryConfig = (code: string) => {
-  const c = code.toLowerCase();
-  switch (c) {
-    case 'de':
-      return { symbol: '€', area: 'm²', carbon: 't', land: 'Hektar', isMetric: true };
-    case 'uk':
-      return { symbol: '£', area: 'm²', carbon: 't', land: 'Acres', isMetric: true };
-    case 'au':
-      return { symbol: 'A$', area: 'm²', carbon: 't', land: 'Hectares', isMetric: true };
-    case 'ca':
-      return { symbol: 'C$', area: 'm²', carbon: 't', land: 'Acres', isMetric: true };
-    default:
-      return { symbol: '$', area: 'sq ft', carbon: 'Tons', land: 'Acres', isMetric: false };
-  }
-};
 
 export default function RebateCalculator({
   defaultGridRate,
