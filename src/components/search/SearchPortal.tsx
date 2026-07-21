@@ -31,7 +31,7 @@ interface SupabaseRebateItem {
     state_province: string;
     city: string;
     postal_code: string;
-  } | null;
+  }[] | null;
 }
 
 interface SearchPortalProps {
@@ -102,10 +102,10 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
                 incentive_type: item.incentive_type,
                 max_limit: item.max_limit ? Number(item.max_limit) : null,
                 region: {
-                  country_code: item.regions?.country_code || 'us',
-                  state_province: item.regions?.state_province || '',
-                  city: item.regions?.city || '',
-                  postal_code: item.regions?.postal_code || ''
+                  country_code: item.regions?.[0]?.country_code || 'us',
+                  state_province: item.regions?.[0]?.state_province || '',
+                  city: item.regions?.[0]?.city || '',
+                  postal_code: item.regions?.[0]?.postal_code || ''
                 }
               }));
             }

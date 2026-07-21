@@ -128,7 +128,7 @@ if (supabase) {
 }
 
 // Fallback category title if not found in database
-const displayCategory = matchedCategory || (category_slug ? category_slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Energy');
+const displayCategory = matchedCategory || (category_slug ? category_slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Energy');
 
 // Localized strings
 const l10n = {
@@ -246,12 +246,12 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
       });
       const representative = sortedMatches[0];
 
-      const uniqueStates = [...new Set(matches.map(m => m.regions?.state_province).filter(Boolean))];
-      const uniqueCities = [...new Set(matches.map(m => m.regions?.city).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+      const uniqueStates = [...new Set(matches.map(m => m.regions?.state_province).filter((s): s is string => Boolean(s)))];
+      const uniqueCities = [...new Set(matches.map(m => m.regions?.city).filter((c): c is string => Boolean(c)))].sort((a, b) => a.localeCompare(b));
 
-      const cleanedDesc = cleanDescription(representative.description, representative.regions?.city, representative.regions?.state_province);
+      const cleanedDesc = cleanDescription(representative.description || '', representative.regions?.city || '', representative.regions?.state_province || '');
       const stateNameForSuffix = uniqueStates.length === 1 ? uniqueStates[0] : null;
-      const newDesc = `${cleanedDesc}${getGroupedSuffix(uniqueCities.length, countryCode, stateNameForSuffix, lang || 'en-us')}`;
+      const newDesc = `${cleanedDesc}${getGroupedSuffix(uniqueCities.length, countryCode || '', stateNameForSuffix, lang || 'en-us')}`;
 
       const groupedCard = {
         ...representative,
@@ -260,7 +260,7 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
         description: newDesc
       };
 
-      if (uniqueStates.length === 1) {
+      if (uniqueStates.length === 1 && uniqueStates[0]) {
         const stateName = uniqueStates[0];
         if (!states[stateName]) states[stateName] = [];
         states[stateName].push(groupedCard);
@@ -536,7 +536,7 @@ import ThemeFonts from '../../../components/ThemeFonts.astro';
                                 {rebate.authority_name}
                               </h4>
                               <span class="text-xs font-bold px-2 py-0.5 rounded bg-[var(--bg-secondary)] border border-[var(--color-border)] text-[var(--text-muted)] whitespace-nowrap">
-                                {formatValue(rebate.incentive_value, rebate.incentive_type, rebate.regions?.country_code)}
+                                {formatValue(rebate.incentive_value, rebate.incentive_type, rebate.regions?.country_code || '')}
                               </span>
                             </div>
                             <p class="text-xs text-[var(--text-muted)] mb-4 line-clamp-3">
@@ -545,7 +545,7 @@ import ThemeFonts from '../../../components/ThemeFonts.astro';
                           </div>
                           <div class="flex justify-between items-center pt-2 mt-auto border-t border-[var(--color-border)]/50">
                             <span class="text-[10px] font-semibold text-[var(--text-muted)]">
-                              📍 Available in: {formatCitiesText(rebate.citiesList)}
+                              📍 Available in: {formatCitiesText(rebate.citiesList || [])}
                             </span>
                             <a 
                               href={`/${lang}/rebate/${rebate.slug}`} 
@@ -578,7 +578,7 @@ import ThemeFonts from '../../../components/ThemeFonts.astro';
                                   {rebate.authority_name}
                                 </h4>
                                 <span class="text-xs font-bold px-2 py-0.5 rounded bg-[var(--bg-secondary)] border border-[var(--color-border)] text-[var(--text-muted)] whitespace-nowrap">
-                                  {formatValue(rebate.incentive_value, rebate.incentive_type, rebate.regions?.country_code)}
+                                  {formatValue(rebate.incentive_value, rebate.incentive_type, rebate.regions?.country_code || '')}
                                 </span>
                               </div>
                               <p class="text-xs text-[var(--text-muted)] mb-4 line-clamp-3">
@@ -588,7 +588,7 @@ import ThemeFonts from '../../../components/ThemeFonts.astro';
                             <div class="flex justify-between items-center pt-2 mt-auto border-t border-[var(--color-border)]/50">
                               {rebate.isGrouped ? (
                                 <span class="text-[10px] font-semibold text-[var(--text-muted)]">
-                                  📍 Available in: {formatCitiesText(rebate.citiesList)}
+                                  📍 Available in: {formatCitiesText(rebate.citiesList || [])}
                                 </span>
                               ) : (
                                 <a 
