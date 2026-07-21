@@ -94,7 +94,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
               .eq('is_active', true);
 
             if (rebatesData && !error) {
-              fetchedRebates = rebatesData.map((item: SupabaseRebateItem) => ({
+              fetchedRebates = rebatesData.map((item: any) => ({
                 id: item.id,
                 authority_name: item.authority_name,
                 technology_category: item.technology_category,
@@ -102,10 +102,10 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
                 incentive_type: item.incentive_type,
                 max_limit: item.max_limit ? Number(item.max_limit) : null,
                 region: {
-                  country_code: item.regions?.country_code || 'us',
-                  state_province: item.regions?.state_province || '',
-                  city: item.regions?.city || '',
-                  postal_code: item.regions?.postal_code || ''
+                  country_code: item.regions?.[0]?.country_code || item.regions?.country_code || 'us',
+                  state_province: item.regions?.[0]?.state_province || item.regions?.state_province || '',
+                  city: item.regions?.[0]?.city || item.regions?.city || '',
+                  postal_code: item.regions?.[0]?.postal_code || item.regions?.postal_code || ''
                 }
               }));
             }
@@ -138,10 +138,10 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
                 incentive_type: item.incentive_type,
                 max_limit: item.max_limit ? Number(item.max_limit) : null,
                 region: {
-                  country_code: matchedRegion?.country_code || 'us',
-                  state_province: matchedRegion?.state_province || '',
-                  city: matchedRegion?.city || '',
-                  postal_code: matchedRegion?.postal_code || ''
+                  country_code: matchedRegion && typeof matchedRegion === 'object' ? String((matchedRegion as any).country_code) : 'us',
+                  state_province: matchedRegion && typeof matchedRegion === 'object' ? String((matchedRegion as any).state_province) : '',
+                  city: matchedRegion && typeof matchedRegion === 'object' ? String((matchedRegion as any).city) : '',
+                  postal_code: matchedRegion && typeof matchedRegion === 'object' ? String((matchedRegion as any).postal_code) : ''
                 }
               };
             });
@@ -361,7 +361,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
         </div>
       ) : (
         <motion.div 
-          variants={containerVariants}
+          variants={containerVariants as any}
           initial="hidden"
           animate="show"
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
@@ -377,7 +377,10 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
                 return (
                   <motion.div
                     layout
-                    variants={itemVariants}
+                    variants={itemVariants as any}
+                    initial="hidden"
+                    animate="show"
+                    exit="exit"
                     key={rebate.id}
                     className="bg-[var(--bg-primary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group relative overflow-hidden"
                   >
@@ -436,7 +439,10 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
             ) : (
               <motion.div 
                 layout
-                variants={itemVariants}
+                variants={itemVariants as any}
+                initial="hidden"
+                animate="show"
+                exit="exit"
                 className="col-span-full bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-16 text-center shadow-inner"
               >
                 <Tag className="w-16 h-16 text-[var(--text-muted)] mx-auto mb-4 opacity-50" />

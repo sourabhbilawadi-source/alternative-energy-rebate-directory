@@ -603,13 +603,13 @@ export default function RebateCalculator({
         animate="show"
         className="lg:col-span-5 space-y-6"
       >
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants as any}>
           <h2 className="text-2xl font-bold text-[var(--text-main)] mb-1">{t.common.calculate}</h2>
           <p className="text-sm text-[var(--text-muted)]">Configure parameters to customize the system model.</p>
         </motion.div>
 
         {/* Location ZIP locator */}
-        <motion.div variants={itemVariants} className="space-y-2">
+        <motion.div variants={itemVariants as any} className="space-y-2">
           <label className="block text-sm font-semibold text-[var(--text-main)] flex justify-between h-5">
             <span>ZIP / Postal Code</span>
             <AnimatePresence mode="wait">
@@ -651,7 +651,7 @@ export default function RebateCalculator({
 
         {/* Ownership Model Toggle for US */}
         {isUs && (
-          <motion.div variants={itemVariants} className="space-y-2">
+          <motion.div variants={itemVariants as any} className="space-y-2">
             <label className="block text-sm font-semibold text-[var(--text-main)]">
               Ownership Model
             </label>
@@ -683,7 +683,7 @@ export default function RebateCalculator({
         )}
 
         {/* Monthly Utility Bill Slider */}
-        <motion.div variants={itemVariants} className="space-y-3">
+        <motion.div variants={itemVariants as any} className="space-y-3">
           <div className="flex justify-between items-center text-sm font-semibold">
             <span className="text-[var(--text-main)]">{t.calculator.monthlyBill}</span>
             <span className="text-[var(--color-accent)] text-lg font-bold">{config.symbol}{monthlyBill}</span>
@@ -705,7 +705,7 @@ export default function RebateCalculator({
         </motion.div>
 
         {/* Usable Roof Area Slider */}
-        <motion.div variants={itemVariants} className="space-y-3">
+        <motion.div variants={itemVariants as any} className="space-y-3">
           <div className="flex justify-between items-center text-sm font-semibold">
             <span className="text-[var(--text-main)]">{t.calculator.roofArea}</span>
             <span className="text-[var(--color-accent)] text-lg font-bold">{roofArea} {config.area}</span>
@@ -727,7 +727,7 @@ export default function RebateCalculator({
         </motion.div>
 
         {/* Battery Storage Toggle & Collapsible Options */}
-        <motion.div variants={itemVariants} className="space-y-3">
+        <motion.div variants={itemVariants as any} className="space-y-3">
           <div className="bg-[var(--bg-primary)] p-4 rounded-2xl border border-[var(--color-border)] flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-green-500/10 text-green-500">
@@ -785,7 +785,7 @@ export default function RebateCalculator({
 
         {/* Local Rate Details Card */}
         <motion.div 
-          variants={itemVariants}
+          variants={itemVariants as any}
           className="bg-[var(--bg-primary)]/50 border border-[var(--color-border)] rounded-2xl p-4 space-y-2 text-xs shadow-sm"
         >
           <h4 className="font-bold flex items-center gap-1.5 text-[var(--text-main)]">
@@ -801,14 +801,14 @@ export default function RebateCalculator({
         </motion.div>
 
         {/* Dynamic Energy Flow Visualizer */}
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants as any}>
           <EnergyFlowVisualizer batteryEnabled={batteryEnabled} sunHours={sunHours} systemSize={systemSizeCapped} lang={lang} />
         </motion.div>
 
         {/* Only show the Data Sources block if at least one real source is present */}
         {hasAnyRealSource && (
           <motion.div 
-            variants={itemVariants}
+            variants={itemVariants as any}
             className="bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-4 text-[10px] text-[var(--text-muted)] space-y-1.5 shadow-sm"
           >
             <div className="font-bold text-[var(--text-main)] mb-1 flex items-center gap-1">
@@ -868,14 +868,14 @@ export default function RebateCalculator({
         animate="show"
         className="lg:col-span-7 flex flex-col justify-between space-y-6"
       >
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants as any}>
           <h2 className="text-2xl font-bold text-[var(--text-main)] mb-1">{t.calculator.roiTitle}</h2>
           <p className="text-sm text-[var(--text-muted)]">Calculated results model your custom solar offsets.</p>
         </motion.div>
 
         {/* Payback period large callout - animates and pops on value change */}
         <motion.div 
-          variants={itemVariants}
+          variants={itemVariants as any}
           key={`payback-${paybackYears.toFixed(1)}`}
           initial={{ scale: 0.98, opacity: 0.9 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -911,7 +911,7 @@ export default function RebateCalculator({
           
           {/* Recommended System Size */}
           <motion.div 
-            variants={itemVariants}
+            variants={itemVariants as any}
             key={`size-${systemSizeCapped.toFixed(2)}`}
             initial={{ scale: 0.98 }}
             animate={{ scale: 1 }}
@@ -932,7 +932,7 @@ export default function RebateCalculator({
 
           {/* Capped Annual Savings */}
           <motion.div 
-            variants={itemVariants}
+            variants={itemVariants as any}
             key={`savings-${Math.round(annualSavingsCapped)}`}
             initial={{ scale: 0.98 }}
             animate={{ scale: 1 }}
@@ -955,7 +955,7 @@ export default function RebateCalculator({
 
         {/* Carbon Offset Analytics Drawer */}
         <motion.div 
-          variants={itemVariants}
+          variants={itemVariants as any}
           key={`carbon-offset-${carbonAbatementTons.toFixed(2)}`}
           className="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 space-y-3 shadow-inner"
         >
@@ -1001,7 +1001,7 @@ export default function RebateCalculator({
 
         {/* Incentives Applied overview */}
         <motion.div 
-          variants={itemVariants} 
+          variants={itemVariants as any}
           className="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 flex flex-col gap-2 text-xs shadow-sm hover:shadow-md transition-shadow duration-300"
         >
           <div className="flex items-center justify-between">
@@ -1070,7 +1070,7 @@ export default function RebateCalculator({
         {/* Germany-specific EEG Reform Disclaimer */}
         {localCountry === 'de' && (
           <motion.div
-            variants={itemVariants}
+            variants={itemVariants as any}
             className="mt-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-[var(--text-muted)] space-y-1 shadow-sm animate-pulse-subtle"
           >
             <div className="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
