@@ -247,7 +247,7 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
       const representative = sortedMatches[0];
 
       const uniqueStates = [...new Set(matches.map(m => m.regions?.state_province).filter(Boolean))];
-      const uniqueCities = [...new Set(matches.map(m => m.regions?.city).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+      const uniqueCities = [...new Set(matches.map(m => m.regions?.city).filter(Boolean))].sort((a, b) => (a as string).localeCompare(b as string));
 
       const cleanedDesc = cleanDescription(representative.description, representative.regions?.city, representative.regions?.state_province);
       const stateNameForSuffix = uniqueStates.length === 1 ? uniqueStates[0] : null;
