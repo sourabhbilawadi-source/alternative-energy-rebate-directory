@@ -22,7 +22,7 @@ if (supabase) {
       
       for (const r of data) {
         const cat = r.technology_category;
-        const country = r.regions?.country_code?.toLowerCase() || 'us';
+        const country = (Array.isArray(r.regions) ? r.regions[0]?.country_code : r.regions?.country_code)?.toLowerCase() || 'us';
         const programKey = `${cat}:${country}:${r.authority_name}`;
 
         if (!seenPrograms.has(programKey)) {

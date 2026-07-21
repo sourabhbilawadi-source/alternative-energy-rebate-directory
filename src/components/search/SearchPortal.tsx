@@ -26,12 +26,7 @@ interface SupabaseRebateItem {
   incentive_value: string | number;
   incentive_type: string;
   max_limit: string | number | null;
-  regions?: {
-    country_code: string;
-    state_province: string;
-    city: string;
-    postal_code: string;
-  } | null;
+  regions?: any;
 }
 
 interface SearchPortalProps {
@@ -125,7 +120,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
           const localRegions = localRegionsRaw ? JSON.parse(localRegionsRaw) : [];
           const localRebates = JSON.parse(localRebatesRaw);
 
-          const regionMap = new Map(localRegions.map((r: any) => [String(r.id), r]));
+          const regionMap = new Map<string, any>(localRegions.map((r: any) => [String(r.id), r]));
           const formattedLocalRebates = localRebates
             .filter((item: any) => item.is_active !== false)
             .map((item: any) => {
@@ -377,7 +372,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
                 return (
                   <motion.div
                     layout
-                    variants={itemVariants}
+                    variants={itemVariants as any}
                     key={rebate.id}
                     className="bg-[var(--bg-primary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group relative overflow-hidden"
                   >
@@ -436,7 +431,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
             ) : (
               <motion.div 
                 layout
-                variants={itemVariants}
+                variants={itemVariants as any}
                 className="col-span-full bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-16 text-center shadow-inner"
               >
                 <Tag className="w-16 h-16 text-[var(--text-muted)] mx-auto mb-4 opacity-50" />
