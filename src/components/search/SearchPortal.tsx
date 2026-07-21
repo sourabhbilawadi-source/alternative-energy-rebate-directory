@@ -125,7 +125,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
           const localRegions = localRegionsRaw ? JSON.parse(localRegionsRaw) : [];
           const localRebates = JSON.parse(localRebatesRaw);
 
-          const regionMap = new Map(localRegions.map((r: any) => [String(r.id), r]));
+          const regionMap = new Map<string, any>(localRegions.map((r: any) => [String(r.id), r]));
           const formattedLocalRebates = localRebates
             .filter((item: any) => item.is_active !== false)
             .map((item: any) => {

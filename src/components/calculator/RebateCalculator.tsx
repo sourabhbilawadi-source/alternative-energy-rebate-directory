@@ -44,14 +44,16 @@ interface RebateCalculatorProps {
   defaultPostalCode?: string;
 }
 
-// Helper to validate metric source values
+// Helper to validate and hide temporary "TODO" source values
 const isValidSource = (source: any): source is MetricSource => {
   return !!(
     source &&
     source.sourceName &&
     source.sourceName.trim() !== '' &&
+    source.sourceName.trim() !== 'TODO' &&
     source.lastVerified &&
-    source.lastVerified.trim() !== ''
+    source.lastVerified.trim() !== '' &&
+    source.lastVerified.trim() !== 'TODO'
   );
 };
 
