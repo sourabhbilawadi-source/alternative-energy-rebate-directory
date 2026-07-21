@@ -1,9 +1,0 @@
-To continue, Astro requires the following dependency to be installed: @astrojs/check.
-
-  Astro will run the following command:
-  If you skip this step, you can always run it yourself later
-╭────────────────────────────────────╮
-│  npm i @astrojs/check typescript   │
-╰────────────────────────────────────╯
-[?25l◆  Continue?
-● Yes / ○ No
