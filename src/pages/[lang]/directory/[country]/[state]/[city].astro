@@ -242,7 +242,7 @@ const getCurrencySymbol = (code: string) => {
 };
 const currencySymbol = getCurrencySymbol(country);
 
-const isUs = country === "us";
+const isUs = (country || "").toLowerCase() === "us";
 let seoTitle = '';
 let seoDescription = '';
 let h1Title = '';
