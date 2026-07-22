@@ -74,7 +74,6 @@ const displayCountry = match?.countryName || (country ? country.toUpperCase() : 
 
 // Localized mock energy rates and solar resources based on state
 const getLocalSpecs = () => {
-  const isUs = country === 'us';
   const DEFAULT_FALLBACK = {
     gridRate: 0.32,
     sunHours: 1050,
@@ -92,14 +91,14 @@ const getLocalSpecs = () => {
   }
 
   return {
-    gridRate: match.gridRate ?? DEFAULT_FALLBACK.gridRate,
-    sunHours: match.sunHours ?? DEFAULT_FALLBACK.sunHours,
-    gridEmissions: match.gridEmissions ?? DEFAULT_FALLBACK.gridEmissions,
-    costPerWatt: match.costPerWatt ?? DEFAULT_FALLBACK.costPerWatt,
+    gridRate: match.gridRate,
+    sunHours: match.sunHours,
+    gridEmissions: match.gridEmissions,
+    costPerWatt: match.costPerWatt,
     incentives: {
-      federalTaxCreditPct: match.federalTaxCreditPct ?? DEFAULT_FALLBACK.incentives.federalTaxCreditPct,
-      stateRebate: match.stateRebate ?? DEFAULT_FALLBACK.incentives.stateRebate,
-      utilityRebate: match.utilityRebate ?? DEFAULT_FALLBACK.incentives.utilityRebate
+      federalTaxCreditPct: match.federalTaxCreditPct,
+      stateRebate: match.stateRebate,
+      utilityRebate: match.utilityRebate
     }
   };
 };
@@ -243,13 +242,13 @@ const getCurrencySymbol = (code: string) => {
 };
 const currencySymbol = getCurrencySymbol(country);
 
+const isUs = (country || "").toLowerCase() === "us";
 let seoTitle = '';
 let seoDescription = '';
 let h1Title = '';
 let introParagraph = '';
 const fedPctText = Math.round((localSpecs.incentives?.federalTaxCreditPct || 0.0) * 100);
 const rateText = (localSpecs.gridRate || 0.32).toFixed(2);
-const isUs = country === 'us';
 const currentYear = 2026;
 
 if (lang === 'de-de') {
