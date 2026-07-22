@@ -92,14 +92,14 @@ const getLocalSpecs = () => {
   }
 
   return {
-    gridRate: match.gridRate !== null ? match.gridRate : DEFAULT_FALLBACK.gridRate,
-    sunHours: match.sunHours !== null ? match.sunHours : DEFAULT_FALLBACK.sunHours,
-    gridEmissions: match.gridEmissions !== null ? match.gridEmissions : DEFAULT_FALLBACK.gridEmissions,
-    costPerWatt: match.costPerWatt !== null ? match.costPerWatt : DEFAULT_FALLBACK.costPerWatt,
+    gridRate: match.gridRate,
+    sunHours: match.sunHours,
+    gridEmissions: match.gridEmissions,
+    costPerWatt: match.costPerWatt,
     incentives: {
-      federalTaxCreditPct: match.federalTaxCreditPct !== null ? match.federalTaxCreditPct : DEFAULT_FALLBACK.incentives.federalTaxCreditPct,
-      stateRebate: match.stateRebate !== null ? match.stateRebate : DEFAULT_FALLBACK.incentives.stateRebate,
-      utilityRebate: match.utilityRebate !== null ? match.utilityRebate : DEFAULT_FALLBACK.incentives.utilityRebate
+      federalTaxCreditPct: match.federalTaxCreditPct,
+      stateRebate: match.stateRebate,
+      utilityRebate: match.utilityRebate
     }
   };
 };
