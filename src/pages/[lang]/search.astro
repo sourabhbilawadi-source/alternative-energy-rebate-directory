@@ -27,7 +27,7 @@ const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
 }));
 
 // Fetch active rebates on the server side
-let serverRebates = [];
+let serverRebates: any[] = [];
 if (supabase) {
   try {
     const { data } = await supabase
