@@ -114,10 +114,10 @@ export default function ComparisonEngine({
         state: r.stateName,
         country: r.countryName,
         countryCode: r.countryCode,
-        gridRate: r.gridRate!,
-        sunHours: r.sunHours!,
-        gridEmissions: r.gridEmissions!,
-        costPerWatt: r.costPerWatt!,
+        gridRate: r.gridRate,
+        sunHours: r.sunHours,
+        gridEmissions: r.gridEmissions,
+        costPerWatt: r.costPerWatt,
         rebates: matchedRebates,
         hasActiveRebates: matchedRebates.length > 0
       };
