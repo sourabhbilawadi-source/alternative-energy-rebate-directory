@@ -277,13 +277,13 @@ export default function SmeHub({
         animate="show"
         className="lg:col-span-5 space-y-6"
       >
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants as any}>
           <h2 className="text-2xl font-bold text-[var(--text-main)] mb-1">Commercial Sizing Engine</h2>
           <p className="text-sm text-[var(--text-muted)]">Configure parameters for enterprise energy audit.</p>
         </motion.div>
 
         {/* Property Status Owned vs Leased */}
-        <motion.div variants={itemVariants} className="space-y-2">
+        <motion.div variants={itemVariants as any} className="space-y-2">
           <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Property Ownership</label>
           <div className="grid grid-cols-2 gap-3 bg-[var(--bg-primary)] p-1.5 rounded-xl border border-[var(--color-border)]">
             <button 
@@ -310,7 +310,7 @@ export default function SmeHub({
         </motion.div>
 
         {/* Facility Area Slider */}
-        <motion.div variants={itemVariants} className="space-y-3">
+        <motion.div variants={itemVariants as any} className="space-y-3">
           <div className="flex justify-between items-center text-sm font-semibold">
             <span className="text-[var(--text-main)]">Rooftop Footprint</span>
             <span className="text-[var(--color-accent)] text-lg font-bold">{(facilityArea).toLocaleString()} {config.area}</span>
@@ -332,7 +332,7 @@ export default function SmeHub({
         </motion.div>
 
         {/* Monthly Consumption Slider */}
-        <motion.div variants={itemVariants} className="space-y-3">
+        <motion.div variants={itemVariants as any} className="space-y-3">
           <div className="flex justify-between items-center text-sm font-semibold">
             <span className="text-[var(--text-main)]">Monthly Grid Draw</span>
             <span className="text-[var(--color-accent)] text-lg font-bold">{(monthlyKwh).toLocaleString()} kWh</span>
@@ -350,7 +350,7 @@ export default function SmeHub({
         </motion.div>
 
         {/* Financing Model Selector */}
-        <motion.div variants={itemVariants} className="space-y-2.5">
+        <motion.div variants={itemVariants as any} className="space-y-2.5">
           <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">{t.calculator.financingModel}</label>
           <div className="grid grid-cols-3 gap-2 bg-[var(--bg-primary)] p-1 rounded-xl border border-[var(--color-border)]">
             <button
@@ -391,7 +391,7 @@ export default function SmeHub({
 
         {/* active specs info card */}
         <motion.div 
-          variants={itemVariants}
+          variants={itemVariants as any}
           className="bg-[var(--bg-primary)]/50 border border-[var(--color-border)] rounded-2xl p-4 text-xs space-y-1 shadow-sm"
         >
           <h4 className="font-bold flex items-center gap-1 text-[var(--text-main)] mb-1">
@@ -409,7 +409,7 @@ export default function SmeHub({
         {/* Only show the Data Sources block if at least one real source is present */}
         {hasAnyRealSource && (
           <motion.div 
-            variants={itemVariants}
+            variants={itemVariants as any}
             className="bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-4 text-[10px] text-[var(--text-muted)] space-y-1.5 shadow-sm"
           >
             <div className="font-bold text-[var(--text-main)] mb-1 flex items-center gap-1">
@@ -419,32 +419,32 @@ export default function SmeHub({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1 border-t border-[var(--color-border)]/50">
               {isValidSource(regionEntry.gridRateSource) && (
                 <div>
-                  Grid Rate: {regionEntry.gridRateSource.sourceUrl !== '#' ? (
-                    <a href={regionEntry.gridRateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.gridRateSource.sourceName}</a>
+                  Grid Rate: {regionEntry.gridRateSource?.sourceUrl !== '#' ? (
+                    <a href={regionEntry.gridRateSource?.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.gridRateSource?.sourceName}</a>
                   ) : (
-                    <span className="font-semibold">{regionEntry.gridRateSource.sourceName}</span>
+                    <span className="font-semibold">{regionEntry.gridRateSource?.sourceName}</span>
                   )}
-                  {regionEntry.gridRateSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.gridRateSource.lastVerified})</span>}
+                  {regionEntry.gridRateSource?.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.gridRateSource?.lastVerified})</span>}
                 </div>
               )}
               {isValidSource(regionEntry.costPerWattSource) && (
                 <div>
-                  Cost/W: {regionEntry.costPerWattSource.sourceUrl !== '#' ? (
-                    <a href={regionEntry.costPerWattSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.costPerWattSource.sourceName}</a>
+                  Cost/W: {regionEntry.costPerWattSource?.sourceUrl !== '#' ? (
+                    <a href={regionEntry.costPerWattSource?.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.costPerWattSource?.sourceName}</a>
                   ) : (
-                    <span className="font-semibold">{regionEntry.costPerWattSource.sourceName}</span>
+                    <span className="font-semibold">{regionEntry.costPerWattSource?.sourceName}</span>
                   )}
-                  {regionEntry.costPerWattSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.costPerWattSource.lastVerified})</span>}
+                  {regionEntry.costPerWattSource?.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.costPerWattSource?.lastVerified})</span>}
                 </div>
               )}
               {isValidSource(regionEntry.federalTaxCreditSource) && (
                 <div>
-                  Federal Credit: {regionEntry.federalTaxCreditSource.sourceUrl !== '#' ? (
-                    <a href={regionEntry.federalTaxCreditSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.federalTaxCreditSource.sourceName}</a>
+                  Federal Credit: {regionEntry.federalTaxCreditSource?.sourceUrl !== '#' ? (
+                    <a href={regionEntry.federalTaxCreditSource?.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.federalTaxCreditSource?.sourceName}</a>
                   ) : (
-                    <span className="font-semibold">{regionEntry.federalTaxCreditSource.sourceName}</span>
+                    <span className="font-semibold">{regionEntry.federalTaxCreditSource?.sourceName}</span>
                   )}
-                  {regionEntry.federalTaxCreditSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.federalTaxCreditSource.lastVerified})</span>}
+                  {regionEntry.federalTaxCreditSource?.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.federalTaxCreditSource?.lastVerified})</span>}
                 </div>
               )}
               {isValidSource(regionEntry.stateRebateSource) && (
@@ -469,14 +469,14 @@ export default function SmeHub({
         animate="show"
         className="lg:col-span-7 flex flex-col justify-between space-y-6"
       >
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants as any}>
           <h2 className="text-2xl font-bold text-[var(--text-main)] mb-1">Financial Yield & Decarbonization</h2>
           <p className="text-sm text-[var(--text-muted)]">Calculated commercial outputs for {city}, {state}.</p>
         </motion.div>
 
         {/* Primary Callout: Payback or Rent */}
         <motion.div 
-          variants={itemVariants}
+          variants={itemVariants as any}
           key={`finance-${financeModel}`}
           initial={{ scale: 0.98, opacity: 0.9 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -538,7 +538,7 @@ export default function SmeHub({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Capacity sized */}
           <motion.div 
-            variants={itemVariants}
+            variants={itemVariants as any}
             key={`sys-${systemSize}`}
             initial={{ scale: 0.98 }}
             animate={{ scale: 1 }}
@@ -555,7 +555,7 @@ export default function SmeHub({
 
           {/* First year ROI */}
           <motion.div 
-            variants={itemVariants}
+            variants={itemVariants as any}
             key={`roi-${metrics.firstYearROI}`}
             initial={{ scale: 0.98 }}
             animate={{ scale: 1 }}
@@ -577,7 +577,7 @@ export default function SmeHub({
 
         {/* Carbon Offset Analytics Drawer */}
         <motion.div 
-          variants={itemVariants}
+          variants={itemVariants as any}
           className="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 space-y-3 shadow-inner"
         >
           <div className="flex justify-between items-center">
