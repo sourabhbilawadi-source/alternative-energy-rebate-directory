@@ -1,7 +1,7 @@
 ---
 import '../../../../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
-import RebateCalculator from '../../../../../components/calculator/RebateCalculator';
+import RebateCalculator, { type DbRebate } from '../../../../../components/calculator/RebateCalculator';
 import SmeHub from '../../../../../components/calculator/SmeHub';
 import { supabase } from '../../../../../lib/supabase';
 import { useTranslations } from '../../../../../lib/i18n';
@@ -25,9 +25,6 @@ export async function getStaticPaths() {
       
       if (error) {
         console.error("DEBUG: Supabase query error in [city].astro getStaticPaths:", error);
-      } else {
-        console.log(`DEBUG: [city].astro getStaticPaths returned ${data?.length || 0} regions.`);
-        console.log("DEBUG: DB query French regions:", data?.filter(r => r.country_code === 'fr'));
       }
       
       if (data && data.length > 0) {
@@ -37,7 +34,10 @@ export async function getStaticPaths() {
           city: r.city.toLowerCase().replace(/\s+/g, '-')
         }));
         
-        const seen = new Set(citiesList.map(c => `${c.country}:${c.state}:${c.city}`));
+        const seen = new Set();
+        for (const c of citiesList) {
+          seen.add(`${c.country}:${c.state}:${c.city}`);
+        }
         for (const dbc of dbCities) {
           const key = `${dbc.country}:${dbc.state}:${dbc.city}`;
           if (!seen.has(key)) {
@@ -46,7 +46,6 @@ export async function getStaticPaths() {
           }
         }
       }
-      console.log("DEBUG: citiesList French entries:", citiesList.filter(c => c.country === 'fr'));
     } catch (err) {
       console.error('Failed to query regions for static paths. Using fallbacks:', err);
     }
@@ -58,7 +57,6 @@ export async function getStaticPaths() {
       paths.push({ params: { lang, ...item } });
     }
   }
-  console.log("DEBUG: final paths French entries:", paths.filter(p => p.params.country === 'fr'));
   return paths;
 }
 
@@ -110,7 +108,7 @@ const presets = getLocalSpecs();
 let localSpecs = { ...presets };
 
 // Query dynamic regional rebates & energy specifications from Supabase
-let dbRebates: any[] = [];
+let dbRebates: DbRebate[] = [];
 let dbPostalCode = '';
 
 if (supabase) {
@@ -158,6 +156,7 @@ const alternates = languages.map(l => ({
   hreflang: l,
   url: `${siteUrl}/${l}/directory/${country}/${state}/${city}`
 }));
+alternates.push({ hreflang: 'x-default', url: `${siteUrl}/en-us/directory/${country}/${state}/${city}` });
 
 // Resolve unique category types for local page links
 const cityCategories = dbRebates ? [...new Set(dbRebates.map(r => r.technology_category))] : [];

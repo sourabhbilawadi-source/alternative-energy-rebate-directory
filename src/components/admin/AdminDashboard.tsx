@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Building, 
@@ -39,6 +39,17 @@ interface Rebate {
   incentive_value: number;
   incentive_type: string;
   max_limit: number | null;
+  is_active: boolean;
+}
+
+interface RawRebateData {
+  id: string;
+  region_id: string | number;
+  authority_name: string;
+  technology_category: string;
+  incentive_value: string | number;
+  incentive_type: string;
+  max_limit: string | number | null;
   is_active: boolean;
 }
 
@@ -141,7 +152,7 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
         
         if (regionsData) activeRegions = regionsData;
         if (rebatesData) {
-          activeRebates = rebatesData.map((item: any) => ({
+          activeRebates = rebatesData.map((item: RawRebateData) => ({
             id: item.id,
             region_id: String(item.region_id),
             authority_name: item.authority_name,
@@ -223,19 +234,11 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
           return;
         }
       } catch (err) {
-        console.warn('Supabase authentication failed, attempting offline credentials fallback.');
+        console.warn('Supabase authentication failed.');
       }
     }
 
-    // Offline / Mock credentials fallback
-    if (email === 'admin@incentivemapper.com' && password === 'admin123') {
-      setIsLoggedIn(true);
-      setIsMockMode(true);
-      sessionStorage.setItem('admin_session', 'mock');
-      triggerToast('Offline Mock Mode active. Changes will write to LocalStorage.');
-    } else {
-      setErrorMsg(t.admin.loginError);
-    }
+    setErrorMsg(t.admin.loginError);
   };
 
   const handleLogout = () => {
@@ -528,6 +531,10 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
   const filteredRebates = selectedRegionId === 'all' 
     ? rebates 
     : rebates.filter(r => String(r.region_id) === String(selectedRegionId));
+
+  const regionMap = useMemo(() => {
+    return new Map(regions.map(r => [String(r.id), r]));
+  }, [regions]);
 
   return (
     <div className="space-y-8 pb-16">
@@ -826,7 +833,7 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
                 </thead>
                 <tbody className="divide-y divide-[var(--color-border)]/50 font-semibold text-[var(--text-main)]">
                   {filteredRebates.map(r => {
-                    const matchedRegion = regions.find(reg => String(reg.id) === String(r.region_id));
+                    const matchedRegion = regionMap.get(String(r.region_id));
                     const isEditing = editingRebateId === r.id;
 
                     return (

@@ -47,12 +47,23 @@ if (supabase) {
       .select('country_code');
     
     if (data && data.length > 0) {
-      const uniqueCodes = [...new Set(data.map(r => r.country_code.toLowerCase()))];
+      const dbCounts = new Map<string, number>();
+      for (const r of data) {
+        const code = r.country_code.toLowerCase();
+        dbCounts.set(code, (dbCounts.get(code) || 0) + 1);
+      }
+
+      const presetCounts = new Map<string, number>();
+      for (const r of regionsData) {
+        presetCounts.set(r.countryCode, (presetCounts.get(r.countryCode) || 0) + 1);
+      }
+
+      const uniqueCodes = Array.from(dbCounts.keys());
       countriesList = uniqueCodes.map(code => {
         const cleanCode = code === 'gb' ? 'uk' : code;
         const meta = COUNTRY_METADATA[cleanCode] || { name: cleanCode.toUpperCase(), flag: '🌐' };
-        const dbCount = data.filter(r => r.country_code.toLowerCase() === code).length;
-        const presetCount = regionsData.filter(r => r.countryCode === cleanCode).length;
+        const dbCount = dbCounts.get(code) || 0;
+        const presetCount = presetCounts.get(cleanCode) || 0;
         return { 
           code: cleanCode, 
           name: meta.name, 
@@ -72,6 +83,7 @@ const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
   hreflang: l,
   url: `${siteUrl}/${l}/directory`
 }));
+alternates.push({ hreflang: 'x-default', url: `${siteUrl}/en-us/directory` });
 
 import Navbar from '../../../components/Navbar.astro';
 import ThemeFonts from '../../../components/ThemeFonts.astro';

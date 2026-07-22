@@ -21,19 +21,20 @@ export async function getStaticPaths() {
       if (data && data.length > 0) {
         // Extract distinct category values and slugify them
         const categories = [...new Set(data.map(r => r.technology_category))];
+        const category_slugs = categories.map(cat =>
+          cat
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .trim()
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+        );
         
-        for (const lang of langs) {
-          for (const cat of categories) {
-            const category_slug = cat
-              .toLowerCase()
-              .replace(/[^a-z0-9\s-]/g, '')
-              .trim()
-              .replace(/\s+/g, '-')
-              .replace(/-+/g, '-');
-            
-            paths.push({ params: { lang, category_slug } });
-          }
-        }
+        paths.push(
+          ...langs.flatMap(lang =>
+            category_slugs.map(category_slug => ({ params: { lang, category_slug } }))
+          )
+        );
       }
     } catch (err) {
       console.error('Failed to generate static paths for categories:', err);
@@ -50,11 +51,11 @@ export async function getStaticPaths() {
       'federal-tax-incentive',
       'local-utility-rebate'
     ];
-    for (const lang of langs) {
-      for (const category_slug of fallbackCategories) {
-        paths.push({ params: { lang, category_slug } });
-      }
-    }
+    paths.push(
+      ...langs.flatMap(lang =>
+        fallbackCategories.map(category_slug => ({ params: { lang, category_slug } }))
+      )
+    );
   }
 
   return paths;
@@ -62,6 +63,24 @@ export async function getStaticPaths() {
 
 const { lang, category_slug } = Astro.params;
 const t = useTranslations(lang || 'en-us');
+
+interface Rebate {
+  id?: string;
+  slug: string;
+  authority_name: string;
+  technology_category?: string;
+  incentive_value: number;
+  incentive_type: string;
+  description: string;
+  is_active?: boolean;
+  regions?: {
+    country_code?: string;
+    state_province?: string;
+    city?: string;
+  };
+  isGrouped?: boolean;
+  citiesList?: string[];
+}
 
 // Helper to slugify categories
 function slugifyCategory(category: string): string {
@@ -74,7 +93,7 @@ function slugifyCategory(category: string): string {
 }
 
 // Fetch database records
-let rebates: any[] = [];
+let rebates: Rebate[] = [];
 let matchedCategory = '';
 
 if (supabase) {
@@ -170,7 +189,7 @@ const l10n = {
 const siteUrl = 'https://incentivemapper.com';
 const currentPath = `/${lang}/category/${category_slug}`;
 const canonicalUrl = `${siteUrl}${currentPath}`;
-const pageTitle = `${displayCategory} ${l10n.titleSuffix}`;
+const pageTitle = `${displayCategory} ${l10n.titleSuffix} | IncentiveMapper`;
 
 const uniqueCountries = [...new Set(rebates.map(r => r.regions?.country_code?.toLowerCase() || 'us'))];
 const countryCount = uniqueCountries.length;
@@ -183,12 +202,13 @@ const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
   hreflang: l,
   url: `${siteUrl}/${l}/category/${category_slug}`
 }));
+alternates.push({ hreflang: 'x-default', url: `${siteUrl}/en-us/category/${category_slug}` });
 
 // Group rebates by country, then state, grouping repeated national programs
-const processedGroupedRebates: Record<string, { national: any[], states: Record<string, any[]> }> = {};
+const processedGroupedRebates: Record<string, { national: Rebate[], states: Record<string, Rebate[]> }> = {};
 
 // 1. Group raw rebates by country code
-const countryGroups: Record<string, any[]> = {};
+const countryGroups: Record<string, Rebate[]> = {};
 rebates.forEach(r => {
   const country = r.regions?.country_code === 'gb' ? 'uk' : r.regions?.country_code?.toLowerCase() || 'us';
   if (!countryGroups[country]) {
@@ -205,8 +225,8 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
     authorityCounts[r.authority_name] = (authorityCounts[r.authority_name] || 0) + 1;
   });
 
-  const national: any[] = [];
-  const states: Record<string, any[]> = {};
+  const national: Rebate[] = [];
+  const states: Record<string, Rebate[]> = {};
   const processedNames = new Set<string>();
 
   countryRebates.forEach(r => {
@@ -227,20 +247,20 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
       const representative = sortedMatches[0];
 
       const uniqueStates = [...new Set(matches.map(m => m.regions?.state_province).filter(Boolean))];
-      const uniqueCities = [...new Set(matches.map(m => m.regions?.city).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+      const uniqueCities = [...new Set(matches.map(m => m.regions?.city).filter(Boolean))].sort((a, b) => (a as string).localeCompare(b as string));
 
       const cleanedDesc = cleanDescription(representative.description, representative.regions?.city, representative.regions?.state_province);
-      const stateNameForSuffix = uniqueStates.length === 1 ? uniqueStates[0] : null;
-      const newDesc = `${cleanedDesc}${getGroupedSuffix(uniqueCities.length, countryCode, stateNameForSuffix, lang || 'en-us')}`;
+      const stateNameForSuffix = uniqueStates.length === 1 && uniqueStates[0] ? uniqueStates[0] : null;
+      const newDesc = `${cleanedDesc || ''}${getGroupedSuffix(uniqueCities.length, countryCode, stateNameForSuffix, lang || 'en-us')}`;
 
       const groupedCard = {
         ...representative,
         isGrouped: true,
-        citiesList: uniqueCities,
+        citiesList: uniqueCities as string[],
         description: newDesc
       };
 
-      if (uniqueStates.length === 1) {
+      if (uniqueStates.length === 1 && uniqueStates[0]) {
         const stateName = uniqueStates[0];
         if (!states[stateName]) states[stateName] = [];
         states[stateName].push(groupedCard);
@@ -261,8 +281,8 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
 });
 
 // Format currency
-function formatValue(value: number, type: string, countryCode: string) {
-  const code = countryCode.toLowerCase();
+function formatValue(value: number, type: string, countryCode?: string) {
+  const code = (countryCode || 'us').toLowerCase();
   const symbol = (code === 'de' || code === 'fr' || code === 'ie' || code === 'nl')
     ? '€'
     : (code === 'gb' || code === 'uk')
@@ -285,7 +305,8 @@ function formatValue(value: number, type: string, countryCode: string) {
 }
 
 // Format city listing text
-function formatCitiesText(cities: string[]) {
+function formatCitiesText(cities?: string[]) {
+  if (!cities) return '';
   if (cities.length <= 4) {
     return `${cities.join(', ')}`;
   }

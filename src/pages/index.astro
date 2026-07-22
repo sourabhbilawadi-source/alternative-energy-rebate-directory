@@ -20,7 +20,7 @@ if (supabase) {
       const counts: Record<string, number> = {};
       const seenPrograms = new Set<string>();
       
-      for (const r of data) {
+      for (const r of data as any[]) {
         const cat = r.technology_category;
         const country = r.regions?.country_code?.toLowerCase() || 'us';
         const programKey = `${cat}:${country}:${r.authority_name}`;
@@ -64,18 +64,14 @@ if (supabase) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="/favicon.ico" sizes="any" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <title>IncentiveMapper | Alternative Energy Rebates Directory</title>
+  <title>Alternative Energy Rebates & Solar Tax Credits Directory | IncentiveMapper</title>
   <meta name="description" content="Calculate, compare, and map alternative energy rebates, federal tax credits, and government incentives across solar, EV, heat pump, and battery storage programs." />
 
   <!-- Canonical & hreflang Alternate Declarations -->
   <link rel="canonical" href="https://incentivemapper.com" />
-  <link rel="alternate" hreflang="x-default" href="https://incentivemapper.com" />
-  <link rel="alternate" hreflang="en-us" href="https://incentivemapper.com/en-us/directory" />
-  <link rel="alternate" hreflang="de-de" href="https://incentivemapper.com/de-de/directory" />
-  <link rel="alternate" hreflang="fr-fr" href="https://incentivemapper.com/fr-fr/directory" />
 
   <!-- Open Graph / Facebook Preview Metadata -->
-  <meta property="og:title" content="IncentiveMapper | Alternative Energy Rebates Directory" />
+  <meta property="og:title" content="Alternative Energy Rebates & Solar Tax Credits Directory | IncentiveMapper" />
   <meta property="og:description" content="Calculate, compare, and map alternative energy rebates, federal tax credits, and government incentives across solar, EV, heat pump, and battery storage programs." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://incentivemapper.com/" />
@@ -83,7 +79,7 @@ if (supabase) {
   
   <!-- Twitter Card Metadata -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="IncentiveMapper | Alternative Energy Rebates Directory" />
+  <meta name="twitter:title" content="Alternative Energy Rebates & Solar Tax Credits Directory | IncentiveMapper" />
   <meta name="twitter:description" content="Calculate, compare, and map alternative energy rebates, federal tax credits, and government incentives across solar, EV, heat pump, and battery storage programs." />
   <meta name="twitter:image" content="https://incentivemapper.com/og-preview.png" />
   <script is:inline>
@@ -111,7 +107,7 @@ if (supabase) {
         ✨ 124 DSIRE Policy Categories Supported
       </div>
       <h1 class="text-5xl md:text-6xl font-black tracking-tight text-[var(--text-main)] leading-tight animate-fade-in">
-        Alternative Energy Sizing & Policy Directory
+        Alternative Energy Rebates & Solar Tax Credits Directory
       </h1>
       <p class="text-lg md:text-xl text-[var(--text-muted)] max-w-2xl mx-auto">
         Compute localized payback timelines, solar capacity limits, and battery peak avoidance offsets. Discover regional utility grants and tax credits.
