@@ -53,6 +53,14 @@ const COUNTRY_DEFAULTS: Record<string, { gridRate: number; costPerWatt: number; 
   jp: { gridRate: 31.00, costPerWatt: 270.00, emissions: 0.45 }
 };
 
+// In-memory cache for Open-Meteo solar insolation data
+const solarCache = new Map<string, { sunHours: number, timestamp: number }>();
+const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+export function clearSolarCache() {
+  solarCache.clear();
+}
+
 export async function queryLocationSpecs(
   query: string, 
   countryHint: string = 'us'
@@ -72,7 +80,7 @@ export async function queryLocationSpecs(
     });
 
     if (!geoResponse.ok) throw new Error('OSM Geocoding request failed');
-    const geoData = await geoResponse.json() as any[];
+    const geoData = await geoResponse.json();
     
     if (!geoData || geoData.length === 0) return null;
     
@@ -102,29 +110,42 @@ export async function queryLocationSpecs(
 
     // 2. Fetch Solar Insolation (MJ/m2) from Open-Meteo
     let sunHours = 1450; // Standard fallback
-    try {
-      const solarUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=shortwave_radiation_sum&timezone=auto`;
-      const solarResponse = await fetch(solarUrl);
-      if (solarResponse.ok) {
-        const solarData = await solarResponse.json() as any;
-        const dailyRadiationSum = solarData.daily?.shortwave_radiation_sum || [];
-        if (dailyRadiationSum.length > 0) {
-          // Average MJ/m2 per day
-          const sum = dailyRadiationSum.reduce((acc: number, val: number) => acc + val, 0);
-          const avgMj = sum / dailyRadiationSum.length;
-          
-          // Convert MJ/m2/day to kWh/m2/day (divided by 3.6)
-          const avgKwhPerDay = avgMj / 3.6;
-          
-          // Annual sun hours = daily peak sun hours * 365
-          sunHours = Math.round(avgKwhPerDay * 365);
-          
-          // Cap inside reasonable operational limits (800 - 2500)
-          sunHours = Math.max(800, Math.min(2500, sunHours));
+
+    // Check cache first using coordinates rounded to 2 decimal places (roughly 1.1km precision)
+    const cacheKey = `${lat.toFixed(2)},${lon.toFixed(2)}`;
+    const cachedData = solarCache.get(cacheKey);
+    const now = Date.now();
+
+    if (cachedData && (now - cachedData.timestamp) < CACHE_DURATION_MS) {
+      sunHours = cachedData.sunHours;
+    } else {
+      try {
+        const solarUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=shortwave_radiation_sum&timezone=auto`;
+        const solarResponse = await fetch(solarUrl);
+        if (solarResponse.ok) {
+          const solarData = await solarResponse.json();
+          const dailyRadiationSum = solarData.daily?.shortwave_radiation_sum || [];
+          if (dailyRadiationSum.length > 0) {
+            // Average MJ/m2 per day
+            const sum = dailyRadiationSum.reduce((acc: number, val: number) => acc + val, 0);
+            const avgMj = sum / dailyRadiationSum.length;
+
+            // Convert MJ/m2/day to kWh/m2/day (divided by 3.6)
+            const avgKwhPerDay = avgMj / 3.6;
+
+            // Annual sun hours = daily peak sun hours * 365
+            sunHours = Math.round(avgKwhPerDay * 365);
+
+            // Cap inside reasonable operational limits (800 - 2500)
+            sunHours = Math.max(800, Math.min(2500, sunHours));
+
+            // Cache the result
+            solarCache.set(cacheKey, { sunHours, timestamp: now });
+          }
         }
+      } catch (err) {
+        console.warn('Failed to fetch solar hours from Open-Meteo, using default:', err);
       }
-    } catch (err) {
-      console.warn('Failed to fetch solar hours from Open-Meteo, using default:', err);
     }
 
     // 3. Fetch Grid Emission Factor (kg CO2 / kWh)
@@ -136,7 +157,7 @@ export async function queryLocationSpecs(
       try {
         const ukEmissionsResponse = await fetch('https://api.carbonintensity.org.uk/intensity');
         if (ukEmissionsResponse.ok) {
-          const ukData = await ukEmissionsResponse.json() as any;
+          const ukData = await ukEmissionsResponse.json();
           const liveValueGrams = ukData.data?.[0]?.intensity?.actual || ukData.data?.[0]?.intensity?.forecast || 150;
           gridEmissions = liveValueGrams / 1000; // Convert gCO2/kWh to kgCO2/kWh
         } else {
