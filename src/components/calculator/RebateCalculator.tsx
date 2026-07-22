@@ -832,22 +832,22 @@ export default function RebateCalculator({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1 border-t border-[var(--color-border)]/50">
               {isValidSource(regionEntry.gridRateSource) && (
                 <div>
-                  Grid Rate: {regionEntry.gridRateSource.sourceUrl !== '#' ? (
-                    <a href={regionEntry.gridRateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.gridRateSource.sourceName}</a>
+                  Grid Rate: {regionEntry.gridRateSource?.sourceUrl !== '#' ? (
+                    <a href={regionEntry.gridRateSource?.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.gridRateSource?.sourceName}</a>
                   ) : (
-                    <span className="font-semibold">{regionEntry.gridRateSource.sourceName}</span>
+                    <span className="font-semibold">{regionEntry.gridRateSource?.sourceName}</span>
                   )}
-                  {regionEntry.gridRateSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.gridRateSource.lastVerified})</span>}
+                  {regionEntry.gridRateSource?.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.gridRateSource?.lastVerified})</span>}
                 </div>
               )}
               {isValidSource(regionEntry.costPerWattSource) && (
                 <div>
-                  Cost/W: {regionEntry.costPerWattSource.sourceUrl !== '#' ? (
-                    <a href={regionEntry.costPerWattSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.costPerWattSource.sourceName}</a>
+                  Cost/W: {regionEntry.costPerWattSource?.sourceUrl !== '#' ? (
+                    <a href={regionEntry.costPerWattSource?.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{regionEntry.costPerWattSource?.sourceName}</a>
                   ) : (
-                    <span className="font-semibold">{regionEntry.costPerWattSource.sourceName}</span>
+                    <span className="font-semibold">{regionEntry.costPerWattSource?.sourceName}</span>
                   )}
-                  {regionEntry.costPerWattSource.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.costPerWattSource.lastVerified})</span>}
+                  {regionEntry.costPerWattSource?.lastVerified && <span className="opacity-80"> (Verified: {regionEntry.costPerWattSource?.lastVerified})</span>}
                 </div>
               )}
               {isValidSource(regionEntry.federalTaxCreditSource) && (
