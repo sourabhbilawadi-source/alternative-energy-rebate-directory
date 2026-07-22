@@ -94,7 +94,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
               .eq('is_active', true);
 
             if (rebatesData && !error) {
-              fetchedRebates = rebatesData.map((item: SupabaseRebateItem) => ({
+              fetchedRebates = (rebatesData as any[]).map((item: SupabaseRebateItem) => ({
                 id: item.id,
                 authority_name: item.authority_name,
                 technology_category: item.technology_category,
@@ -129,7 +129,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
           const formattedLocalRebates = localRebates
             .filter((item: any) => item.is_active !== false)
             .map((item: any) => {
-              const matchedRegion = regionMap.get(String(item.region_id));
+              const matchedRegion = regionMap.get(String(item.region_id)) as any;
               return {
                 id: item.id || `local-${Math.random()}`,
                 authority_name: item.authority_name,
@@ -261,7 +261,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
 
   const itemVariants = {
     hidden: { opacity: 0, scale: 0.95, y: 15 },
-    show: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 140, damping: 15 } },
+    show: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring' as const, stiffness: 140, damping: 15 } },
     exit: { opacity: 0, scale: 0.95, y: -15, transition: { duration: 0.2 } }
   };
 

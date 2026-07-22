@@ -250,13 +250,13 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
       const uniqueCities = [...new Set(matches.map(m => m.regions?.city).filter((c): c is string => Boolean(c)))].sort((a, b) => a.localeCompare(b));
 
       const cleanedDesc = cleanDescription(representative.description || '', representative.regions?.city, representative.regions?.state_province);
-      const stateNameForSuffix = uniqueStates.length === 1 ? uniqueStates[0] : null;
-      const newDesc = `${cleanedDesc}${getGroupedSuffix(uniqueCities.length, countryCode, stateNameForSuffix || '', lang || 'en-us')}`;
+      const stateNameForSuffix = uniqueStates.length === 1 && uniqueStates[0] ? uniqueStates[0] : null;
+      const newDesc = `${cleanedDesc || ''}${getGroupedSuffix(uniqueCities.length, countryCode, stateNameForSuffix || '', lang || 'en-us')}`;
 
       const groupedCard = {
         ...representative,
         isGrouped: true,
-        citiesList: uniqueCities,
+        citiesList: uniqueCities as string[],
         description: newDesc
       };
 
@@ -281,8 +281,8 @@ Object.entries(countryGroups).forEach(([countryCode, countryRebates]) => {
 });
 
 // Format currency
-function formatValue(value: number, type: string, countryCode: string) {
-  const code = countryCode.toLowerCase();
+function formatValue(value: number, type: string, countryCode?: string) {
+  const code = (countryCode || 'us').toLowerCase();
   const symbol = (code === 'de' || code === 'fr' || code === 'ie' || code === 'nl')
     ? '€'
     : (code === 'gb' || code === 'uk')
