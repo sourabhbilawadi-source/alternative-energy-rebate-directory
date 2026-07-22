@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { queryLocationSpecs } from '../energyApi';
+import { queryLocationSpecs, clearSolarCache } from '../energyApi';
 
 describe('queryLocationSpecs', () => {
   beforeEach(() => {
     global.fetch = vi.fn();
+    clearSolarCache();
   });
 
   afterEach(() => {
