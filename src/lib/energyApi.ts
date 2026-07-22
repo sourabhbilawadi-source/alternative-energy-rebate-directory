@@ -53,6 +53,14 @@ const COUNTRY_DEFAULTS: Record<string, { gridRate: number; costPerWatt: number; 
   jp: { gridRate: 31.00, costPerWatt: 270.00, emissions: 0.45 }
 };
 
+interface CacheEntry {
+  data: LocationSpecs;
+  timestamp: number;
+}
+
+const locationCache = new Map<string, CacheEntry>();
+const CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour
+
 export async function queryLocationSpecs(
   query: string, 
   countryHint: string = 'us'
@@ -60,6 +68,12 @@ export async function queryLocationSpecs(
   try {
     const cleanQuery = query.trim();
     if (!cleanQuery) return null;
+
+    const cacheKey = `${cleanQuery.toLowerCase()}|${countryHint.toLowerCase()}`;
+    const cached = locationCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+      return cached.data;
+    }
 
     // 1. Geocode location using OpenStreetMap Nominatim
     let countryRestr = countryHint.toLowerCase();
@@ -158,7 +172,7 @@ export async function queryLocationSpecs(
     // 4. Resolve default rates
     const defaults = COUNTRY_DEFAULTS[cleanCountryCode] || COUNTRY_DEFAULTS['us'];
     
-    return {
+    const result = {
       lat,
       lon,
       city: city || cleanQuery,
@@ -170,8 +184,20 @@ export async function queryLocationSpecs(
       gridEmissions,
       costPerWatt: defaults.costPerWatt
     };
+
+    locationCache.set(cacheKey, {
+      data: result,
+      timestamp: Date.now()
+    });
+
+    return result;
   } catch (err) {
     console.error('Error fetching location specs from APIs:', err);
     return null;
   }
+}
+
+// Export for testing
+export function _clearLocationCache() {
+  locationCache.clear();
 }

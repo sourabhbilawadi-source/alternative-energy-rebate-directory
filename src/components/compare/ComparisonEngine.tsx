@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { ArrowRightLeft, Info } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
 import { regionsData } from '../../data/regions';
-import { getCountryConfig } from '../../utils/countryConfig';
 
 interface DatabaseRebate {
   id: string;
@@ -44,10 +43,40 @@ interface CitySpecs {
   hasActiveRebates: boolean;
 }
 
+const getCountryConfig = (code: string) => {
+  const c = code.toLowerCase();
+  switch (c) {
+    case 'de':
+    case 'fr':
+    case 'ie':
+    case 'nl':
+      return { symbol: '€', area: 'm²', carbon: 't', isMetric: true };
+    case 'uk':
+      return { symbol: '£', area: 'm²', carbon: 't', isMetric: true };
+    case 'au':
+      return { symbol: 'A$', area: 'm²', carbon: 't', isMetric: true };
+    case 'ca':
+      return { symbol: 'C$', area: 'm²', carbon: 't', isMetric: true };
+    case 'nz':
+      return { symbol: 'NZ$', area: 'm²', carbon: 't', isMetric: true };
+    case 'jp':
+      return { symbol: '¥', area: 'm²', carbon: 't', isMetric: true };
+    default:
+      return { symbol: '$', area: 'sq ft', carbon: 'Tons', isMetric: false };
+  }
+};
+
+const COUNTRY_ALIASES: Record<string, string> = {
+  gb: 'uk',
+};
+
+const normalizeCountryCode = (code: string) => {
+  const normalized = code.toLowerCase();
+  return COUNTRY_ALIASES[normalized] || normalized;
+};
+
 const matchCountry = (c1: string, c2: string) => {
-  const cc1 = c1.toLowerCase();
-  const cc2 = c2.toLowerCase();
-  return cc1 === cc2 || (cc1 === 'gb' && cc2 === 'uk') || (cc1 === 'uk' && cc2 === 'gb');
+  return normalizeCountryCode(c1) === normalizeCountryCode(c2);
 };
 
 export default function ComparisonEngine({ 
@@ -60,7 +89,6 @@ export default function ComparisonEngine({
   const t = useTranslations(lang);
 
   const initialCities: CitySpecs[] = regionsData
-    .filter(r => r.gridRate !== null)
     .map(r => {
       const matchedRebates = databaseRebates
         .filter((dbR: RawDatabaseRebate) => {
@@ -138,9 +166,12 @@ export default function ComparisonEngine({
         }));
 
         const merged = [...initialCities];
+        const existingNames = new Set(merged.map(c => c.name.toLowerCase()));
         formattedLocal.forEach(localCity => {
-          if (!merged.some(c => c.name.toLowerCase() === localCity.name.toLowerCase())) {
+          const lowerName = localCity.name.toLowerCase();
+          if (!existingNames.has(lowerName)) {
             merged.push(localCity);
+            existingNames.add(lowerName);
           }
         });
         setCities(merged);
