@@ -66,10 +66,17 @@ const getCountryConfig = (code: string) => {
   }
 };
 
+const COUNTRY_ALIASES: Record<string, string> = {
+  gb: 'uk',
+};
+
+const normalizeCountryCode = (code: string) => {
+  const normalized = code.toLowerCase();
+  return COUNTRY_ALIASES[normalized] || normalized;
+};
+
 const matchCountry = (c1: string, c2: string) => {
-  const cc1 = c1.toLowerCase();
-  const cc2 = c2.toLowerCase();
-  return cc1 === cc2 || (cc1 === 'gb' && cc2 === 'uk') || (cc1 === 'uk' && cc2 === 'gb');
+  return normalizeCountryCode(c1) === normalizeCountryCode(c2);
 };
 
 export default function ComparisonEngine({ 
@@ -82,7 +89,6 @@ export default function ComparisonEngine({
   const t = useTranslations(lang);
 
   const initialCities: CitySpecs[] = regionsData
-    .filter(r => r.gridRate !== null)
     .map(r => {
       const matchedRebates = databaseRebates
         .filter((dbR: RawDatabaseRebate) => {
