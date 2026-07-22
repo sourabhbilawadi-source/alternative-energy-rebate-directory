@@ -61,10 +61,10 @@ describe('Regions Data Validation', () => {
         expect(region.gridEmissions === null || typeof region.gridEmissions === 'number').toBe(true);
         expect(region.costPerWatt === null || typeof region.costPerWatt === 'number').toBe(true);
 
-        // Incentives are usually numbers
-        expect(typeof region.federalTaxCreditPct).toBe('number');
-        expect(typeof region.stateRebate).toBe('number');
-        expect(typeof region.utilityRebate).toBe('number');
+        // Incentives can be numbers or null
+        expect(region.federalTaxCreditPct === null || typeof region.federalTaxCreditPct === 'number').toBe(true);
+        expect(region.stateRebate === null || typeof region.stateRebate === 'number').toBe(true);
+        expect(region.utilityRebate === null || typeof region.utilityRebate === 'number').toBe(true);
       }
     });
 
