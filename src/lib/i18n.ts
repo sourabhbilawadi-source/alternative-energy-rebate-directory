@@ -152,7 +152,7 @@ export const translations = {
       successAddCity: 'City successfully registered!',
       successAddRebate: 'Rebate program successfully registered!',
       successDelete: 'Record deleted successfully!',
-      loginError: 'Invalid credentials. Try admin@incentivemapper.com / admin123'
+      loginError: 'Invalid credentials.'
     }
   },
   'de-de': {
@@ -304,7 +304,7 @@ export const translations = {
       successAddCity: 'Stadt erfolgreich registriert!',
       successAddRebate: 'Rabattprogramm erfolgreich registriert!',
       successDelete: 'Datensatz erfolgreich gelöscht!',
-      loginError: 'Ungültige Anmeldedaten. Versuchen Sie admin@incentivemapper.com / admin123'
+      loginError: 'Ungültige Anmeldedaten.'
     }
   },
   'fr-fr': {
@@ -456,7 +456,7 @@ export const translations = {
       successAddCity: 'Ville enregistrée avec succès !',
       successAddRebate: 'Programme de rabais enregistré avec succès !',
       successDelete: 'Enregistrement supprimé avec succès !',
-      loginError: 'Identifiants invalides. Essayez admin@incentivemapper.com / admin123'
+      loginError: 'Identifiants invalides.'
     }
   }
 } as const;
