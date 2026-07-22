@@ -33,8 +33,10 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.9",
     "@astrojs/cloudflare": "^13.7.0",
     "@vitest/coverage-v8": "^4.1.10",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.10",
     "wrangler": "^4.103.0"
   },
