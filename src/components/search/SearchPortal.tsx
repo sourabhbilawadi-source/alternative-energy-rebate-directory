@@ -94,7 +94,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
               .eq('is_active', true);
 
             if (rebatesData && !error) {
-              fetchedRebates = rebatesData.map((item: SupabaseRebateItem) => ({
+              fetchedRebates = (rebatesData as any[]).map((item: SupabaseRebateItem) => ({
                 id: item.id,
                 authority_name: item.authority_name,
                 technology_category: item.technology_category,
@@ -102,10 +102,10 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
                 incentive_type: item.incentive_type,
                 max_limit: item.max_limit ? Number(item.max_limit) : null,
                 region: {
-                  country_code: item.regions?.country_code || 'us',
-                  state_province: item.regions?.state_province || '',
-                  city: item.regions?.city || '',
-                  postal_code: item.regions?.postal_code || ''
+                  country_code: (item.regions as any)?.country_code || 'us',
+                  state_province: (item.regions as any)?.state_province || '',
+                  city: (item.regions as any)?.city || '',
+                  postal_code: (item.regions as any)?.postal_code || ''
                 }
               }));
             }
@@ -129,7 +129,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
           const formattedLocalRebates = localRebates
             .filter((item: any) => item.is_active !== false)
             .map((item: any) => {
-              const matchedRegion = regionMap.get(String(item.region_id));
+              const matchedRegion = regionMap.get(String(item.region_id)) as any;
               return {
                 id: item.id || `local-${Math.random()}`,
                 authority_name: item.authority_name,
@@ -138,10 +138,10 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
                 incentive_type: item.incentive_type,
                 max_limit: item.max_limit ? Number(item.max_limit) : null,
                 region: {
-                  country_code: matchedRegion?.country_code || 'us',
-                  state_province: matchedRegion?.state_province || '',
-                  city: matchedRegion?.city || '',
-                  postal_code: matchedRegion?.postal_code || ''
+                  country_code: (matchedRegion as any)?.country_code || 'us',
+                  state_province: (matchedRegion as any)?.state_province || '',
+                  city: (matchedRegion as any)?.city || '',
+                  postal_code: (matchedRegion as any)?.postal_code || ''
                 }
               };
             });
@@ -261,7 +261,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
 
   const itemVariants = {
     hidden: { opacity: 0, scale: 0.95, y: 15 },
-    show: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 140, damping: 15 } },
+    show: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring' as const, stiffness: 140, damping: 15 } },
     exit: { opacity: 0, scale: 0.95, y: -15, transition: { duration: 0.2 } }
   };
 
@@ -377,7 +377,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
                 return (
                   <motion.div
                     layout
-                    variants={itemVariants}
+                    variants={itemVariants as any}
                     key={rebate.id}
                     className="bg-[var(--bg-primary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group relative overflow-hidden"
                   >
@@ -436,7 +436,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
             ) : (
               <motion.div 
                 layout
-                variants={itemVariants}
+                variants={itemVariants as any}
                 className="col-span-full bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-16 text-center shadow-inner"
               >
                 <Tag className="w-16 h-16 text-[var(--text-muted)] mx-auto mb-4 opacity-50" />

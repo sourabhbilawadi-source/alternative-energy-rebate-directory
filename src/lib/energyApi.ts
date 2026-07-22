@@ -72,7 +72,7 @@ export async function queryLocationSpecs(
     });
 
     if (!geoResponse.ok) throw new Error('OSM Geocoding request failed');
-    const geoData = await geoResponse.json();
+    const geoData = await geoResponse.json() as any[];
     
     if (!geoData || geoData.length === 0) return null;
     
@@ -106,7 +106,7 @@ export async function queryLocationSpecs(
       const solarUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=shortwave_radiation_sum&timezone=auto`;
       const solarResponse = await fetch(solarUrl);
       if (solarResponse.ok) {
-        const solarData = await solarResponse.json();
+        const solarData = await solarResponse.json() as any;
         const dailyRadiationSum = solarData.daily?.shortwave_radiation_sum || [];
         if (dailyRadiationSum.length > 0) {
           // Average MJ/m2 per day
@@ -136,7 +136,7 @@ export async function queryLocationSpecs(
       try {
         const ukEmissionsResponse = await fetch('https://api.carbonintensity.org.uk/intensity');
         if (ukEmissionsResponse.ok) {
-          const ukData = await ukEmissionsResponse.json();
+          const ukData = await ukEmissionsResponse.json() as any;
           const liveValueGrams = ukData.data?.[0]?.intensity?.actual || ukData.data?.[0]?.intensity?.forecast || 150;
           gridEmissions = liveValueGrams / 1000; // Convert gCO2/kWh to kgCO2/kWh
         } else {
