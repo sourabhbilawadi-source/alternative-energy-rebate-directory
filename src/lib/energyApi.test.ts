@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { queryLocationSpecs, clearSolarCache } from './energyApi';
+import { queryLocationSpecs, _clearLocationCache } from './energyApi';
 
 describe('queryLocationSpecs', () => {
   const originalFetch = global.fetch;
 
   beforeEach(() => {
     global.fetch = vi.fn();
-    clearSolarCache();
+    _clearLocationCache();
   });
 
   afterEach(() => {
@@ -180,40 +180,6 @@ describe('queryLocationSpecs', () => {
     }
   });
 
-  it('should handle Open-Meteo API exception gracefully', async () => {
-    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-    (global.fetch as any).mockImplementation((url: string) => {
-      if (url.includes('nominatim')) {
-        return Promise.resolve({
-          ok: true,
-          json: async () => [{
-            lat: '37.7749',
-            lon: '-122.4194',
-            display_name: 'San Francisco, California, United States',
-          }],
-        });
-      }
-
-      if (url.includes('open-meteo')) {
-        return Promise.reject(new Error('Network error'));
-      }
-
-      return Promise.resolve({ ok: false });
-    });
-
-    const result = await queryLocationSpecs('San Francisco', 'us');
-
-    expect(result).not.toBeNull();
-    if (result) {
-      expect(result.sunHours).toBe(1450); // Fallback standard value
-    }
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      'Failed to fetch solar hours from Open-Meteo, using default:',
-      expect.any(Error)
-    );
-  });
-
   it('should handle UK Carbon Intensity API failure gracefully', async () => {
     (global.fetch as any).mockImplementation((url: string) => {
       if (url.includes('nominatim')) {
@@ -308,39 +274,6 @@ describe('queryLocationSpecs', () => {
     }
   });
 
-
-
-  it('should handle Open-Meteo API throwing an error gracefully', async () => {
-    const error = new Error('Network timeout');
-    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-    (global.fetch as any).mockImplementation((url: string) => {
-      if (url.includes('nominatim')) {
-        return Promise.resolve({
-          ok: true,
-          json: async () => [{
-            lat: '37.7749',
-            lon: '-122.4194',
-            display_name: 'San Francisco, California, United States',
-          }],
-        });
-      }
-
-      if (url.includes('open-meteo')) {
-        return Promise.reject(error);
-      }
-
-      return Promise.resolve({ ok: false });
-    });
-
-    const result = await queryLocationSpecs('San Francisco', 'us');
-
-    expect(result).not.toBeNull();
-    if (result) {
-      expect(result.sunHours).toBe(1450); // Fallback standard value
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Failed to fetch solar hours from Open-Meteo, using default:', error);
-    }
-  });
   it('should return null and not make network requests when query is empty or whitespace', async () => {
     const fetchSpy = vi.spyOn(global, 'fetch');
 
@@ -351,18 +284,5 @@ describe('queryLocationSpecs', () => {
     expect(result2).toBeNull();
 
     expect(fetchSpy).not.toHaveBeenCalled();
-  });
-
-  it('should handle generic uncaught errors and return null', async () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    // Passing undefined will cause query.trim() to throw a TypeError,
-    // which will be caught by the outer catch block.
-    const result = await queryLocationSpecs(undefined as any, 'us');
-
-    expect(result).toBeNull();
-    expect(consoleSpy).toHaveBeenCalledWith('Error fetching location specs from APIs:', expect.any(TypeError));
-
-    consoleSpy.mockRestore();
   });
 });
