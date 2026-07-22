@@ -122,16 +122,29 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
     { id: 'r5', region_id: '2', authority_name: 'CenterPoint Energy Solar Rebate', technology_category: 'Local Utility Rebate', incentive_value: 0.75, incentive_type: 'per_watt', max_limit: 2500, is_active: true }
   ];
 
-  // Initialize session from storage
+  // Initialize session from Supabase securely
   useEffect(() => {
-    const sessionToken = sessionStorage.getItem('admin_session');
-    if (sessionToken === 'live') {
-      setIsLoggedIn(true);
-      setIsMockMode(false);
-    } else if (sessionToken === 'mock') {
-      setIsLoggedIn(true);
-      setIsMockMode(true);
-    }
+    if (!supabase) return;
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setIsLoggedIn(true);
+        setIsMockMode(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setIsLoggedIn(true);
+        setIsMockMode(false);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   // Fetch Database or LocalStorage Records
@@ -229,7 +242,6 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
         if (data?.session && !error) {
           setIsLoggedIn(true);
           setIsMockMode(false);
-          sessionStorage.setItem('admin_session', 'live');
           triggerToast('Welcome, Administrator! Authenticated via Supabase.');
           return;
         }
@@ -243,7 +255,6 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    sessionStorage.removeItem('admin_session');
     if (supabase) {
       supabase.auth.signOut();
     }
