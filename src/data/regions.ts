@@ -1037,7 +1037,7 @@ export const regionsData: RegionEntry[] = [
     utilityRebate: null
   }
 ];
-export const isValidSource = (source: any): boolean => {
+export const isValidSource = (source: any): source is MetricSource => {
   return !!(
     source &&
     source.sourceName &&
