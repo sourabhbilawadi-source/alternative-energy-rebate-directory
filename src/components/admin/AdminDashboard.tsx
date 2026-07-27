@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Building, 
@@ -228,7 +228,7 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
   }
 
   // Handle Authentication submit
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
 
@@ -266,7 +266,7 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
   };
 
   // Add a new Region
-  const handleAddRegion = async (e: React.FormEvent) => {
+  const handleAddRegion = async (e: FormEvent) => {
     e.preventDefault();
     if (!newCityName || !newState || !newPostalCode) {
       alert('Please fill out all city parameters.');
@@ -317,7 +317,7 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
   };
 
   // Add a new Rebate
-  const handleAddRebate = async (e: React.FormEvent) => {
+  const handleAddRebate = async (e: FormEvent) => {
     e.preventDefault();
     if (!authorityName || !rebateRegionId) {
       alert('Please select a target city and provide program name.');

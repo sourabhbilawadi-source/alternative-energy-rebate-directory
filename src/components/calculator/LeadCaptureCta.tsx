@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, User, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
@@ -29,7 +29,7 @@ export default function LeadCaptureCta({ region, calculatorType }: LeadCaptureCt
     setIsVisible(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim()) return;
 
