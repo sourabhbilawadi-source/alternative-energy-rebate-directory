@@ -466,9 +466,9 @@ import ThemeFonts from '../../../components/ThemeFonts.astro';
   </script>
   
   <!-- Structured Data -->
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   {rebates.length > 0 && (
-    <script type="application/ld+json" set:html={JSON.stringify(itemListSchema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(itemListSchema)} />
   )}
 
   

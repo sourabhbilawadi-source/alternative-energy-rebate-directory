@@ -433,10 +433,10 @@ import ThemeFonts from '../../../../../components/ThemeFonts.astro';
   ))}
 
   <!-- JSON-LD Structured Schema Maps -->
-  <script type="application/ld+json" set:html={JSON.stringify(governmentBenefitSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(governmentBenefitSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   <!-- Astro View Transitions -->
   <ClientRouter />
