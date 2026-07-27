@@ -1038,9 +1038,11 @@ export const regionsData: RegionEntry[] = [
   }
 ];
 export const isValidSource = (source: any): boolean => {
-  if (!source) return false;
-  if (typeof source === 'object') {
-    return !!source.url && source.url.trim() !== '';
-  }
-  return false;
+  return !!(
+    source &&
+    source.sourceName &&
+    source.sourceName.trim() !== '' &&
+    source.lastVerified &&
+    source.lastVerified.trim() !== ''
+  );
 };
