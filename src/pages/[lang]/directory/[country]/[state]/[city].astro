@@ -523,13 +523,13 @@ import ThemeFonts from '../../../../../components/ThemeFonts.astro';
         <RebateCalculator 
           client:visible 
           defaultPostalCode={dbPostalCode}
-          defaultGridRate={localSpecs.gridRate ?? 0.15}
-          defaultSunHours={localSpecs.sunHours ?? 1500}
-          defaultGridEmissions={localSpecs.gridEmissions ?? 0.5}
-          defaultCostPerWatt={localSpecs.costPerWatt ?? 3.0}
-          federalTaxCreditPct={localSpecs.incentives.federalTaxCreditPct ?? 30}
-          stateRebate={localSpecs.incentives.stateRebate ?? 0}
-          utilityRebate={localSpecs.incentives.utilityRebate ?? 0}
+          defaultGridRate={localSpecs.gridRate}
+          defaultSunHours={localSpecs.sunHours}
+          defaultGridEmissions={localSpecs.gridEmissions}
+          defaultCostPerWatt={localSpecs.costPerWatt}
+          federalTaxCreditPct={localSpecs.incentives.federalTaxCreditPct}
+          stateRebate={localSpecs.incentives.stateRebate}
+          utilityRebate={localSpecs.incentives.utilityRebate}
           city={displayCity}
           state={displayState}
           dbRebates={dbRebates}
@@ -589,10 +589,10 @@ import ThemeFonts from '../../../../../components/ThemeFonts.astro';
     <div id="panel-sme" class="hidden space-y-8 animate-fade-in">
       <SmeHub 
         client:visible 
-        defaultGridRate={localSpecs.gridRate ?? 0.15}
-        defaultSunHours={localSpecs.sunHours ?? 1500}
-        defaultGridEmissions={localSpecs.gridEmissions ?? 0.5}
-        defaultCostPerWatt={localSpecs.costPerWatt ?? 3.0}
+        defaultGridRate={localSpecs.gridRate}
+        defaultSunHours={localSpecs.sunHours}
+        defaultGridEmissions={localSpecs.gridEmissions}
+        defaultCostPerWatt={localSpecs.costPerWatt}
         state={displayState}
         city={displayCity}
         lang={lang}
