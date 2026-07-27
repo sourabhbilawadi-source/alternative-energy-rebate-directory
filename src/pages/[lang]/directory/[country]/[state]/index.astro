@@ -1,6 +1,7 @@
 ---
 import '../../../../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
+import { sanitizeJsonLd } from '../../../../../utils/jsonLd';
 import { supabase } from '../../../../../lib/supabase';
 import { useTranslations } from '../../../../../lib/i18n';
 import Analytics from '../../../../../components/Analytics.astro';
@@ -171,7 +172,7 @@ import ThemeFonts from '../../../../../components/ThemeFonts.astro';
   ))}
 
   <!-- Breadcrumb Schema -->
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={sanitizeJsonLd(breadcrumbSchema)} />
 
   <ClientRouter />
   <script is:inline>
