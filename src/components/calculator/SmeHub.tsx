@@ -135,7 +135,7 @@ export default function SmeHub({
   }, [city, initialGridRate, initialSunHours, initialGridEmissions, initialCostPerWatt]);
 
   // Commercial scale cost discounts (15% discount for enterprise sizes)
-  const costPerWatt = costPerWattVal * 0.85;
+  const costPerWatt = (costPerWattVal ?? 0) * 0.85;
 
   // Commercial sizing calculations
   // Max capacity based on usable rooftop area (approx 120 sq ft per kW commercial panels)
@@ -143,22 +143,22 @@ export default function SmeHub({
   const capacityFromRoof = facilityAreaSqFt / 120; // kW
   
   // Ideal system size based on consumption
-  const capacityFromDemand = (monthlyKwh * 12) / sunHours; // kW
+  const capacityFromDemand = (monthlyKwh * 12) / (sunHours || 1); // kW
   
   // Capped capacity
   const systemSize = Math.min(capacityFromRoof, capacityFromDemand); // kW
   const capitalCost = systemSize * 1000 * costPerWatt; // gross cost
   
   // Annual generation
-  const annualGeneration = systemSize * sunHours; // kWh
+  const annualGeneration = systemSize * (sunHours ?? 0); // kWh
 
   // Financing models ROI logic
   const getFinancingMetrics = () => {
     if (financeModel === 'ppa') {
       // PPA: $0 down, buy electricity at fixed discount rate (approx 28% cheaper)
-      const ppaRate = gridRate * 0.72;
+      const ppaRate = (gridRate ?? 0) * 0.72;
       const netCost = 0;
-      const annualSavings = annualGeneration * (gridRate - ppaRate);
+      const annualSavings = annualGeneration * ((gridRate ?? 0) - ppaRate);
       const payback = 0; // Immediate savings
       const firstYearROI = 100; // infinite / immediate
       return { netCost, annualSavings, payback, firstYearROI, ppaRate };
@@ -222,8 +222,8 @@ export default function SmeHub({
 
   // Carbon Abatement Scope 2 equivalents
   const carbonTons = config.isMetric 
-    ? (annualGeneration * gridEmissions) / 1000
-    : (annualGeneration * gridEmissions) / 907.185;
+    ? (annualGeneration * (gridEmissions ?? 0)) / 1000
+    : (annualGeneration * (gridEmissions ?? 0)) / 907.185;
   const equivalentCars = carbonTons * 0.22;
   const equivalentCoal = carbonTons * 0.96;
   const equivalentForest = config.isMetric ? (carbonTons * 1.2 * 0.4047) : (carbonTons * 1.2);
@@ -500,7 +500,7 @@ export default function SmeHub({
               </span>
             )}
             {financeModel === 'ppa' && (
-              <span>{config.symbol}0 upfront capital. Power purchase rate: <strong>{config.symbol}{metrics.ppaRate?.toFixed(3)}/kWh</strong> (Utility: {config.symbol}{gridRate.toFixed(2)}/kWh).</span>
+              <span>{config.symbol}0 upfront capital. Power purchase rate: <strong>{config.symbol}{(metrics.ppaRate ?? 0).toFixed(3)}/kWh</strong> (Utility: {config.symbol}{gridRate.toFixed(2)}/kWh).</span>
             )}
             {financeModel === 'lease' && (
               <span>{config.symbol}0 upfront capital. Rent: <strong>{config.symbol}{Math.round(metrics.monthlyLease || 0).toLocaleString()}/mo</strong>, net profit from day 1.</span>
