@@ -12,7 +12,10 @@ import {
   Flame 
 } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
-import { isValidSource } from '../../data/regions';
+// import { isValidSource } from '../../data/regions';
+const isValidSource = (source: any): boolean => {
+  return source && typeof source === 'object' && 'name' in source && 'url' in source;
+};
 import type { RegionEntry } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
 import { getCountryConfig } from '../../utils/countryConfig';
