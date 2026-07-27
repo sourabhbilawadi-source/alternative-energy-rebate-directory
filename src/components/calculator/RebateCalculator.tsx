@@ -46,16 +46,7 @@ interface RebateCalculatorProps {
   defaultPostalCode?: string;
 }
 
-// Helper to validate source values
-const isValidSource = (source: any): source is MetricSource => {
-  return !!(
-    source &&
-    source.sourceName &&
-    source.sourceName.trim() !== '' &&
-    source.lastVerified &&
-    source.lastVerified.trim() !== ''
-  );
-};
+import { isValidSource } from '../../data/regions';
 
 // Custom animated counter using requestAnimationFrame for high performance
 function AnimatedNumber({ value, formatter }: { value: number; formatter?: (v: number) => string }) {
