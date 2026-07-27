@@ -19,10 +19,10 @@ import { getCountryConfig } from '../../utils/countryConfig';
 
 interface SmeHubProps {
   key?: string;
-  defaultGridRate: number;
-  defaultSunHours: number;
-  defaultGridEmissions: number;
-  defaultCostPerWatt: number;
+  defaultGridRate: number | null;
+  defaultSunHours: number | null;
+  defaultGridEmissions: number | null;
+  defaultCostPerWatt: number | null;
   state: string;
   city: string;
   lang?: string;

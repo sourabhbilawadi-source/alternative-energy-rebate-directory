@@ -31,13 +31,13 @@ export interface DbRebate {
 
 interface RebateCalculatorProps {
   key?: string;
-  defaultGridRate: number;
-  defaultSunHours: number;
-  defaultGridEmissions: number;
-  defaultCostPerWatt: number;
-  federalTaxCreditPct: number;
-  stateRebate: number;
-  utilityRebate: number;
+  defaultGridRate: number | null;
+  defaultSunHours: number | null;
+  defaultGridEmissions: number | null;
+  defaultCostPerWatt: number | null;
+  federalTaxCreditPct: number | null;
+  stateRebate: number | null;
+  utilityRebate: number | null;
   city: string;
   state: string;
   dbRebates?: DbRebate[];
