@@ -36,6 +36,17 @@ export interface RegionEntry {
   utilityRebateSource?: MetricSource;
 }
 
+// Helper to validate source values
+export const isValidSource = (source: any): source is MetricSource => {
+  return !!(
+    source &&
+    source.sourceName &&
+    source.sourceName.trim() !== '' &&
+    source.lastVerified &&
+    source.lastVerified.trim() !== ''
+  );
+};
+
 export const COUNTRY_METADATA: Record<string, { name: string; flag: string }> = {
   us: { name: 'United States', flag: '🇺🇸' },
   uk: { name: 'United Kingdom', flag: '🇬🇧' },
