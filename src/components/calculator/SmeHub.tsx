@@ -12,9 +12,12 @@ import {
   Flame 
 } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
-import { isValidSource } from '../../data/regions';
 import type { RegionEntry } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
+
+export function isValidSource(source: any): boolean {
+  return !!source && !!source.sourceName && source.sourceName !== 'Estimated' && source.sourceName !== 'TBD';
+}
 import { getCountryConfig } from '../../utils/countryConfig';
 
 interface SmeHubProps {
