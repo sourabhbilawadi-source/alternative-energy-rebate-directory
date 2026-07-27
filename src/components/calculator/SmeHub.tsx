@@ -14,11 +14,11 @@ import {
 import { useTranslations } from '../../lib/i18n';
 import type { RegionEntry } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
+import { getCountryConfig } from '../../utils/countryConfig';
 
 export function isValidSource(source: any): boolean {
   return !!source && !!source.sourceName && source.sourceName !== 'Estimated' && source.sourceName !== 'TBD';
 }
-import { getCountryConfig } from '../../utils/countryConfig';
 
 interface SmeHubProps {
   key?: string;
