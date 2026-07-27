@@ -12,7 +12,6 @@ import {
   Flame 
 } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
-import { isValidSource } from '../../data/regions';
 import type { RegionEntry } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
 import { getCountryConfig } from '../../utils/countryConfig';
@@ -76,10 +75,10 @@ export default function SmeHub({
   const t = useTranslations(lang);
 
   const hasAnyRealSource = regionEntry && (
-    isValidSource((regionEntry as any).gridRateSource) ||
-    isValidSource((regionEntry as any).costPerWattSource) ||
-    isValidSource((regionEntry as any).federalTaxCreditSource) ||
-    isValidSource((regionEntry as any).stateRebateSource)
+    ((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).gridRateSource) ||
+    ((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).costPerWattSource) ||
+    ((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).federalTaxCreditSource) ||
+    ((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).stateRebateSource)
   );
 
   // Dynamic regional specs (updated onmount/city/localStorage changes)
@@ -393,7 +392,7 @@ export default function SmeHub({
               Data Sources & Verification
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1 border-t border-[var(--color-border)]/50">
-              {isValidSource((regionEntry as any).gridRateSource) && (
+              {((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).gridRateSource) && (
                 <div>
                   Grid Rate: {(regionEntry as any).gridRateSource.sourceUrl !== '#' ? (
                     <a href={(regionEntry as any).gridRateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{(regionEntry as any).gridRateSource.sourceName}</a>
@@ -403,7 +402,7 @@ export default function SmeHub({
                   {(regionEntry as any).gridRateSource.lastVerified && <span className="opacity-80"> (Verified: {(regionEntry as any).gridRateSource.lastVerified})</span>}
                 </div>
               )}
-              {isValidSource((regionEntry as any).costPerWattSource) && (
+              {((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).costPerWattSource) && (
                 <div>
                   Cost/W: {(regionEntry as any).costPerWattSource.sourceUrl !== '#' ? (
                     <a href={(regionEntry as any).costPerWattSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{(regionEntry as any).costPerWattSource.sourceName}</a>
@@ -413,7 +412,7 @@ export default function SmeHub({
                   {(regionEntry as any).costPerWattSource.lastVerified && <span className="opacity-80"> (Verified: {(regionEntry as any).costPerWattSource.lastVerified})</span>}
                 </div>
               )}
-              {isValidSource((regionEntry as any).federalTaxCreditSource) && (
+              {((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).federalTaxCreditSource) && (
                 <div>
                   Federal Credit: {(regionEntry as any).federalTaxCreditSource.sourceUrl !== '#' ? (
                     <a href={(regionEntry as any).federalTaxCreditSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{(regionEntry as any).federalTaxCreditSource.sourceName}</a>
@@ -423,7 +422,7 @@ export default function SmeHub({
                   {(regionEntry as any).federalTaxCreditSource.lastVerified && <span className="opacity-80"> (Verified: {(regionEntry as any).federalTaxCreditSource.lastVerified})</span>}
                 </div>
               )}
-              {isValidSource((regionEntry as any).stateRebateSource) && (
+              {((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).stateRebateSource) && (
                 <div>
                   State Rebate: {(regionEntry as any).stateRebateSource.sourceUrl !== '#' ? (
                     <a href={(regionEntry as any).stateRebateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{(regionEntry as any).stateRebateSource.sourceName}</a>
