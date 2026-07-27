@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Building, 
@@ -31,9 +31,9 @@ interface SmeHubProps {
 
 // Custom high-performance animated number counter
 function AnimatedNumber({ value, formatter }: { value: number; formatter?: (v: number) => string }) {
-  const [displayValue, setDisplayValue] = React.useState(value);
+  const [displayValue, setDisplayValue] = useState(value);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let start = displayValue;
     const end = value;
     if (start === end) return;
