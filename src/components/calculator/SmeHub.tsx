@@ -12,9 +12,19 @@ import {
   Flame 
 } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
-import { isValidSource } from '../../data/regions';
-import type { RegionEntry } from '../../data/regions';
+import type { RegionEntry, MetricSource } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
+
+// Helper to validate source values
+const isValidSource = (source: any): source is MetricSource => {
+  return !!(
+    source &&
+    source.sourceName &&
+    source.sourceName.trim() !== '' &&
+    source.lastVerified &&
+    source.lastVerified.trim() !== ''
+  );
+};
 import { getCountryConfig } from '../../utils/countryConfig';
 
 interface SmeHubProps {
