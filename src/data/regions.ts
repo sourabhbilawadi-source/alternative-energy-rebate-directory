@@ -1037,3 +1037,6 @@ export const regionsData: RegionEntry[] = [
     utilityRebate: null
   }
 ];
+export const isValidSource = (source?: MetricSource): source is MetricSource => {
+  return !!(source && source.sourceName && source.sourceUrl);
+};
