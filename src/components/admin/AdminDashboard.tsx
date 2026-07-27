@@ -160,8 +160,13 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
     // 1. Fetch from live database if available and not explicitly mock
     if (supabase && !isMockMode) {
       try {
-        const { data: regionsData } = await supabase.from('regions').select('*');
-        const { data: rebatesData } = await supabase.from('rebates').select('*');
+        const [
+          { data: regionsData },
+          { data: rebatesData }
+        ] = await Promise.all([
+          supabase.from('regions').select('*'),
+          supabase.from('rebates').select('*')
+        ]);
         
         if (regionsData) activeRegions = regionsData;
         if (rebatesData) {
