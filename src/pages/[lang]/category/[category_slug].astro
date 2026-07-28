@@ -1,7 +1,6 @@
 ---
 import '../../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
-import { sanitizeJsonLd } from '../../../utils/jsonLd';
 import { supabase } from '../../../lib/supabase';
 import { useTranslations } from '../../../lib/i18n';
 import Analytics from '../../../components/Analytics.astro';
@@ -129,7 +128,7 @@ if (supabase) {
 }
 
 // Fallback category title if not found in database
-const displayCategory = matchedCategory || (category_slug ? category_slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Energy');
+const displayCategory = matchedCategory || (category_slug ? category_slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Energy');
 
 // Localized strings
 const l10n = {
@@ -467,9 +466,9 @@ import ThemeFonts from '../../../components/ThemeFonts.astro';
   </script>
   
   <!-- Structured Data -->
-  <script type="application/ld+json" set:html={sanitizeJsonLd(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   {rebates.length > 0 && (
-    <script type="application/ld+json" set:html={sanitizeJsonLd(itemListSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(itemListSchema)} />
   )}
 
   

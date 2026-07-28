@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Building, 
@@ -12,17 +12,17 @@ import {
   Flame 
 } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
+import { isValidSource } from '../../data/regions';
 import type { RegionEntry } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
 import { getCountryConfig } from '../../utils/countryConfig';
 
-
 interface SmeHubProps {
   key?: string;
-  defaultGridRate: number | null;
-  defaultSunHours: number | null;
-  defaultGridEmissions: number | null;
-  defaultCostPerWatt: number | null;
+  defaultGridRate: number;
+  defaultSunHours: number;
+  defaultGridEmissions: number;
+  defaultCostPerWatt: number;
   state: string;
   city: string;
   lang?: string;
@@ -31,9 +31,9 @@ interface SmeHubProps {
 
 // Custom high-performance animated number counter
 function AnimatedNumber({ value, formatter }: { value: number; formatter?: (v: number) => string }) {
-  const [displayValue, setDisplayValue] = useState(value);
+  const [displayValue, setDisplayValue] = React.useState(value);
 
-  useEffect(() => {
+  React.useEffect(() => {
     let start = displayValue;
     const end = value;
     if (start === end) return;
@@ -76,10 +76,10 @@ export default function SmeHub({
   const t = useTranslations(lang);
 
   const hasAnyRealSource = regionEntry && (
-    ((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).gridRateSource) ||
-    ((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).costPerWattSource) ||
-    ((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).federalTaxCreditSource) ||
-    ((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).stateRebateSource)
+    isValidSource((regionEntry as any).gridRateSource) ||
+    isValidSource((regionEntry as any).costPerWattSource) ||
+    isValidSource((regionEntry as any).federalTaxCreditSource) ||
+    isValidSource((regionEntry as any).stateRebateSource)
   );
 
   // Dynamic regional specs (updated onmount/city/localStorage changes)
@@ -135,7 +135,7 @@ export default function SmeHub({
   }, [city, initialGridRate, initialSunHours, initialGridEmissions, initialCostPerWatt]);
 
   // Commercial scale cost discounts (15% discount for enterprise sizes)
-  const costPerWatt = (costPerWattVal ?? 0) * 0.85;
+  const costPerWatt = costPerWattVal * 0.85;
 
   // Commercial sizing calculations
   // Max capacity based on usable rooftop area (approx 120 sq ft per kW commercial panels)
@@ -143,22 +143,22 @@ export default function SmeHub({
   const capacityFromRoof = facilityAreaSqFt / 120; // kW
   
   // Ideal system size based on consumption
-  const capacityFromDemand = (monthlyKwh * 12) / (sunHours || 1); // kW
+  const capacityFromDemand = (monthlyKwh * 12) / sunHours; // kW
   
   // Capped capacity
   const systemSize = Math.min(capacityFromRoof, capacityFromDemand); // kW
   const capitalCost = systemSize * 1000 * costPerWatt; // gross cost
   
   // Annual generation
-  const annualGeneration = systemSize * (sunHours ?? 0); // kWh
+  const annualGeneration = systemSize * sunHours; // kWh
 
   // Financing models ROI logic
   const getFinancingMetrics = () => {
     if (financeModel === 'ppa') {
       // PPA: $0 down, buy electricity at fixed discount rate (approx 28% cheaper)
-      const ppaRate = (gridRate ?? 0) * 0.72;
+      const ppaRate = gridRate * 0.72;
       const netCost = 0;
-      const annualSavings = annualGeneration * ((gridRate ?? 0) - ppaRate);
+      const annualSavings = annualGeneration * (gridRate - ppaRate);
       const payback = 0; // Immediate savings
       const firstYearROI = 100; // infinite / immediate
       return { netCost, annualSavings, payback, firstYearROI, ppaRate };
@@ -222,8 +222,8 @@ export default function SmeHub({
 
   // Carbon Abatement Scope 2 equivalents
   const carbonTons = config.isMetric 
-    ? (annualGeneration * (gridEmissions ?? 0)) / 1000
-    : (annualGeneration * (gridEmissions ?? 0)) / 907.185;
+    ? (annualGeneration * gridEmissions) / 1000
+    : (annualGeneration * gridEmissions) / 907.185;
   const equivalentCars = carbonTons * 0.22;
   const equivalentCoal = carbonTons * 0.96;
   const equivalentForest = config.isMetric ? (carbonTons * 1.2 * 0.4047) : (carbonTons * 1.2);
@@ -393,7 +393,7 @@ export default function SmeHub({
               Data Sources & Verification
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1 border-t border-[var(--color-border)]/50">
-              {((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).gridRateSource) && (
+              {isValidSource((regionEntry as any).gridRateSource) && (
                 <div>
                   Grid Rate: {(regionEntry as any).gridRateSource.sourceUrl !== '#' ? (
                     <a href={(regionEntry as any).gridRateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{(regionEntry as any).gridRateSource.sourceName}</a>
@@ -403,7 +403,7 @@ export default function SmeHub({
                   {(regionEntry as any).gridRateSource.lastVerified && <span className="opacity-80"> (Verified: {(regionEntry as any).gridRateSource.lastVerified})</span>}
                 </div>
               )}
-              {((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).costPerWattSource) && (
+              {isValidSource((regionEntry as any).costPerWattSource) && (
                 <div>
                   Cost/W: {(regionEntry as any).costPerWattSource.sourceUrl !== '#' ? (
                     <a href={(regionEntry as any).costPerWattSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{(regionEntry as any).costPerWattSource.sourceName}</a>
@@ -413,7 +413,7 @@ export default function SmeHub({
                   {(regionEntry as any).costPerWattSource.lastVerified && <span className="opacity-80"> (Verified: {(regionEntry as any).costPerWattSource.lastVerified})</span>}
                 </div>
               )}
-              {((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).federalTaxCreditSource) && (
+              {isValidSource((regionEntry as any).federalTaxCreditSource) && (
                 <div>
                   Federal Credit: {(regionEntry as any).federalTaxCreditSource.sourceUrl !== '#' ? (
                     <a href={(regionEntry as any).federalTaxCreditSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{(regionEntry as any).federalTaxCreditSource.sourceName}</a>
@@ -423,7 +423,7 @@ export default function SmeHub({
                   {(regionEntry as any).federalTaxCreditSource.lastVerified && <span className="opacity-80"> (Verified: {(regionEntry as any).federalTaxCreditSource.lastVerified})</span>}
                 </div>
               )}
-              {((s: any) => s && s.sourceName !== "" && s.sourceName !== "TODO" && s.sourceUrl !== "")((regionEntry as any).stateRebateSource) && (
+              {isValidSource((regionEntry as any).stateRebateSource) && (
                 <div>
                   State Rebate: {(regionEntry as any).stateRebateSource.sourceUrl !== '#' ? (
                     <a href={(regionEntry as any).stateRebateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{(regionEntry as any).stateRebateSource.sourceName}</a>
@@ -500,7 +500,7 @@ export default function SmeHub({
               </span>
             )}
             {financeModel === 'ppa' && (
-              <span>{config.symbol}0 upfront capital. Power purchase rate: <strong>{config.symbol}{(metrics.ppaRate ?? 0).toFixed(3)}/kWh</strong> (Utility: {config.symbol}{gridRate.toFixed(2)}/kWh).</span>
+              <span>{config.symbol}0 upfront capital. Power purchase rate: <strong>{config.symbol}{metrics.ppaRate?.toFixed(3)}/kWh</strong> (Utility: {config.symbol}{gridRate.toFixed(2)}/kWh).</span>
             )}
             {financeModel === 'lease' && (
               <span>{config.symbol}0 upfront capital. Rent: <strong>{config.symbol}{Math.round(metrics.monthlyLease || 0).toLocaleString()}/mo</strong>, net profit from day 1.</span>

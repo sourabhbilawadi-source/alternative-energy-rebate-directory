@@ -65,7 +65,7 @@ export default function LeadCaptureCta({ region, calculatorType }: LeadCaptureCt
         throw new Error('Server returned an error status.');
       }
 
-      const result = await response.json() as { status?: string, message?: string };
+      const result = await response.json();
       if (result.status === 'success') {
         setStatus('success');
       } else {

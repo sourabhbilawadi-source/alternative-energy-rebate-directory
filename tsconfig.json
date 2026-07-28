@@ -6,7 +6,7 @@
     "./worker-configuration.d.ts"
   ],
   "exclude": [
-    "dist", "**/*.test.tsx", "**/*.test.ts", "vitest.setup.ts"
+    "dist"
   ],
   "compilerOptions": {
     "jsx": "react-jsx",

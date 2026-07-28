@@ -1,7 +1,6 @@
 ---
 import '../../../../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
-import { sanitizeJsonLd } from '../../../../../utils/jsonLd';
 import RebateCalculator, { type DbRebate } from '../../../../../components/calculator/RebateCalculator';
 import SmeHub from '../../../../../components/calculator/SmeHub';
 import { supabase } from '../../../../../lib/supabase';
@@ -434,10 +433,10 @@ import ThemeFonts from '../../../../../components/ThemeFonts.astro';
   ))}
 
   <!-- JSON-LD Structured Schema Maps -->
-  <script type="application/ld+json" set:html={sanitizeJsonLd(governmentBenefitSchema)} />
-  <script type="application/ld+json" set:html={sanitizeJsonLd(websiteSchema)} />
-  <script type="application/ld+json" set:html={sanitizeJsonLd(breadcrumbSchema)} />
-  <script type="application/ld+json" set:html={sanitizeJsonLd(faqSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(governmentBenefitSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   <!-- Astro View Transitions -->
   <ClientRouter />
@@ -524,13 +523,13 @@ import ThemeFonts from '../../../../../components/ThemeFonts.astro';
         <RebateCalculator 
           client:visible 
           defaultPostalCode={dbPostalCode}
-          defaultGridRate={localSpecs.gridRate ?? 0}
-          defaultSunHours={localSpecs.sunHours ?? 0}
-          defaultGridEmissions={localSpecs.gridEmissions ?? 0}
-          defaultCostPerWatt={localSpecs.costPerWatt ?? 0}
-          federalTaxCreditPct={localSpecs.incentives.federalTaxCreditPct ?? 0}
-          stateRebate={localSpecs.incentives.stateRebate ?? 0}
-          utilityRebate={localSpecs.incentives.utilityRebate ?? 0}
+          defaultGridRate={localSpecs.gridRate}
+          defaultSunHours={localSpecs.sunHours}
+          defaultGridEmissions={localSpecs.gridEmissions}
+          defaultCostPerWatt={localSpecs.costPerWatt}
+          federalTaxCreditPct={localSpecs.incentives.federalTaxCreditPct}
+          stateRebate={localSpecs.incentives.stateRebate}
+          utilityRebate={localSpecs.incentives.utilityRebate}
           city={displayCity}
           state={displayState}
           dbRebates={dbRebates}
@@ -590,10 +589,10 @@ import ThemeFonts from '../../../../../components/ThemeFonts.astro';
     <div id="panel-sme" class="hidden space-y-8 animate-fade-in">
       <SmeHub 
         client:visible 
-        defaultGridRate={localSpecs.gridRate ?? 0}
-        defaultSunHours={localSpecs.sunHours ?? 0}
-        defaultGridEmissions={localSpecs.gridEmissions ?? 0}
-        defaultCostPerWatt={localSpecs.costPerWatt ?? 0}
+        defaultGridRate={localSpecs.gridRate}
+        defaultSunHours={localSpecs.sunHours}
+        defaultGridEmissions={localSpecs.gridEmissions}
+        defaultCostPerWatt={localSpecs.costPerWatt}
         state={displayState}
         city={displayCity}
         lang={lang}
