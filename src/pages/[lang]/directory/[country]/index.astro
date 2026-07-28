@@ -71,7 +71,7 @@ if (supabase) {
       .from('regions')
       .select('state_province, state_slug')
       .eq('country_code', country === 'uk' ? 'gb' : (country || 'us').toLowerCase());
-    
+
     if (data && data.length > 0) {
       const stateMap = new Map<string, { slug: string; count: number }>();
       for (const r of data) {

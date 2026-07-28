@@ -80,7 +80,7 @@ if (supabase) {
       .select('city')
       .eq('country_code', country === 'uk' ? 'gb' : (country || 'us').toLowerCase())
       .eq('state_slug', state);
-    
+
     if (data && data.length > 0) {
       const uniqueCities = [...new Set(data.map(r => r.city))];
       citiesList = uniqueCities.map(name => {
