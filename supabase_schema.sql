@@ -56,34 +56,34 @@ create policy "Restrict insert access to authenticated admins"
   on public.regions
   for insert
   to authenticated
-  with check (true);
+  with check (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
 
 create policy "Restrict update access to authenticated admins"
   on public.regions
   for update
   to authenticated
-  using (true);
+  using (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
 
 create policy "Restrict delete access to authenticated admins"
   on public.regions
   for delete
   to authenticated
-  using (true);
+  using (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
 
 create policy "Restrict insert access on rebates to authenticated admins"
   on public.rebates
   for insert
   to authenticated
-  with check (true);
+  with check (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
 
 create policy "Restrict update access on rebates to authenticated admins"
   on public.rebates
   for update
   to authenticated
-  using (true);
+  using (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
 
 create policy "Restrict delete access on rebates to authenticated admins"
   on public.rebates
   for delete
   to authenticated
-  using (true);
+  using (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Sun, 
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
 import { queryLocationSpecs } from '../../lib/energyApi';
-import type { RegionEntry, MetricSource } from '../../data/regions';
+import { isValidSource, type RegionEntry, type MetricSource } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
 import { getCountryConfig } from '../../utils/countryConfig';
 
@@ -31,13 +31,13 @@ export interface DbRebate {
 
 interface RebateCalculatorProps {
   key?: string;
-  defaultGridRate: number;
-  defaultSunHours: number;
-  defaultGridEmissions: number;
-  defaultCostPerWatt: number;
-  federalTaxCreditPct: number;
-  stateRebate: number;
-  utilityRebate: number;
+  defaultGridRate: number | null;
+  defaultSunHours: number | null;
+  defaultGridEmissions: number | null;
+  defaultCostPerWatt: number | null;
+  federalTaxCreditPct: number | null;
+  stateRebate: number | null;
+  utilityRebate: number | null;
   city: string;
   state: string;
   dbRebates?: DbRebate[];
@@ -45,17 +45,6 @@ interface RebateCalculatorProps {
   regionEntry?: RegionEntry;
   defaultPostalCode?: string;
 }
-
-// Helper to validate source values
-const isValidSource = (source: any): source is MetricSource => {
-  return !!(
-    source &&
-    source.sourceName &&
-    source.sourceName.trim() !== '' &&
-    source.lastVerified &&
-    source.lastVerified.trim() !== ''
-  );
-};
 
 // Custom animated counter using requestAnimationFrame for high performance
 function AnimatedNumber({ value, formatter }: { value: number; formatter?: (v: number) => string }) {

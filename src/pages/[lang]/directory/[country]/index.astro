@@ -1,6 +1,7 @@
 ---
 import '../../../../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
+import { sanitizeJsonLd } from '../../../../utils/jsonLd';
 import { supabase } from '../../../../lib/supabase';
 import { useTranslations } from '../../../../lib/i18n';
 import Analytics from '../../../../components/Analytics.astro';
@@ -64,49 +65,53 @@ const getStatesPreset = (c: string) => {
 };
 
 let statesList = getStatesPreset(country || '');
-
-if (supabase) {
-  try {
-    const { data } = await supabase
-      .from('regions')
-      .select('state_province, state_slug')
-      .eq('country_code', country === 'uk' ? 'gb' : (country || 'us').toLowerCase());
-    
-    if (data && data.length > 0) {
-      const stateMap = new Map<string, { slug: string; count: number }>();
-      for (const r of data) {
-        const name = r.state_province;
-        const slug = r.state_slug || name.toLowerCase().replace(/\s+/g, '-');
-        const existing = stateMap.get(name);
-        if (existing) {
-          existing.count += 1;
-        } else {
-          stateMap.set(name, { slug, count: 1 });
-        }
-      }
-      statesList = Array.from(stateMap.entries()).map(([name, info]) => ({
-        slug: info.slug,
-        name,
-        citiesCount: info.count
-      }));
-    }
-  } catch (err) {
-    console.error('Failed to query states from Supabase regions. Using presets:', err);
-  }
-}
-
 let activeProgramsCount = 0;
+
 if (supabase) {
-  try {
-    const { count } = await supabase
-      .from('rebates')
-      .select('*, regions!inner(*)', { count: 'exact', head: true })
-      .eq('is_active', true)
-      .eq('regions.country_code', country === 'uk' ? 'gb' : country.toLowerCase());
-    if (count !== null) activeProgramsCount = count;
-  } catch (err) {
-    console.error('Failed to count active rebates for country:', err);
-  }
+  const statesPromise = (async () => {
+    try {
+      const { data } = await supabase
+        .from('regions')
+        .select('state_province, state_slug')
+        .eq('country_code', country === 'uk' ? 'gb' : (country || 'us').toLowerCase());
+
+      if (data && data.length > 0) {
+        const stateMap = new Map<string, { slug: string; count: number }>();
+        for (const r of data) {
+          const name = r.state_province;
+          const slug = r.state_slug || name.toLowerCase().replace(/\s+/g, '-');
+          const existing = stateMap.get(name);
+          if (existing) {
+            existing.count += 1;
+          } else {
+            stateMap.set(name, { slug, count: 1 });
+          }
+        }
+        statesList = Array.from(stateMap.entries()).map(([name, info]) => ({
+          slug: info.slug,
+          name,
+          citiesCount: info.count
+        }));
+      }
+    } catch (err) {
+      console.error('Failed to query states from Supabase regions. Using presets:', err);
+    }
+  })();
+
+  const rebatesPromise = (async () => {
+    try {
+      const { count } = await supabase
+        .from('rebates')
+        .select('*, regions!inner(*)', { count: 'exact', head: true })
+        .eq('is_active', true)
+        .eq('regions.country_code', country === 'uk' ? 'gb' : country.toLowerCase());
+      if (count !== null) activeProgramsCount = count;
+    } catch (err) {
+      console.error('Failed to count active rebates for country:', err);
+    }
+  })();
+
+  await Promise.all([statesPromise, rebatesPromise]);
 }
 
 const siteUrl = 'https://incentivemapper.com';
@@ -172,7 +177,7 @@ import ThemeFonts from '../../../../components/ThemeFonts.astro';
   ))}
 
   <!-- Breadcrumb Schema -->
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={sanitizeJsonLd(breadcrumbSchema)} />
 
   <ClientRouter />
   <script is:inline>

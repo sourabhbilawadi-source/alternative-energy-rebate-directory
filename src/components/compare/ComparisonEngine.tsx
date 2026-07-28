@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRightLeft, Info } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
@@ -114,10 +114,10 @@ export default function ComparisonEngine({
         state: r.stateName,
         country: r.countryName,
         countryCode: r.countryCode,
-        gridRate: r.gridRate,
-        sunHours: r.sunHours,
-        gridEmissions: r.gridEmissions,
-        costPerWatt: r.costPerWatt,
+        gridRate: r.gridRate ?? 0,
+        sunHours: r.sunHours ?? 0,
+        gridEmissions: r.gridEmissions ?? 0,
+        costPerWatt: r.costPerWatt ?? 0,
         rebates: matchedRebates,
         hasActiveRebates: matchedRebates.length > 0
       };
@@ -184,13 +184,13 @@ export default function ComparisonEngine({
   // Helper to compute ROI parameters
   const calculateROI = (city: CitySpecs) => {
     const config = getCountryConfig(city.countryCode);
-    const systemSizeIdeal = (12 * monthlyBill) / (city.gridRate * city.sunHours);
+    const systemSizeIdeal = (12 * monthlyBill) / ((city.gridRate ?? 0) * (city.sunHours ?? 0));
     
     // Slider is in City A's local unit (m² if configA.isMetric, else sq ft)
     const roofAreaSqFt = configA.isMetric ? roofArea * 10.764 : roofArea;
     const systemSizeCapped = Math.min(roofAreaSqFt / 150, systemSizeIdeal);
     const systemSizeWatts = systemSizeCapped * 1000;
-    const capitalCost = systemSizeWatts * city.costPerWatt;
+    const capitalCost = systemSizeWatts * (city.costPerWatt ?? 0);
     
     let upfrontIncentives = 0;
     let taxSavings = 0;
@@ -224,14 +224,14 @@ export default function ComparisonEngine({
     const netCost = capitalCost - upfrontIncentives;
 
     // Generation & Savings
-    const annualGeneration = systemSizeCapped * city.sunHours;
-    const annualSavings = annualGeneration * city.gridRate;
+    const annualGeneration = systemSizeCapped * (city.sunHours ?? 0);
+    const annualSavings = annualGeneration * (city.gridRate ?? 0);
     const payback = annualSavings > 0 ? Math.max(0.5, netCost / annualSavings) : 0;
 
     // Ecological
     const carbonAbated = config.isMetric 
-      ? (systemSizeCapped * city.sunHours * city.gridEmissions) / 1000
-      : (systemSizeCapped * city.sunHours * city.gridEmissions) / 907.185;
+      ? (systemSizeCapped * (city.sunHours ?? 0) * (city.gridEmissions ?? 0)) / 1000
+      : (systemSizeCapped * (city.sunHours ?? 0) * (city.gridEmissions ?? 0)) / 907.185;
 
     return {
       size: systemSizeCapped,
