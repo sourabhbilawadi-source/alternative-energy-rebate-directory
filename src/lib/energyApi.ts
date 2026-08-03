@@ -54,7 +54,7 @@ const COUNTRY_DEFAULTS: Record<string, { gridRate: number; costPerWatt: number; 
 };
 
 interface CacheEntry {
-  data: LocationSpecs;
+  data: LocationSpecs | null;
   timestamp: number;
 }
 
@@ -88,7 +88,13 @@ export async function queryLocationSpecs(
     if (!geoResponse.ok) throw new Error('OSM Geocoding request failed');
     const geoData = await geoResponse.json();
     
-    if (!geoData || geoData.length === 0) return null;
+    if (!geoData || geoData.length === 0) {
+      locationCache.set(cacheKey, {
+        data: null,
+        timestamp: Date.now()
+      });
+      return null;
+    }
     
     const lat = Number(geoData[0].lat);
     const lon = Number(geoData[0].lon);
