@@ -38,9 +38,11 @@ export async function getStaticPaths() {
       'california-sgip-battery-rebate-los-angeles',
       'boiler-upgrade-scheme-grant-london'
     ];
-    paths.push(...langs.flatMap(lang =>
-      fallbackRebates.map(rebate_slug => ({ params: { lang, rebate_slug } }))
-    ));
+    for (const lang of langs) {
+      for (const rebate_slug of fallbackRebates) {
+        paths.push({ params: { lang, rebate_slug } });
+      }
+    }
   }
 
   return paths;
