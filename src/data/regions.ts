@@ -1037,3 +1037,7 @@ export const regionsData: RegionEntry[] = [
     utilityRebate: null
   }
 ];
+
+export function isValidSource(source: any): source is string {
+  return typeof source === 'string' && source.length > 0;
+}
