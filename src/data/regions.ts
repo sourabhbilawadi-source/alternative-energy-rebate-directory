@@ -6,6 +6,14 @@ export interface MetricSource {
   lastVerified: string;
 }
 
+/**
+ * Type guard to check if a source object is a valid MetricSource
+ */
+export const isValidSource = (source: any): source is MetricSource => {
+  return source && typeof source === 'object' && typeof source.sourceName === 'string';
+};
+
+
 export interface RegionEntry {
   countryCode: string;   // e.g. 'us'
   countryName: string;   // e.g. 'United States'
