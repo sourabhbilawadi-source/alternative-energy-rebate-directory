@@ -79,6 +79,196 @@ const matchCountry = (c1: string, c2: string) => {
   return normalizeCountryCode(c1) === normalizeCountryCode(c2);
 };
 
+const parseInitialCities = (databaseRebates: RawDatabaseRebate[]): CitySpecs[] => regionsData
+  .map(r => {
+    const matchedRebates = databaseRebates
+      .filter((dbR: RawDatabaseRebate) => {
+        const reg = dbR.regions;
+        if (!reg) return false;
+        const countryMatch = matchCountry(reg.country_code, r.countryCode);
+        const cityMatch = reg.city.toLowerCase() === r.cityName.toLowerCase() ||
+                          reg.city.toLowerCase().replace(/\s+/g, '-') === r.citySlug.toLowerCase();
+        return countryMatch && cityMatch;
+      })
+      .map((dbR: RawDatabaseRebate) => ({
+        id: dbR.id,
+        authority_name: dbR.authority_name,
+        technology_category: dbR.technology_category,
+        incentive_value: Number(dbR.incentive_value),
+        incentive_type: dbR.incentive_type,
+        max_limit: dbR.max_limit ? Number(dbR.max_limit) : null
+      }));
+
+    return {
+      key: r.citySlug,
+      name: r.cityName,
+      state: r.stateName,
+      country: r.countryName,
+      countryCode: r.countryCode,
+      gridRate: r.gridRate,
+      sunHours: r.sunHours,
+      gridEmissions: r.gridEmissions,
+      costPerWatt: r.costPerWatt,
+      rebates: matchedRebates,
+      hasActiveRebates: matchedRebates.length > 0
+    };
+  });
+
+const getFedTaxCreditPct = (city: CitySpecs) => {
+  return city.rebates
+    .filter(r => r.incentive_type === 'percentage' && ['Federal Tax Incentive', 'Tax Exemption'].includes(r.technology_category))
+    .reduce((sum, r) => sum + r.incentive_value, 0);
+};
+
+const calculateROI = (
+  city: CitySpecs,
+  monthlyBill: number,
+  roofArea: number,
+  isMetricA: boolean
+) => {
+  const config = getCountryConfig(city.countryCode);
+  const systemSizeIdeal = (12 * monthlyBill) / (city.gridRate * city.sunHours);
+
+  // Slider is in City A's local unit (m² if configA.isMetric, else sq ft)
+  const roofAreaSqFt = isMetricA ? roofArea * 10.764 : roofArea;
+  const systemSizeCapped = Math.min(roofAreaSqFt / 150, systemSizeIdeal);
+  const systemSizeWatts = systemSizeCapped * 1000;
+  const capitalCost = systemSizeWatts * city.costPerWatt;
+
+  let upfrontIncentives = 0;
+  let taxSavings = 0;
+
+  for (const rebate of city.rebates) {
+    let rebateVal = 0;
+    if (rebate.incentive_type === 'percentage') {
+      if (rebate.technology_category !== 'Clean Energy Loan') {
+        rebateVal = capitalCost * (rebate.incentive_value / 100);
+      }
+    } else if (rebate.incentive_type === 'per_watt') {
+      rebateVal = systemSizeWatts * rebate.incentive_value;
+    } else if (rebate.incentive_type === 'fixed') {
+      rebateVal = rebate.incentive_value;
+    }
+
+    if (rebate.max_limit !== null && rebate.max_limit > 0) {
+      rebateVal = Math.min(rebateVal, rebate.max_limit);
+    }
+
+    // Classify based on technology_category
+    const cat = rebate.technology_category;
+    if (['Tax Exemption', 'Sales Tax Incentive', 'Federal Tax Incentive', 'Property Tax Offset'].includes(cat)) {
+      taxSavings += rebateVal;
+    } else if (cat !== 'Clean Energy Loan') {
+      upfrontIncentives += rebateVal;
+    }
+  }
+
+  upfrontIncentives = Math.min(capitalCost, upfrontIncentives);
+  const netCost = capitalCost - upfrontIncentives;
+
+  // Generation & Savings
+  const annualGeneration = systemSizeCapped * city.sunHours;
+  const annualSavings = annualGeneration * city.gridRate;
+  const payback = annualSavings > 0 ? Math.max(0.5, netCost / annualSavings) : 0;
+
+  // Ecological
+  const carbonAbated = config.isMetric
+    ? (systemSizeCapped * city.sunHours * city.gridEmissions) / 1000
+    : (systemSizeCapped * city.sunHours * city.gridEmissions) / 907.185;
+
+  return {
+    size: systemSizeCapped,
+    cost: netCost,
+    savings: annualSavings,
+    payback,
+    carbon: carbonAbated,
+    taxSavings
+  };
+};
+
+const RegionColumn = ({
+  city,
+  roi,
+  config,
+  t,
+  colKey,
+  initialX
+}: {
+  city: CitySpecs;
+  roi: ReturnType<typeof calculateROI>;
+  config: ReturnType<typeof getCountryConfig>;
+  t: any;
+  colKey: string;
+  initialX: number;
+}) => (
+  <motion.div
+    key={colKey}
+    initial={{ opacity: 0, x: initialX }}
+    animate={{ opacity: 1, x: 0 }}
+    className="lg:col-span-5 bg-[var(--bg-secondary)]/30 border border-[var(--color-border)] rounded-3xl p-6 space-y-6 flex flex-col justify-between"
+  >
+    <div>
+      <div className="text-xs font-bold text-[var(--text-muted)] tracking-widest uppercase">{city.country}</div>
+      <h2 className="text-3xl font-black text-[var(--text-main)] mt-1">{city.name}</h2>
+      <p className="text-sm text-[var(--text-muted)] font-semibold">{city.state}</p>
+    </div>
+
+    {!city.hasActiveRebates ? (
+      <div className="bg-amber-500/10 border border-amber-500/20 text-amber-700 rounded-2xl p-5 my-6 text-center space-y-2 flex flex-col items-center justify-center flex-grow">
+        <span className="text-2xl">⚠️</span>
+        <h3 className="font-bold text-sm text-[var(--text-main)]">No Rebate Data Available</h3>
+        <p className="text-[11px] text-[var(--text-muted)] max-w-[200px] leading-relaxed">
+          No rebate data available for this location yet. Payback and ROI calculations are disabled.
+        </p>
+      </div>
+    ) : (
+      <div className="space-y-4 my-6 font-semibold">
+        <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
+          <span className="text-xs font-bold text-[var(--text-muted)]">{t.calculator.paybackPeriod}:</span>
+          <span className="text-xl font-extrabold text-[var(--text-main)]">{roi.payback.toFixed(1)} {t.calculator.years}</span>
+        </div>
+        <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
+          <span className="text-xs font-bold text-[var(--text-muted)]">{t.calculator.netCost}:</span>
+          <span className="text-xl font-extrabold text-[var(--text-main)]">{config.symbol}{Math.round(roi.cost).toLocaleString()}</span>
+        </div>
+        {roi.taxSavings > 0 && (
+          <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-dashed border-[var(--color-accent)]/40 flex justify-between items-center">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-bold text-[var(--color-accent)]">{t.calculator.taxSavings}:</span>
+              <div className="relative group inline-block">
+                <Info className="w-3.5 h-3.5 cursor-help text-[var(--color-accent)]/70 hover:text-[var(--color-accent)] transition-colors" />
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-[var(--bg-secondary)] border border-[var(--color-border)] text-[var(--text-muted)] text-[10px] rounded-lg p-2.5 w-56 shadow-xl z-20 leading-relaxed font-normal text-left">
+                  {t.calculator.taxSavingsTooltip}
+                </div>
+              </div>
+            </div>
+            <span className="text-xl font-extrabold text-[var(--color-accent)]">{config.symbol}{Math.round(roi.taxSavings).toLocaleString()}</span>
+          </div>
+        )}
+        <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
+          <span className="text-xs font-bold text-[var(--text-muted)] font-semibold">Annual bill savings:</span>
+          <span className="text-xl font-extrabold text-[var(--text-main)]">{config.symbol}{Math.round(roi.savings).toLocaleString()}</span>
+        </div>
+        <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
+          <span className="text-xs font-bold text-[var(--text-muted)]">System Size Capped:</span>
+          <span className="text-xl font-extrabold text-[var(--text-main)]">{roi.size.toFixed(2)} kW</span>
+        </div>
+        <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
+          <span className="text-xs font-bold text-[var(--text-muted)]">{t.calculator.carbonOffset}:</span>
+          <span className="text-xl font-extrabold text-[var(--text-main)]">{roi.carbon.toFixed(1)} {config.carbon}</span>
+        </div>
+      </div>
+    )}
+
+    <div className="bg-[var(--bg-primary)]/40 p-4 rounded-2xl border border-[var(--color-border)] text-xs space-y-1">
+      <div className="font-bold mb-1 text-[var(--text-main)]">Regional Policy Specs:</div>
+      <div className="text-[var(--text-muted)] font-semibold">{t.calculator.gridRate}: <strong>{config.symbol}{city.gridRate}/kWh</strong></div>
+      <div className="text-[var(--text-muted)] font-semibold">{t.calculator.sunHours}: <strong>{city.sunHours} hrs/yr</strong></div>
+      <div className="text-[var(--text-muted)] font-semibold">{t.calculator.federalIncentive}: <strong>{getFedTaxCreditPct(city)}%</strong></div>
+    </div>
+  </motion.div>
+);
+
 export default function ComparisonEngine({ 
   lang = 'en-us', 
   databaseRebates = [] 
@@ -88,40 +278,7 @@ export default function ComparisonEngine({
 }) {
   const t = useTranslations(lang);
 
-  const initialCities: CitySpecs[] = regionsData
-    .map(r => {
-      const matchedRebates = databaseRebates
-        .filter((dbR: RawDatabaseRebate) => {
-          const reg = dbR.regions;
-          if (!reg) return false;
-          const countryMatch = matchCountry(reg.country_code, r.countryCode);
-          const cityMatch = reg.city.toLowerCase() === r.cityName.toLowerCase() ||
-                            reg.city.toLowerCase().replace(/\s+/g, '-') === r.citySlug.toLowerCase();
-          return countryMatch && cityMatch;
-        })
-        .map((dbR: RawDatabaseRebate) => ({
-          id: dbR.id,
-          authority_name: dbR.authority_name,
-          technology_category: dbR.technology_category,
-          incentive_value: Number(dbR.incentive_value),
-          incentive_type: dbR.incentive_type,
-          max_limit: dbR.max_limit ? Number(dbR.max_limit) : null
-        }));
-
-      return {
-        key: r.citySlug,
-        name: r.cityName,
-        state: r.stateName,
-        country: r.countryName,
-        countryCode: r.countryCode,
-        gridRate: r.gridRate,
-        sunHours: r.sunHours,
-        gridEmissions: r.gridEmissions,
-        costPerWatt: r.costPerWatt,
-        rebates: matchedRebates,
-        hasActiveRebates: matchedRebates.length > 0
-      };
-    });
+  const initialCities: CitySpecs[] = parseInitialCities(databaseRebates);
 
   const [cities, setCities] = useState<CitySpecs[]>(initialCities);
   const [cityAKey, setCityAKey] = useState('los-angeles');
@@ -181,76 +338,8 @@ export default function ComparisonEngine({
     }
   }, []);
 
-  // Helper to compute ROI parameters
-  const calculateROI = (city: CitySpecs) => {
-    const config = getCountryConfig(city.countryCode);
-    const systemSizeIdeal = (12 * monthlyBill) / (city.gridRate * city.sunHours);
-    
-    // Slider is in City A's local unit (m² if configA.isMetric, else sq ft)
-    const roofAreaSqFt = configA.isMetric ? roofArea * 10.764 : roofArea;
-    const systemSizeCapped = Math.min(roofAreaSqFt / 150, systemSizeIdeal);
-    const systemSizeWatts = systemSizeCapped * 1000;
-    const capitalCost = systemSizeWatts * city.costPerWatt;
-    
-    let upfrontIncentives = 0;
-    let taxSavings = 0;
-
-    for (const rebate of city.rebates) {
-      let rebateVal = 0;
-      if (rebate.incentive_type === 'percentage') {
-        if (rebate.technology_category !== 'Clean Energy Loan') {
-          rebateVal = capitalCost * (rebate.incentive_value / 100);
-        }
-      } else if (rebate.incentive_type === 'per_watt') {
-        rebateVal = systemSizeWatts * rebate.incentive_value;
-      } else if (rebate.incentive_type === 'fixed') {
-        rebateVal = rebate.incentive_value;
-      }
-
-      if (rebate.max_limit !== null && rebate.max_limit > 0) {
-        rebateVal = Math.min(rebateVal, rebate.max_limit);
-      }
-
-      // Classify based on technology_category
-      const cat = rebate.technology_category;
-      if (['Tax Exemption', 'Sales Tax Incentive', 'Federal Tax Incentive', 'Property Tax Offset'].includes(cat)) {
-        taxSavings += rebateVal;
-      } else if (cat !== 'Clean Energy Loan') {
-        upfrontIncentives += rebateVal;
-      }
-    }
-
-    upfrontIncentives = Math.min(capitalCost, upfrontIncentives);
-    const netCost = capitalCost - upfrontIncentives;
-
-    // Generation & Savings
-    const annualGeneration = systemSizeCapped * city.sunHours;
-    const annualSavings = annualGeneration * city.gridRate;
-    const payback = annualSavings > 0 ? Math.max(0.5, netCost / annualSavings) : 0;
-
-    // Ecological
-    const carbonAbated = config.isMetric 
-      ? (systemSizeCapped * city.sunHours * city.gridEmissions) / 1000
-      : (systemSizeCapped * city.sunHours * city.gridEmissions) / 907.185;
-
-    return {
-      size: systemSizeCapped,
-      cost: netCost,
-      savings: annualSavings,
-      payback,
-      carbon: carbonAbated,
-      taxSavings
-    };
-  };
-
-  const getFedTaxCreditPct = (city: CitySpecs) => {
-    return city.rebates
-      .filter(r => r.incentive_type === 'percentage' && ['Federal Tax Incentive', 'Tax Exemption'].includes(r.technology_category))
-      .reduce((sum, r) => sum + r.incentive_value, 0);
-  };
-
-  const roiA = calculateROI(cityA);
-  const roiB = calculateROI(cityB);
+  const roiA = calculateROI(cityA, monthlyBill, roofArea, configA.isMetric);
+  const roiB = calculateROI(cityB, monthlyBill, roofArea, configA.isMetric);
 
   return (
     <div className="space-y-8">
@@ -330,72 +419,14 @@ export default function ComparisonEngine({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
         {/* Region A Column */}
-        <motion.div 
-          key={`colA-${cityAKey}`}
-          initial={{ opacity: 0, x: -15 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="lg:col-span-5 bg-[var(--bg-secondary)]/30 border border-[var(--color-border)] rounded-3xl p-6 space-y-6 flex flex-col justify-between"
-        >
-          <div>
-            <div className="text-xs font-bold text-[var(--text-muted)] tracking-widest uppercase">{cityA.country}</div>
-            <h2 className="text-3xl font-black text-[var(--text-main)] mt-1">{cityA.name}</h2>
-            <p className="text-sm text-[var(--text-muted)] font-semibold">{cityA.state}</p>
-          </div>
-
-          {!cityA.hasActiveRebates ? (
-            <div className="bg-amber-500/10 border border-amber-500/20 text-amber-700 rounded-2xl p-5 my-6 text-center space-y-2 flex flex-col items-center justify-center flex-grow">
-              <span className="text-2xl">⚠️</span>
-              <h3 className="font-bold text-sm text-[var(--text-main)]">No Rebate Data Available</h3>
-              <p className="text-[11px] text-[var(--text-muted)] max-w-[200px] leading-relaxed">
-                No rebate data available for this location yet. Payback and ROI calculations are disabled.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4 my-6 font-semibold">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
-                <span className="text-xs font-bold text-[var(--text-muted)]">{t.calculator.paybackPeriod}:</span>
-                <span className="text-xl font-extrabold text-[var(--text-main)]">{roiA.payback.toFixed(1)} {t.calculator.years}</span>
-              </div>
-              <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
-                <span className="text-xs font-bold text-[var(--text-muted)]">{t.calculator.netCost}:</span>
-                <span className="text-xl font-extrabold text-[var(--text-main)]">{configA.symbol}{Math.round(roiA.cost).toLocaleString()}</span>
-              </div>
-              {roiA.taxSavings > 0 && (
-                <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-dashed border-[var(--color-accent)]/40 flex justify-between items-center">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-bold text-[var(--color-accent)]">{t.calculator.taxSavings}:</span>
-                    <div className="relative group inline-block">
-                      <Info className="w-3.5 h-3.5 cursor-help text-[var(--color-accent)]/70 hover:text-[var(--color-accent)] transition-colors" />
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-[var(--bg-secondary)] border border-[var(--color-border)] text-[var(--text-muted)] text-[10px] rounded-lg p-2.5 w-56 shadow-xl z-20 leading-relaxed font-normal text-left">
-                        {t.calculator.taxSavingsTooltip}
-                      </div>
-                    </div>
-                  </div>
-                  <span className="text-xl font-extrabold text-[var(--color-accent)]">{configA.symbol}{Math.round(roiA.taxSavings).toLocaleString()}</span>
-                </div>
-              )}
-              <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
-                <span className="text-xs font-bold text-[var(--text-muted)] font-semibold">Annual bill savings:</span>
-                <span className="text-xl font-extrabold text-[var(--text-main)]">{configA.symbol}{Math.round(roiA.savings).toLocaleString()}</span>
-              </div>
-              <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
-                <span className="text-xs font-bold text-[var(--text-muted)]">System Size Capped:</span>
-                <span className="text-xl font-extrabold text-[var(--text-main)]">{roiA.size.toFixed(2)} kW</span>
-              </div>
-              <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
-                <span className="text-xs font-bold text-[var(--text-muted)]">{t.calculator.carbonOffset}:</span>
-                <span className="text-xl font-extrabold text-[var(--text-main)]">{roiA.carbon.toFixed(1)} {configA.carbon}</span>
-              </div>
-            </div>
-          )}
-
-          <div className="bg-[var(--bg-primary)]/40 p-4 rounded-2xl border border-[var(--color-border)] text-xs space-y-1">
-            <div className="font-bold mb-1 text-[var(--text-main)]">Regional Policy Specs:</div>
-            <div className="text-[var(--text-muted)] font-semibold">{t.calculator.gridRate}: <strong>{configA.symbol}{cityA.gridRate}/kWh</strong></div>
-            <div className="text-[var(--text-muted)] font-semibold">{t.calculator.sunHours}: <strong>{cityA.sunHours} hrs/yr</strong></div>
-            <div className="text-[var(--text-muted)] font-semibold">{t.calculator.federalIncentive}: <strong>{getFedTaxCreditPct(cityA)}%</strong></div>
-          </div>
-        </motion.div>
+        <RegionColumn
+          city={cityA}
+          roi={roiA}
+          config={configA}
+          t={t}
+          colKey={`colA-${cityAKey}`}
+          initialX={-15}
+        />
 
         {/* Mid comparison matrix indicators */}
         <div className="lg:col-span-2 flex flex-col justify-center items-center gap-6 py-6 text-center">
@@ -426,72 +457,14 @@ export default function ComparisonEngine({
         </div>
 
         {/* Region B Column */}
-        <motion.div 
-          key={`colB-${cityBKey}`}
-          initial={{ opacity: 0, x: 15 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="lg:col-span-5 bg-[var(--bg-secondary)]/30 border border-[var(--color-border)] rounded-3xl p-6 space-y-6 flex flex-col justify-between"
-        >
-          <div>
-            <div className="text-xs font-bold text-[var(--text-muted)] tracking-widest uppercase">{cityB.country}</div>
-            <h2 className="text-3xl font-black text-[var(--text-main)] mt-1">{cityB.name}</h2>
-            <p className="text-sm text-[var(--text-muted)] font-semibold">{cityB.state}</p>
-          </div>
-
-          {!cityB.hasActiveRebates ? (
-            <div className="bg-amber-500/10 border border-amber-500/20 text-amber-700 rounded-2xl p-5 my-6 text-center space-y-2 flex flex-col items-center justify-center flex-grow">
-              <span className="text-2xl">⚠️</span>
-              <h3 className="font-bold text-sm text-[var(--text-main)]">No Rebate Data Available</h3>
-              <p className="text-[11px] text-[var(--text-muted)] max-w-[200px] leading-relaxed">
-                No rebate data available for this location yet. Payback and ROI calculations are disabled.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4 my-6 font-semibold">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
-                <span className="text-xs font-bold text-[var(--text-muted)]">{t.calculator.paybackPeriod}:</span>
-                <span className="text-xl font-extrabold text-[var(--text-main)]">{roiB.payback.toFixed(1)} {t.calculator.years}</span>
-              </div>
-              <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
-                <span className="text-xs font-bold text-[var(--text-muted)]">{t.calculator.netCost}:</span>
-                <span className="text-xl font-extrabold text-[var(--text-main)]">{configB.symbol}{Math.round(roiB.cost).toLocaleString()}</span>
-              </div>
-              {roiB.taxSavings > 0 && (
-                <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-dashed border-[var(--color-accent)]/40 flex justify-between items-center">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-bold text-[var(--color-accent)]">{t.calculator.taxSavings}:</span>
-                    <div className="relative group inline-block">
-                      <Info className="w-3.5 h-3.5 cursor-help text-[var(--color-accent)]/70 hover:text-[var(--color-accent)] transition-colors" />
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-[var(--bg-secondary)] border border-[var(--color-border)] text-[var(--text-muted)] text-[10px] rounded-lg p-2.5 w-56 shadow-xl z-20 leading-relaxed font-normal text-left">
-                        {t.calculator.taxSavingsTooltip}
-                      </div>
-                    </div>
-                  </div>
-                  <span className="text-xl font-extrabold text-[var(--color-accent)]">{configB.symbol}{Math.round(roiB.taxSavings).toLocaleString()}</span>
-                </div>
-              )}
-              <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
-                <span className="text-xs font-bold text-[var(--text-muted)] font-semibold">Annual bill savings:</span>
-                <span className="text-xl font-extrabold text-[var(--text-main)]">{configB.symbol}{Math.round(roiB.savings).toLocaleString()}</span>
-              </div>
-              <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
-                <span className="text-xs font-bold text-[var(--text-muted)]">System Size Capped:</span>
-                <span className="text-xl font-extrabold text-[var(--text-main)]">{roiB.size.toFixed(2)} kW</span>
-              </div>
-              <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--color-border)] flex justify-between items-center">
-                <span className="text-xs font-bold text-[var(--text-muted)]">{t.calculator.carbonOffset}:</span>
-                <span className="text-xl font-extrabold text-[var(--text-main)]">{roiB.carbon.toFixed(1)} {configB.carbon}</span>
-              </div>
-            </div>
-          )}
-
-          <div className="bg-[var(--bg-primary)]/40 p-4 rounded-2xl border border-[var(--color-border)] text-xs space-y-1">
-            <div className="font-bold mb-1 text-[var(--text-main)]">Regional Policy Specs:</div>
-            <div className="text-[var(--text-muted)] font-semibold">{t.calculator.gridRate}: <strong>{configB.symbol}{cityB.gridRate}/kWh</strong></div>
-            <div className="text-[var(--text-muted)] font-semibold">{t.calculator.sunHours}: <strong>{cityB.sunHours} hrs/yr</strong></div>
-            <div className="text-[var(--text-muted)] font-semibold">{t.calculator.federalIncentive}: <strong>{getFedTaxCreditPct(cityB)}%</strong></div>
-          </div>
-        </motion.div>
+        <RegionColumn
+          city={cityB}
+          roi={roiB}
+          config={configB}
+          t={t}
+          colKey={`colB-${cityBKey}`}
+          initialX={15}
+        />
 
       </div>
 
