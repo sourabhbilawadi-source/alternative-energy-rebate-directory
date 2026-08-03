@@ -247,4 +247,27 @@ describe('SearchPortal', () => {
     expect(screen.getByText('25%')).toBeInTheDocument();
     expect(screen.getByText('London, ENG W1')).toBeInTheDocument();
   });
+
+  it('logs an error if fetching from Supabase fails', async () => {
+    mockSupabaseEq.mockReset();
+    mockSupabaseEq.mockRejectedValue(new Error('Supabase fetch failed'));
+
+    // Suppress the console.error output so it doesn't pollute the test run
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    render(<SearchPortal lang="en-us" />);
+
+    // Trigger a search to satisfy test scenario requirements
+    const searchInput = screen.getByPlaceholderText('Search for incentives...');
+    fireEvent.change(searchInput, { target: { value: 'trigger search' } });
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Failed to query search database from Supabase client:',
+        expect.any(Error)
+      );
+    });
+
+    consoleSpy.mockRestore();
+  });
 });
