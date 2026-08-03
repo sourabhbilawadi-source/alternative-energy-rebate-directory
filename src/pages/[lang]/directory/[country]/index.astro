@@ -46,17 +46,16 @@ const getStatesPreset = (c: string) => {
   const code = c.toLowerCase();
   const countryRegions = regionsData.filter(r => r.countryCode === code);
   
-  const stateMap = new Map<string, { name: string; citiesCount: number }>();
-  for (const r of countryRegions) {
-    const existing = stateMap.get(r.stateSlug);
-    if (existing) {
-      existing.citiesCount += 1;
+  const stateMap = countryRegions.reduce((acc, r) => {
+    if (acc[r.stateSlug]) {
+      acc[r.stateSlug].citiesCount += 1;
     } else {
-      stateMap.set(r.stateSlug, { name: r.stateName, citiesCount: 1 });
+      acc[r.stateSlug] = { name: r.stateName, citiesCount: 1 };
     }
-  }
+    return acc;
+  }, {} as Record<string, { name: string; citiesCount: number }>);
   
-  return Array.from(stateMap.entries()).map(([slug, info]) => ({
+  return Object.entries(stateMap).map(([slug, info]) => ({
     slug,
     name: info.name,
     citiesCount: info.citiesCount
@@ -73,18 +72,17 @@ if (supabase) {
       .eq('country_code', country === 'uk' ? 'gb' : (country || 'us').toLowerCase());
     
     if (data && data.length > 0) {
-      const stateMap = new Map<string, { slug: string; count: number }>();
-      for (const r of data) {
+      const stateMap = data.reduce((acc, r) => {
         const name = r.state_province;
-        const slug = r.state_slug || name.toLowerCase().replace(/\s+/g, '-');
-        const existing = stateMap.get(name);
-        if (existing) {
-          existing.count += 1;
+        if (acc[name]) {
+          acc[name].count += 1;
         } else {
-          stateMap.set(name, { slug, count: 1 });
+          const slug = r.state_slug || name.toLowerCase().replace(/\s+/g, '-');
+          acc[name] = { slug, count: 1 };
         }
-      }
-      statesList = Array.from(stateMap.entries()).map(([name, info]) => ({
+        return acc;
+      }, {} as Record<string, { slug: string; count: number }>);
+      statesList = Object.entries(stateMap).map(([name, info]) => ({
         slug: info.slug,
         name,
         citiesCount: info.count
