@@ -75,30 +75,39 @@ interface ResolvedRegion {
   url: string;
 }
 
+function resolveCountryLink(country: string, activeLang: string): ResolvedRegion {
+  return {
+    name: country.toUpperCase(),
+    url: `/${activeLang}/directory/${country}`
+  };
+}
+
+function resolveStateLink(country: string, state: string, activeLang: string): ResolvedRegion {
+  const match = regionsData.find(r => r.countryCode === country && r.stateSlug === state);
+  return {
+    name: match ? `${match.stateName}, ${match.countryName}` : state,
+    url: `/${activeLang}/directory/${country}/${state}`
+  };
+}
+
+function resolveCityLink(country: string, state: string, city: string, activeLang: string): ResolvedRegion {
+  const match = regionsData.find(r => r.countryCode === country && r.stateSlug === state && r.citySlug === city);
+  return {
+    name: match ? `${match.cityName}, ${match.stateName}` : city,
+    url: `/${activeLang}/directory/${country}/${state}/${city}`
+  };
+}
+
 function resolveRegionLink(tag: string): ResolvedRegion | null {
   const parts = tag.split('/');
   if (parts.length === 1) {
-    const country = parts[0];
-    return {
-      name: country.toUpperCase(),
-      url: `/${activeLang}/directory/${country}`
-    };
+    return resolveCountryLink(parts[0], activeLang);
   }
   if (parts.length === 2) {
-    const [country, state] = parts;
-    const match = regionsData.find(r => r.countryCode === country && r.stateSlug === state);
-    return {
-      name: match ? `${match.stateName}, ${match.countryName}` : state,
-      url: `/${activeLang}/directory/${country}/${state}`
-    };
+    return resolveStateLink(parts[0], parts[1], activeLang);
   }
   if (parts.length === 3) {
-    const [country, state, city] = parts;
-    const match = regionsData.find(r => r.countryCode === country && r.stateSlug === state && r.citySlug === city);
-    return {
-      name: match ? `${match.cityName}, ${match.stateName}` : city,
-      url: `/${activeLang}/directory/${country}/${state}/${city}`
-    };
+    return resolveCityLink(parts[0], parts[1], parts[2], activeLang);
   }
   return null;
 }
