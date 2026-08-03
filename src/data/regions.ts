@@ -1,5 +1,16 @@
 // src/data/regions.ts
 
+
+export const isValidSource = (source: any): source is MetricSource => {
+  return (
+    source !== null &&
+    typeof source === 'object' &&
+    typeof source.sourceName === 'string' &&
+    typeof source.sourceUrl === 'string' &&
+    typeof source.lastVerified === 'string'
+  );
+};
+
 export interface MetricSource {
   sourceName: string;
   sourceUrl: string;
