@@ -1037,3 +1037,7 @@ export const regionsData: RegionEntry[] = [
     utilityRebate: null
   }
 ];
+
+export const isValidSource = (source: string): source is 'grid' | 'solar' => {
+  return source === 'grid' || source === 'solar';
+};

@@ -1,33 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, SlidersHorizontal, MapPin, Zap, Tag, ArrowRight, Globe, Layers } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { Search, SlidersHorizontal, MapPin, Tag, Globe, Layers } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
-
-interface SearchRebate {
-  id: string;
-  authority_name: string;
-  technology_category: string;
-  incentive_value: number;
-  incentive_type: string;
-  max_limit: number | null;
-  region: {
-    country_code: string;
-    state_province: string;
-    city: string;
-    postal_code: string;
-  };
-}
-
-interface SupabaseRebateItem {
-  id: string;
-  authority_name: string;
-  technology_category: string;
-  incentive_value: string | number;
-  incentive_type: string;
-  max_limit: string | number | null;
-  regions?: any;
-}
+import type { SearchRebate } from './types';
+import { RebateCard } from './RebateCard';
+import { useSearchData } from './useSearchData';
+import { categories, filterRebates, getCategoryCount, getCategoryLabel } from './searchUtils';
 
 interface SearchPortalProps {
   initialQuery?: string;
@@ -41,15 +19,12 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
   const [postalQuery, setPostalQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedCountry, setSelectedCountry] = useState<string>('all');
-  const [rebates, setRebates] = useState<SearchRebate[]>([]);
   const [filteredResults, setFilteredResults] = useState<SearchRebate[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  // Offline mocks removed to guarantee live database data only
+  const { rebates, isLoading } = useSearchData(initialRebates);
 
-  // Load data and parse URL search params on mount
+  // Parse URL search params on mount
   useEffect(() => {
-    // 1. Grab initial query parameter if present in the URL
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const q = urlParams.get('q');
@@ -57,193 +32,13 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
         setQuery(q);
       }
     }
-
-    // 2. Load and merge rebates
-    async function loadData() {
-      setIsLoading(true);
-      
-      // Use the server-fetched rebates as the base list
-      let fetchedRebates = [...initialRebates];
-
-      // If server-fetched list is empty (e.g. Supabase was offline/unconfigured and no fallback passed),
-      // we can try fetching from Supabase client-side or fallback to mockRebates.
-      if (fetchedRebates.length === 0) {
-        if (supabase) {
-          try {
-            const { data: rebatesData, error } = await supabase
-              .from('rebates')
-              .select(`
-                id,
-                authority_name,
-                technology_category,
-                incentive_value,
-                incentive_type,
-                max_limit,
-                regions (
-                  country_code,
-                  state_province,
-                  city,
-                  postal_code
-                )
-              `)
-              .eq('is_active', true);
-
-            if (rebatesData && !error) {
-              fetchedRebates = (rebatesData as any[]).map((item: SupabaseRebateItem) => ({
-                id: item.id,
-                authority_name: item.authority_name,
-                technology_category: item.technology_category,
-                incentive_value: Number(item.incentive_value),
-                incentive_type: item.incentive_type,
-                max_limit: item.max_limit ? Number(item.max_limit) : null,
-                region: {
-                  country_code: (item.regions as any)?.country_code || 'us',
-                  state_province: (item.regions as any)?.state_province || '',
-                  city: (item.regions as any)?.city || '',
-                  postal_code: (item.regions as any)?.postal_code || ''
-                }
-              }));
-            }
-          } catch (err) {
-            console.error('Failed to query search database from Supabase client:', err);
-          }
-        }
-      }
-
-
-
-      // Merge localstorage additions/modifications (Admin Sandbox additions)
-      try {
-        const localRegionsRaw = localStorage.getItem('local_regions');
-        const localRebatesRaw = localStorage.getItem('local_rebates');
-        if (localRebatesRaw) {
-          const localRegions = localRegionsRaw ? JSON.parse(localRegionsRaw) : [];
-          const localRebates = JSON.parse(localRebatesRaw);
-
-          const regionMap = new Map<string, any>(localRegions.map((r: any) => [String(r.id), r]));
-          const formattedLocalRebates = localRebates
-            .filter((item: any) => item.is_active !== false)
-            .map((item: any) => {
-              const matchedRegion = regionMap.get(String(item.region_id)) as any;
-              return {
-                id: item.id || `local-${Math.random()}`,
-                authority_name: item.authority_name,
-                technology_category: item.technology_category,
-                incentive_value: Number(item.incentive_value),
-                incentive_type: item.incentive_type,
-                max_limit: item.max_limit ? Number(item.max_limit) : null,
-                region: {
-                  country_code: (matchedRegion as any)?.country_code || 'us',
-                  state_province: (matchedRegion as any)?.state_province || '',
-                  city: (matchedRegion as any)?.city || '',
-                  postal_code: (matchedRegion as any)?.postal_code || ''
-                }
-              };
-            });
-          
-          fetchedRebates = [...formattedLocalRebates, ...fetchedRebates];
-        }
-      } catch (err) {
-        console.error('Failed to merge local storage rebates:', err);
-      }
-
-      setRebates(fetchedRebates);
-      setIsLoading(false);
-    }
-    loadData();
-  }, [initialRebates]);
+  }, []);
 
   // Perform search filtering
   useEffect(() => {
-    let filtered = rebates.filter((item) => {
-      // 1. Text Search matching authority, technology, city, state, or postal code
-      const searchStr = `${item.authority_name} ${item.technology_category} ${item.region.city} ${item.region.state_province} ${item.region.postal_code}`.toLowerCase();
-      const textMatches = searchStr.includes(query.toLowerCase());
-
-      // 2. Postal Code specific filtering
-      const postalMatches = postalQuery === '' || item.region.postal_code.toLowerCase().includes(postalQuery.toLowerCase().trim());
-
-      // 3. Category Filter
-      let catMatches = true;
-      if (selectedCategory !== 'all') {
-        if (selectedCategory === 'rebate') {
-          const catStr = `${item.technology_category} ${item.authority_name}`.toLowerCase();
-          catMatches = catStr.includes('rebate') || catStr.includes('grant') || catStr.includes('subsidy');
-        } else {
-          catMatches = item.technology_category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
-                       item.authority_name.toLowerCase().includes(selectedCategory.toLowerCase());
-        }
-      }
-
-      // 4. Country Filter
-      let countryMatches = true;
-      if (selectedCountry !== 'all') {
-        const itemCountry = item.region.country_code.toLowerCase() === 'gb' ? 'uk' : item.region.country_code.toLowerCase();
-        countryMatches = itemCountry === selectedCountry.toLowerCase();
-      }
-
-      return textMatches && postalMatches && catMatches && countryMatches;
-    });
-
+    const filtered = filterRebates(rebates, query, postalQuery, selectedCategory, selectedCountry);
     setFilteredResults(filtered);
   }, [query, postalQuery, selectedCategory, selectedCountry, rebates]);
-
-  // Extended technology categories for filtering
-  const categories = ['all', 'solar', 'battery', 'heat pump', 'utility', 'tax', 'rebate'];
-
-  // Localized label helper for filter tabs
-  const getCategoryLabel = (cat: string) => {
-    if (cat === 'all') return t.search.allCategories;
-    if (lang === 'de-de') {
-      if (cat === 'solar') return 'Solar';
-      if (cat === 'battery') return 'Batterie';
-      if (cat === 'heat pump') return 'Wärmepumpe';
-      if (cat === 'utility') return 'Versorger';
-      if (cat === 'tax') return 'Steuern';
-      if (cat === 'rebate') return 'Zuschüsse';
-    }
-    if (lang === 'fr-fr') {
-      if (cat === 'solar') return 'Solaire';
-      if (cat === 'battery') return 'Batterie';
-      if (cat === 'heat pump') return 'Pompe à chaleur';
-      if (cat === 'utility') return 'Réseau';
-      if (cat === 'tax') return 'Impôts';
-      if (cat === 'rebate') return 'Subventions';
-    }
-    if (cat === 'heat pump') return 'Heat Pump';
-    return cat;
-  };
-
-  // Count matching rebates for each category (based on queries but independent of selectedCategory filter)
-  const getCategoryCount = (category: string) => {
-    let tempFiltered = rebates.filter((item) => {
-      const searchStr = `${item.authority_name} ${item.technology_category} ${item.region.city} ${item.region.state_province} ${item.region.postal_code}`.toLowerCase();
-      const textMatches = searchStr.includes(query.toLowerCase());
-      const postalMatches = postalQuery === '' || item.region.postal_code.toLowerCase().includes(postalQuery.toLowerCase().trim());
-
-      let countryMatches = true;
-      if (selectedCountry !== 'all') {
-        const itemCountry = item.region.country_code.toLowerCase() === 'gb' ? 'uk' : item.region.country_code.toLowerCase();
-        countryMatches = itemCountry === selectedCountry.toLowerCase();
-      }
-
-      return textMatches && postalMatches && countryMatches;
-    });
-
-    if (category === 'all') return tempFiltered.length;
-
-    if (category === 'rebate') {
-      return tempFiltered.filter((item) => {
-        const catStr = `${item.technology_category} ${item.authority_name}`.toLowerCase();
-        return catStr.includes('rebate') || catStr.includes('grant') || catStr.includes('subsidy');
-      }).length;
-    }
-
-    return tempFiltered.filter((item) => {
-      return item.technology_category.toLowerCase().includes(category.toLowerCase()) ||
-             item.authority_name.toLowerCase().includes(category.toLowerCase());
-    }).length;
-  };
 
   // Animation variants
   const containerVariants = {
@@ -319,7 +114,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
         <div className="flex flex-wrap items-center gap-2">
           <SlidersHorizontal className="w-4 h-4 text-[var(--text-muted)] mr-2" />
           {categories.map((cat) => {
-            const count = getCategoryCount(cat);
+            const count = getCategoryCount(cat, rebates, query, postalQuery, selectedCountry);
             const isActive = selectedCategory === cat;
             return (
               <button
@@ -331,7 +126,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
                     : 'bg-[var(--bg-primary)] border-[var(--color-border)] text-[var(--text-muted)] hover:border-[var(--color-accent)]'
                 }`}
               >
-                <span>{getCategoryLabel(cat)}</span>
+                <span>{getCategoryLabel(cat, lang, t)}</span>
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${
                   isActive ? 'bg-white/20 text-white' : 'bg-[var(--bg-secondary)] text-[var(--text-main)] border border-[var(--color-border)]'
                 }`}>
@@ -363,71 +158,14 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
         >
           <AnimatePresence mode="popLayout">
             {filteredResults.length > 0 ? (
-              filteredResults.map((rebate) => {
-                const countryCode = rebate.region.country_code.toLowerCase() === 'gb' ? 'uk' : rebate.region.country_code.toLowerCase();
-                const stateSlug = rebate.region.state_province.toLowerCase().replace(/\s+/g, '-');
-                const citySlug = rebate.region.city.toLowerCase().replace(/\s+/g, '-');
-                const detailUrl = `/${lang}/directory/${countryCode}/${stateSlug}/${citySlug}`;
-
-                return (
-                  <motion.div
-                    layout
-                    variants={itemVariants as any}
-                    key={rebate.id}
-                    className="bg-[var(--bg-primary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group relative overflow-hidden"
-                  >
-                    {/* Background glow on hover */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-accent)]/2 rounded-full blur-2xl pointer-events-none group-hover:bg-[var(--color-accent)]/5 transition-all"></div>
-
-                    <div>
-                      {/* Location & Sizing Badge */}
-                      <div className="flex justify-between items-start gap-2 mb-4">
-                        <span className="text-[10px] font-bold text-[var(--text-muted)] bg-[var(--bg-secondary)] border border-[var(--color-border)] px-2.5 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
-                          <MapPin className="w-3.5 h-3.5 text-[var(--color-accent)]" />
-                          {rebate.region.city}, {rebate.region.state_province} {rebate.region.postal_code}
-                        </span>
-                        
-                        <span className="text-[10px] font-black text-[var(--color-accent)] border border-[var(--color-accent)]/20 px-2.5 py-1 rounded-lg bg-[var(--color-accent)]/5 flex items-center gap-1 uppercase tracking-wide">
-                          <Zap className="w-3 h-3 animate-pulse" />
-                          {rebate.incentive_type === 'percentage' && 'Tax Credit'}
-                          {rebate.incentive_type === 'fixed' && 'Cash Grant'}
-                          {rebate.incentive_type === 'per_watt' && 'Utility Offset'}
-                        </span>
-                      </div>
-
-                      <h3 className="text-lg font-bold text-[var(--text-main)] mb-1.5 group-hover:text-[var(--color-accent)] transition-colors line-clamp-2">
-                        {rebate.authority_name}
-                      </h3>
-                      <p className="text-xs text-[var(--text-muted)] mb-4 font-semibold tracking-wide uppercase flex items-center gap-1.5">
-                        <Tag className="w-3.5 h-3.5" />
-                        {rebate.technology_category}
-                      </p>
-                    </div>
-
-                    <div className="border-t border-[var(--color-border)]/50 pt-4 mt-2 flex items-center justify-between">
-                      {/* Value callout */}
-                      <div>
-                        <span className="text-3xl font-black text-[var(--text-main)] tracking-tight">
-                          {rebate.incentive_type === 'percentage' && `${rebate.incentive_value}%`}
-                          {rebate.incentive_type === 'fixed' && `$${rebate.incentive_value.toLocaleString()}`}
-                          {rebate.incentive_type === 'per_watt' && `$${rebate.incentive_value}/W`}
-                        </span>
-                        <span className="block text-[10px] font-bold text-[var(--text-muted)] mt-0.5">
-                          {rebate.max_limit ? `Capped at $${rebate.max_limit.toLocaleString()}` : 'No limit cap'}
-                        </span>
-                      </div>
-
-                      {/* Action trigger link */}
-                      <a 
-                        href={detailUrl}
-                        className="text-xs font-bold text-[var(--color-accent)] flex items-center gap-1 border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white px-4 py-2 rounded-xl transition-all shadow-sm"
-                      >
-                        Calculate ROI <ArrowRight className="w-4 h-4 ml-0.5" />
-                      </a>
-                    </div>
-                  </motion.div>
-                );
-              })
+              filteredResults.map((rebate) => (
+                <RebateCard
+                  key={rebate.id}
+                  rebate={rebate}
+                  lang={lang}
+                  itemVariants={itemVariants}
+                />
+              ))
             ) : (
               <motion.div 
                 layout
