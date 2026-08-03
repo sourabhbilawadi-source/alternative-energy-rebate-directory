@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Building, 
-  Leaf, 
   DollarSign, 
   Zap, 
   Scale, 
   ShieldCheck, 
   TrendingUp, 
-  Truck, 
-  Flame 
 } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
-import { isValidSource } from '../../data/regions';
 import type { RegionEntry } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
 import { getCountryConfig } from '../../utils/countryConfig';
+import DataSourcesBlock from './sme/DataSourcesBlock';
+import CarbonDrawer from './sme/CarbonDrawer';
+import { AnimatedNumber } from './sme/AnimatedNumber';
+import { isValidSource } from '../../data/regions';
 
 interface SmeHubProps {
   key?: string;
@@ -27,40 +26,6 @@ interface SmeHubProps {
   city: string;
   lang?: string;
   regionEntry?: RegionEntry;
-}
-
-// Custom high-performance animated number counter
-function AnimatedNumber({ value, formatter }: { value: number; formatter?: (v: number) => string }) {
-  const [displayValue, setDisplayValue] = React.useState(value);
-
-  React.useEffect(() => {
-    let start = displayValue;
-    const end = value;
-    if (start === end) return;
-
-    const duration = 500;
-    const startTime = performance.now();
-    let animationFrameId: number;
-
-    const updateNumber = (now: number) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 3);
-      const current = start + (end - start) * ease;
-      setDisplayValue(current);
-
-      if (progress < 1) {
-        animationFrameId = requestAnimationFrame(updateNumber);
-      } else {
-        setDisplayValue(end);
-      }
-    };
-
-    animationFrameId = requestAnimationFrame(updateNumber);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [value]);
-
-  return <span>{formatter ? formatter(displayValue) : Math.round(displayValue)}</span>;
 }
 
 export default function SmeHub({
@@ -382,60 +347,15 @@ export default function SmeHub({
           </div>
         </motion.div>
 
-        {/* Only show the Data Sources block if at least one real source is present */}
-        {hasAnyRealSource && (
-          <motion.div 
-            variants={itemVariants as any}
-            className="bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded-2xl p-4 text-[10px] text-[var(--text-muted)] space-y-1.5 shadow-sm"
-          >
-            <div className="font-bold text-[var(--text-main)] mb-1 flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-[var(--color-accent)]" />
-              Data Sources & Verification
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1 border-t border-[var(--color-border)]/50">
-              {isValidSource((regionEntry as any).gridRateSource) && (
-                <div>
-                  Grid Rate: {(regionEntry as any).gridRateSource.sourceUrl !== '#' ? (
-                    <a href={(regionEntry as any).gridRateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{(regionEntry as any).gridRateSource.sourceName}</a>
-                  ) : (
-                    <span className="font-semibold">{(regionEntry as any).gridRateSource.sourceName}</span>
-                  )}
-                  {(regionEntry as any).gridRateSource.lastVerified && <span className="opacity-80"> (Verified: {(regionEntry as any).gridRateSource.lastVerified})</span>}
-                </div>
-              )}
-              {isValidSource((regionEntry as any).costPerWattSource) && (
-                <div>
-                  Cost/W: {(regionEntry as any).costPerWattSource.sourceUrl !== '#' ? (
-                    <a href={(regionEntry as any).costPerWattSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{(regionEntry as any).costPerWattSource.sourceName}</a>
-                  ) : (
-                    <span className="font-semibold">{(regionEntry as any).costPerWattSource.sourceName}</span>
-                  )}
-                  {(regionEntry as any).costPerWattSource.lastVerified && <span className="opacity-80"> (Verified: {(regionEntry as any).costPerWattSource.lastVerified})</span>}
-                </div>
-              )}
-              {isValidSource((regionEntry as any).federalTaxCreditSource) && (
-                <div>
-                  Federal Credit: {(regionEntry as any).federalTaxCreditSource.sourceUrl !== '#' ? (
-                    <a href={(regionEntry as any).federalTaxCreditSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{(regionEntry as any).federalTaxCreditSource.sourceName}</a>
-                  ) : (
-                    <span className="font-semibold">{(regionEntry as any).federalTaxCreditSource.sourceName}</span>
-                  )}
-                  {(regionEntry as any).federalTaxCreditSource.lastVerified && <span className="opacity-80"> (Verified: {(regionEntry as any).federalTaxCreditSource.lastVerified})</span>}
-                </div>
-              )}
-              {isValidSource((regionEntry as any).stateRebateSource) && (
-                <div>
-                  State Rebate: {(regionEntry as any).stateRebateSource.sourceUrl !== '#' ? (
-                    <a href={(regionEntry as any).stateRebateSource.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline font-semibold">{(regionEntry as any).stateRebateSource.sourceName}</a>
-                  ) : (
-                    <span className="font-semibold">{(regionEntry as any).stateRebateSource.sourceName}</span>
-                  )}
-                  {(regionEntry as any).stateRebateSource.lastVerified && <span className="opacity-80"> (Verified: {(regionEntry as any).stateRebateSource.lastVerified})</span>}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
+        {/* Data Sources block */
+         hasAnyRealSource && (
+           <DataSourcesBlock
+             hasAnyRealSource={hasAnyRealSource}
+             regionEntry={regionEntry}
+             itemVariants={itemVariants}
+           />
+         )
+        }
       </motion.div>
 
       {/* ----------------- RIGHT PANEL: DYNAMIC RESULTS ----------------- */}
@@ -552,49 +472,16 @@ export default function SmeHub({
         </div>
 
         {/* Carbon Offset Analytics Drawer */}
-        <motion.div 
-          variants={itemVariants as any}
-          className="bg-[var(--bg-primary)] border border-[var(--color-border)] rounded-2xl p-4 space-y-3 shadow-inner"
-        >
-          <div className="flex justify-between items-center">
-            <span className="text-xs font-bold text-[var(--text-main)] flex items-center gap-1.5">
-              <Leaf className="w-4 h-4 text-green-500" />
-              {t.calculator.carbonOffset}
-            </span>
-            <span className="text-sm font-black text-green-500">
-              <AnimatedNumber value={carbonTons} formatter={(v) => v.toFixed(1)} /> {config.carbon}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-3 gap-2 border-t border-[var(--color-border)]/40 pt-3 text-center text-[10px] text-[var(--text-muted)]">
-            <div className="space-y-1.5 p-2 bg-[var(--bg-secondary)]/50 rounded-xl border border-[var(--color-border)]/40">
-              <Truck className="w-4 h-4 text-[var(--text-muted)] mx-auto" />
-              <div className="font-bold text-[var(--text-main)]">
-                <AnimatedNumber value={equivalentCars} /> Cars
-              </div>
-              <div>{t.calculator.equivalentCars}</div>
-            </div>
-            <div className="space-y-1.5 p-2 bg-[var(--bg-secondary)]/50 rounded-xl border border-[var(--color-border)]/40">
-              <Flame className="w-4 h-4 text-[var(--text-muted)] mx-auto" />
-              <div className="font-bold text-[var(--text-main)]">
-                <AnimatedNumber value={equivalentCoal} /> Tons
-              </div>
-              <div>{t.calculator.equivalentCoal}</div>
-            </div>
-            <div className="space-y-1.5 p-2 bg-[var(--bg-secondary)]/50 rounded-xl border border-[var(--color-border)]/40">
-              <Building className="w-4 h-4 text-[var(--text-muted)] mx-auto" />
-              <div className="font-bold text-[var(--text-main)]">
-                <AnimatedNumber value={equivalentForest} /> {config.land}
-              </div>
-              <div>
-                {lang === 'de-de' 
-                  ? 'Waldfläche gerettet (Hektar)' 
-                  : (config.land === 'Hectares' ? 'Forest hectares saved' : t.calculator.equivalentForest)
-                }
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        <CarbonDrawer
+          carbonTons={carbonTons}
+          equivalentCars={equivalentCars}
+          equivalentCoal={equivalentCoal}
+          equivalentForest={equivalentForest}
+          config={config}
+          lang={lang}
+          t={t}
+          itemVariants={itemVariants}
+        />
       </motion.div>
     </motion.div>
   );
