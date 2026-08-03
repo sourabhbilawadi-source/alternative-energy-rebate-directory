@@ -10,15 +10,12 @@ export async function getStaticPaths() {
   const langs = ['en-us', 'de-de', 'fr-fr'];
   
   const seen = new Set();
-  const list = [];
-  for (const r of regionsData) {
+  let regions = regionsData.filter(r => {
     const key = `${r.countryCode}:${r.stateSlug}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      list.push({ country: r.countryCode, state: r.stateSlug });
-    }
-  }
-  let regions = list;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).map(r => ({ country: r.countryCode, state: r.stateSlug }));
 
   if (supabase) {
     try {
