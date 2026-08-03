@@ -447,48 +447,51 @@ export default function RebateCalculator({
     if (dbRebates && dbRebates.length > 0) {
       let fedCreditVal = 0;
       let otherIncentivesVal = 0;
+      let hasFedInDb = false;
 
-      dbRebates.forEach((rebate) => {
+      const isUsPurchase = isUs && ownership === 'purchase';
+      const isUsLease = isUs && ownership === 'lease';
+      const capitalCostLease = capitalCost * 0.30;
+
+      for (let i = 0, len = dbRebates.length; i < len; i++) {
+        const rebate = dbRebates[i];
         if (rebate.technology_category === 'Clean Energy Loan') {
-          return;
+          continue;
         }
+
         let value = 0;
+
+        const incentiveValueNum = Number(rebate.incentive_value);
         if (rebate.incentive_type === 'percentage') {
-          value = capitalCost * (Number(rebate.incentive_value) / 100);
+          value = capitalCost * (incentiveValueNum / 100);
         } else if (rebate.incentive_type === 'per_watt') {
-          value = systemSizeCapped * 1000 * Number(rebate.incentive_value);
+          value = systemSizeCapped * 1000 * incentiveValueNum;
         } else if (rebate.incentive_type === 'fixed') {
-          value = Number(rebate.incentive_value);
+          value = incentiveValueNum;
         }
 
         if (rebate.max_limit !== null) {
           value = Math.min(value, Number(rebate.max_limit));
         }
 
-        if (
-          rebate.technology_category.toLowerCase().includes('federal') || 
-          rebate.authority_name.toLowerCase().includes('federal')
-        ) {
-          if (isUs && ownership === 'purchase') {
+        const isFederal = rebate.technology_category.toLowerCase().includes('federal') ||
+                          rebate.authority_name.toLowerCase().includes('federal');
+
+        if (isFederal) {
+          hasFedInDb = true;
+          if (isUsPurchase) {
             value = 0;
-          } else if (isUs && ownership === 'lease') {
-            value = capitalCost * 0.30;
+          } else if (isUsLease) {
+            value = capitalCostLease;
           }
           fedCreditVal += value;
         } else {
           otherIncentivesVal += value;
         }
-      });
+      }
 
-      if (isUs && ownership === 'lease') {
-        const hasFedInDb = dbRebates.some(
-          (r) =>
-            r.technology_category.toLowerCase().includes('federal') ||
-            r.authority_name.toLowerCase().includes('federal')
-        );
-        if (!hasFedInDb) {
-          fedCreditVal = capitalCost * 0.30;
-        }
+      if (isUsLease && !hasFedInDb) {
+        fedCreditVal = capitalCostLease;
       }
 
       const totalApplied = Math.min(capitalCost, fedCreditVal + otherIncentivesVal);
