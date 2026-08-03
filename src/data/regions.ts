@@ -1038,6 +1038,12 @@ export const regionsData: RegionEntry[] = [
   }
 ];
 
-export function isValidSource(source: any): source is string {
-  return typeof source === 'string' && source.length > 0;
-}
+export const isValidSource = (source: any): source is MetricSource => {
+  return !!(
+    source &&
+    source.sourceName &&
+    source.sourceName.trim() !== '' &&
+    source.lastVerified &&
+    source.lastVerified.trim() !== ''
+  );
+};
