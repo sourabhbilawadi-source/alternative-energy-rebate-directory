@@ -93,4 +93,14 @@ describe('supabase client', () => {
 
     vi.unstubAllEnvs();
   });
+
+  it('should throw an error in PROD environment if credentials are missing', async () => {
+    vi.stubEnv('PROD', 'true');
+    vi.stubEnv('PUBLIC_SUPABASE_URL', '');
+    vi.stubEnv('PUBLIC_SUPABASE_ANON_KEY', '');
+
+    await expect(import('./supabase')).rejects.toThrow('Supabase credentials are required in production environments.');
+
+    vi.unstubAllEnvs();
+  });
 });
