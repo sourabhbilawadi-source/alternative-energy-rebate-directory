@@ -216,6 +216,25 @@ describe('SearchPortal', () => {
     });
   });
 
+  it('handles invalid JSON in localStorage gracefully without crashing', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    // Set invalid JSON in localStorage
+    localStorageMock.setItem('local_rebates', 'invalid-json-content');
+
+    render(<SearchPortal lang="en-us" initialRebates={[sampleRebate]} />);
+
+    await waitFor(() => {
+      // Should still render the initial rebate
+      expect(screen.getByText('Federal Solar Rebate')).toBeInTheDocument();
+    });
+
+    // Should have logged the error
+    expect(consoleSpy).toHaveBeenCalledWith('Failed to merge local storage rebates:', expect.any(SyntaxError));
+
+    consoleSpy.mockRestore();
+  });
+
   it('fetches rebates from Supabase when initialRebates is empty', async () => {
     mockSupabaseEq.mockReset();
     // Setup Supabase mock response
