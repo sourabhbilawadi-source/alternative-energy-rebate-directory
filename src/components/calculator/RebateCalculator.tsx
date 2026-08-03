@@ -30,6 +30,8 @@ export interface DbRebate {
   max_limit: number | null;
 }
 
+
+
 interface RebateCalculatorProps {
   key?: string;
   defaultGridRate: number;
@@ -283,6 +285,32 @@ function calculateSolarMetrics({
   };
 }
 
+// Dynamic payback yield evaluation
+function getPaybackTier(years: number) {
+  if (years === 0) return { label: 'No Savings', className: 'bg-red-500/10 text-red-500' };
+  if (years < 5) {
+    return {
+      label: 'Excellent Yield',
+      className: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+    };
+  } else if (years >= 5 && years <= 8) {
+    return {
+      label: 'High Return',
+      className: 'bg-green-500/10 text-green-600 dark:text-green-400'
+    };
+  } else if (years > 8 && years <= 12) {
+    return {
+      label: 'Moderate Return',
+      className: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+    };
+  } else {
+    return {
+      label: 'Slow Return',
+      className: 'bg-orange-500/10 text-orange-600 dark:text-orange-400'
+    };
+  }
+}
+
 function calculateIncentivesData(
   dbRebates: DbRebate[] | undefined,
   capitalCost: number,
@@ -357,32 +385,6 @@ function calculateIncentivesData(
     fedTaxCredit: fedCreditVal,
     totalIncentives: totalApplied,
   };
-}
-
-// Dynamic payback yield evaluation
-function getPaybackTier(years: number) {
-  if (years === 0) return { label: 'No Savings', className: 'bg-red-500/10 text-red-500' };
-  if (years < 5) {
-    return {
-      label: 'Excellent Yield',
-      className: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-    };
-  } else if (years >= 5 && years <= 8) {
-    return {
-      label: 'High Return',
-      className: 'bg-green-500/10 text-green-600 dark:text-green-400'
-    };
-  } else if (years > 8 && years <= 12) {
-    return {
-      label: 'Moderate Return',
-      className: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-    };
-  } else {
-    return {
-      label: 'Slow Return',
-      className: 'bg-orange-500/10 text-orange-600 dark:text-orange-400'
-    };
-  }
 }
 
 export default function RebateCalculator({
