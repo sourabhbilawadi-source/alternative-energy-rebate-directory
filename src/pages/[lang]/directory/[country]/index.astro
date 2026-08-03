@@ -37,77 +37,95 @@ export async function getStaticPaths() {
 const { lang, country } = Astro.params;
 const t = useTranslations(lang || 'en-us');
 
-const displayCountry = (country && COUNTRY_METADATA[country.toLowerCase()]) 
-  ? COUNTRY_METADATA[country.toLowerCase()].name 
-  : (country === 'uk' ? 'United Kingdom' : country === 'us' ? 'United States' : country === 'de' ? 'Germany' : country === 'ca' ? 'Canada' : country === 'au' ? 'Australia' : (country || '').toUpperCase());
-
-// Resolve unique states and their city count dynamically
-const getStatesPreset = (c: string) => {
-  const code = c.toLowerCase();
-  const countryRegions = regionsData.filter(r => r.countryCode === code);
-  
-  const stateMap = new Map<string, { name: string; citiesCount: number }>();
-  for (const r of countryRegions) {
-    const existing = stateMap.get(r.stateSlug);
-    if (existing) {
-      existing.citiesCount += 1;
-    } else {
-      stateMap.set(r.stateSlug, { name: r.stateName, citiesCount: 1 });
-    }
+const getDisplayCountry = (c: string | undefined) => {
+  if (c && COUNTRY_METADATA[c.toLowerCase()]) {
+    return COUNTRY_METADATA[c.toLowerCase()].name;
   }
-  
-  return Array.from(stateMap.entries()).map(([slug, info]) => ({
-    slug,
-    name: info.name,
-    citiesCount: info.citiesCount
-  }));
+  if (c === 'uk') return 'United Kingdom';
+  if (c === 'us') return 'United States';
+  if (c === 'de') return 'Germany';
+  if (c === 'ca') return 'Canada';
+  if (c === 'au') return 'Australia';
+  return (c || '').toUpperCase();
 };
 
-let statesList = getStatesPreset(country || '');
+const displayCountry = getDisplayCountry(country);
 
-if (supabase) {
-  try {
-    const { data } = await supabase
-      .from('regions')
-      .select('state_province, state_slug')
-      .eq('country_code', country === 'uk' ? 'gb' : (country || 'us').toLowerCase());
+async function fetchStatesList(c: string) {
+  const getStatesPreset = (cCode: string) => {
+    const code = cCode.toLowerCase();
+    const countryRegions = regionsData.filter(r => r.countryCode === code);
     
-    if (data && data.length > 0) {
-      const stateMap = new Map<string, { slug: string; count: number }>();
-      for (const r of data) {
-        const name = r.state_province;
-        const slug = r.state_slug || name.toLowerCase().replace(/\s+/g, '-');
-        const existing = stateMap.get(name);
-        if (existing) {
-          existing.count += 1;
-        } else {
-          stateMap.set(name, { slug, count: 1 });
-        }
+    const stateMap = new Map<string, { name: string; citiesCount: number }>();
+    for (const r of countryRegions) {
+      const existing = stateMap.get(r.stateSlug);
+      if (existing) {
+        existing.citiesCount += 1;
+      } else {
+        stateMap.set(r.stateSlug, { name: r.stateName, citiesCount: 1 });
       }
-      statesList = Array.from(stateMap.entries()).map(([name, info]) => ({
-        slug: info.slug,
-        name,
-        citiesCount: info.count
-      }));
     }
-  } catch (err) {
-    console.error('Failed to query states from Supabase regions. Using presets:', err);
+
+    return Array.from(stateMap.entries()).map(([slug, info]) => ({
+      slug,
+      name: info.name,
+      citiesCount: info.citiesCount
+    }));
+  };
+
+  let list = getStatesPreset(c);
+
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from('regions')
+        .select('state_province, state_slug')
+        .eq('country_code', c === 'uk' ? 'gb' : (c || 'us').toLowerCase());
+
+      if (data && data.length > 0) {
+        const stateMap = new Map<string, { slug: string; count: number }>();
+        for (const r of data) {
+          const name = r.state_province;
+          const slug = r.state_slug || name.toLowerCase().replace(/\s+/g, '-');
+          const existing = stateMap.get(name);
+          if (existing) {
+            existing.count += 1;
+          } else {
+            stateMap.set(name, { slug, count: 1 });
+          }
+        }
+        list = Array.from(stateMap.entries()).map(([name, info]) => ({
+          slug: info.slug,
+          name,
+          citiesCount: info.count
+        }));
+      }
+    } catch (err) {
+      console.error('Failed to query states from Supabase regions. Using presets:', err);
+    }
   }
+
+  return list;
 }
 
-let activeProgramsCount = 0;
-if (supabase) {
+const statesList = await fetchStatesList(country || '');
+
+async function fetchActiveProgramsCount(c: string) {
+  if (!supabase) return 0;
   try {
     const { count } = await supabase
       .from('rebates')
       .select('*, regions!inner(*)', { count: 'exact', head: true })
       .eq('is_active', true)
-      .eq('regions.country_code', country === 'uk' ? 'gb' : country.toLowerCase());
-    if (count !== null) activeProgramsCount = count;
+      .eq('regions.country_code', c === 'uk' ? 'gb' : c.toLowerCase());
+    return count !== null ? count : 0;
   } catch (err) {
     console.error('Failed to count active rebates for country:', err);
+    return 0;
   }
 }
+
+const activeProgramsCount = await fetchActiveProgramsCount(country || 'us');
 
 const siteUrl = 'https://incentivemapper.com';
 const canonicalUrl = `${siteUrl}/${lang}/directory/${country}`;
