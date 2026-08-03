@@ -17,6 +17,7 @@ import {
 import { useTranslations } from '../../lib/i18n';
 import { queryLocationSpecs } from '../../lib/energyApi';
 import type { RegionEntry, MetricSource } from '../../data/regions';
+import { isValidSource } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
 import { getCountryConfig } from '../../utils/countryConfig';
 
@@ -46,16 +47,7 @@ interface RebateCalculatorProps {
   defaultPostalCode?: string;
 }
 
-// Helper to validate source values
-const isValidSource = (source: any): source is MetricSource => {
-  return !!(
-    source &&
-    source.sourceName &&
-    source.sourceName.trim() !== '' &&
-    source.lastVerified &&
-    source.lastVerified.trim() !== ''
-  );
-};
+
 
 // Custom animated counter using requestAnimationFrame for high performance
 function AnimatedNumber({ value, formatter }: { value: number; formatter?: (v: number) => string }) {
@@ -224,6 +216,173 @@ function EnergyFlowVisualizer({ batteryEnabled, sunHours, systemSize, lang }: { 
       </svg>
     </div>
   );
+}
+
+function calculateSolarMetrics({
+  monthlyBill,
+  gridRate,
+  sunHours,
+  systemSizeCapped,
+  capitalCost,
+  isMetric,
+  batteryEnabled,
+  batteryCapacity,
+  totalIncentives,
+  gridEmissions
+}: {
+  monthlyBill: number;
+  gridRate: number;
+  sunHours: number;
+  systemSizeCapped: number;
+  capitalCost: number;
+  isMetric: boolean;
+  batteryEnabled: boolean;
+  batteryCapacity: number;
+  totalIncentives: number;
+  gridEmissions: number;
+}) {
+  // Battery capital cost overlay ($750/kWh estimate)
+  const batteryCost = batteryEnabled ? batteryCapacity * 750 : 0;
+  const netSystemCost = capitalCost + batteryCost - totalIncentives;
+
+  // Annual Generation (E_annual = P_sz * eta_sun)
+  const annualGeneration = systemSizeCapped * sunHours; // kWh
+
+  // Peak Avoidance Uplift through Battery Integration (Delta_peak)
+  const deltaPeak = batteryEnabled ? batteryCapacity * 365 * 0.26 * 0.88 : 0;
+
+  // Annual savings (A_save = E_annual * E_u + Delta_peak)
+  const annualSavings = (annualGeneration * gridRate) + deltaPeak;
+
+  // Capped at total electric bill plus peak avoidance value
+  const annualBillTotal = 12 * monthlyBill;
+  const annualSavingsCapped = Math.min(annualBillTotal + deltaPeak, annualSavings);
+
+  // Payback timeline (P_back = (C_sys - I_r) / A_save)
+  const paybackYears = annualSavingsCapped > 0 ? Math.max(0.5, netSystemCost / annualSavingsCapped) : 0;
+
+  const paybackTier = getPaybackTier(paybackYears);
+
+  // Carbon abatement (CO2_tons = (P_sz * eta_sun * delta_grid) / 2000)
+  const carbonAbatementTons = isMetric ? (systemSizeCapped * sunHours * gridEmissions) / 1000 : (systemSizeCapped * sunHours * gridEmissions) / 907.185;
+
+  // Carbon equivalents
+  const equivalentCars = carbonAbatementTons * 0.22;
+  const equivalentCoal = carbonAbatementTons * 0.96;
+  const equivalentForest = isMetric ? (carbonAbatementTons * 1.2 * 0.4047) : (carbonAbatementTons * 1.2);
+
+  return {
+    netSystemCost,
+    annualSavingsCapped,
+    paybackYears,
+    paybackTier,
+    carbonAbatementTons,
+    equivalentCars,
+    equivalentCoal,
+    equivalentForest
+  };
+}
+
+function calculateIncentivesData(
+  dbRebates: DbRebate[] | undefined,
+  capitalCost: number,
+  systemSizeCapped: number,
+  isUs: boolean,
+  ownership: 'purchase' | 'lease',
+  federalTaxCreditPct: number,
+  stateRebate: number,
+  utilityRebate: number
+) {
+  const effectiveFedCreditPct = isUs
+    ? (ownership === 'lease' ? 0.30 : 0.0)
+    : federalTaxCreditPct;
+
+  if (dbRebates && dbRebates.length > 0) {
+    let fedCreditVal = 0;
+    let otherIncentivesVal = 0;
+
+    dbRebates.forEach((rebate) => {
+      if (rebate.technology_category === 'Clean Energy Loan') {
+        return;
+      }
+      let value = 0;
+      if (rebate.incentive_type === 'percentage') {
+        value = capitalCost * (Number(rebate.incentive_value) / 100);
+      } else if (rebate.incentive_type === 'per_watt') {
+        value = systemSizeCapped * 1000 * Number(rebate.incentive_value);
+      } else if (rebate.incentive_type === 'fixed') {
+        value = Number(rebate.incentive_value);
+      }
+
+      if (rebate.max_limit !== null) {
+        value = Math.min(value, Number(rebate.max_limit));
+      }
+
+      if (
+        rebate.technology_category.toLowerCase().includes('federal') ||
+        rebate.authority_name.toLowerCase().includes('federal')
+      ) {
+        if (isUs && ownership === 'purchase') {
+          value = 0;
+        } else if (isUs && ownership === 'lease') {
+          value = capitalCost * 0.30;
+        }
+        fedCreditVal += value;
+      } else {
+        otherIncentivesVal += value;
+      }
+    });
+
+    if (isUs && ownership === 'lease') {
+      const hasFedInDb = dbRebates.some(
+        (r) =>
+          r.technology_category.toLowerCase().includes('federal') ||
+          r.authority_name.toLowerCase().includes('federal')
+      );
+      if (!hasFedInDb) {
+        fedCreditVal = capitalCost * 0.30;
+      }
+    }
+
+    const totalApplied = Math.min(capitalCost, fedCreditVal + otherIncentivesVal);
+    return {
+      fedTaxCredit: fedCreditVal,
+      totalIncentives: totalApplied,
+    };
+  }
+
+  const fedCreditVal = capitalCost * effectiveFedCreditPct;
+  const totalApplied = Math.min(capitalCost, fedCreditVal + stateRebate + utilityRebate);
+  return {
+    fedTaxCredit: fedCreditVal,
+    totalIncentives: totalApplied,
+  };
+}
+
+// Dynamic payback yield evaluation
+function getPaybackTier(years: number) {
+  if (years === 0) return { label: 'No Savings', className: 'bg-red-500/10 text-red-500' };
+  if (years < 5) {
+    return {
+      label: 'Excellent Yield',
+      className: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+    };
+  } else if (years >= 5 && years <= 8) {
+    return {
+      label: 'High Return',
+      className: 'bg-green-500/10 text-green-600 dark:text-green-400'
+    };
+  } else if (years > 8 && years <= 12) {
+    return {
+      label: 'Moderate Return',
+      className: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+    };
+  } else {
+    return {
+      label: 'Slow Return',
+      className: 'bg-orange-500/10 text-orange-600 dark:text-orange-400'
+    };
+  }
 }
 
 export default function RebateCalculator({
@@ -438,131 +597,40 @@ export default function RebateCalculator({
   
   const isUs = localCountry === 'us';
 
-  // Total localized incentives
-  const calculateIncentives = () => {
-    const effectiveFedCreditPct = isUs
-      ? (ownership === 'lease' ? 0.30 : 0.0)
-      : federalTaxCreditPct;
+  const { fedTaxCredit, totalIncentives } = calculateIncentivesData(
+    dbRebates,
+    capitalCost,
+    systemSizeCapped,
+    isUs,
+    ownership,
+    federalTaxCreditPct,
+    stateRebate,
+    utilityRebate
+  );
 
-    if (dbRebates && dbRebates.length > 0) {
-      let fedCreditVal = 0;
-      let otherIncentivesVal = 0;
-
-      dbRebates.forEach((rebate) => {
-        if (rebate.technology_category === 'Clean Energy Loan') {
-          return;
-        }
-        let value = 0;
-        if (rebate.incentive_type === 'percentage') {
-          value = capitalCost * (Number(rebate.incentive_value) / 100);
-        } else if (rebate.incentive_type === 'per_watt') {
-          value = systemSizeCapped * 1000 * Number(rebate.incentive_value);
-        } else if (rebate.incentive_type === 'fixed') {
-          value = Number(rebate.incentive_value);
-        }
-
-        if (rebate.max_limit !== null) {
-          value = Math.min(value, Number(rebate.max_limit));
-        }
-
-        if (
-          rebate.technology_category.toLowerCase().includes('federal') || 
-          rebate.authority_name.toLowerCase().includes('federal')
-        ) {
-          if (isUs && ownership === 'purchase') {
-            value = 0;
-          } else if (isUs && ownership === 'lease') {
-            value = capitalCost * 0.30;
-          }
-          fedCreditVal += value;
-        } else {
-          otherIncentivesVal += value;
-        }
-      });
-
-      if (isUs && ownership === 'lease') {
-        const hasFedInDb = dbRebates.some(
-          (r) =>
-            r.technology_category.toLowerCase().includes('federal') ||
-            r.authority_name.toLowerCase().includes('federal')
-        );
-        if (!hasFedInDb) {
-          fedCreditVal = capitalCost * 0.30;
-        }
-      }
-
-      const totalApplied = Math.min(capitalCost, fedCreditVal + otherIncentivesVal);
-      return {
-        fedTaxCredit: fedCreditVal,
-        totalIncentives: totalApplied,
-      };
-    }
-
-    const fedCreditVal = capitalCost * effectiveFedCreditPct;
-    const totalApplied = Math.min(capitalCost, fedCreditVal + stateRebate + utilityRebate);
-    return {
-      fedTaxCredit: fedCreditVal,
-      totalIncentives: totalApplied,
-    };
-  };
-
-  const { fedTaxCredit, totalIncentives } = calculateIncentives();
+  const metrics = calculateSolarMetrics({
+    monthlyBill,
+    gridRate,
+    sunHours,
+    systemSizeCapped,
+    capitalCost,
+    isMetric: config.isMetric,
+    batteryEnabled,
+    batteryCapacity,
+    totalIncentives,
+    gridEmissions
+  });
   
-  // Battery capital cost overlay ($750/kWh estimate)
-  const batteryCost = batteryEnabled ? batteryCapacity * 750 : 0;
-  const netSystemCost = capitalCost + batteryCost - totalIncentives;
-
-  // Annual Generation (E_annual = P_sz * eta_sun)
-  const annualGeneration = systemSizeCapped * sunHours; // kWh
-
-  // Peak Avoidance Uplift through Battery Integration (Delta_peak)
-  // Delta_peak = batteryCapacity * 365 * (Phi_peak - Phi_off) * alpha_eff
-  const deltaPeak = batteryEnabled ? batteryCapacity * 365 * 0.26 * 0.88 : 0;
-
-  // Annual savings (A_save = E_annual * E_u + Delta_peak)
-  const annualSavings = (annualGeneration * gridRate) + deltaPeak;
-  
-  // Capped at total electric bill plus peak avoidance value
-  const annualBillTotal = 12 * monthlyBill;
-  const annualSavingsCapped = Math.min(annualBillTotal + deltaPeak, annualSavings);
-
-  // Payback timeline (P_back = (C_sys - I_r) / A_save)
-  const paybackYears = annualSavingsCapped > 0 ? Math.max(0.5, netSystemCost / annualSavingsCapped) : 0;
-
-  // Dynamic payback yield evaluation
-  const getPaybackTier = (years: number) => {
-    if (years === 0) return { label: 'No Savings', className: 'bg-red-500/10 text-red-500' };
-    if (years < 5) {
-      return {
-        label: 'Excellent Yield',
-        className: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-      };
-    } else if (years >= 5 && years <= 8) {
-      return {
-        label: 'High Return',
-        className: 'bg-green-500/10 text-green-600 dark:text-green-400'
-      };
-    } else if (years > 8 && years <= 12) {
-      return {
-        label: 'Moderate Return',
-        className: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-      };
-    } else {
-      return {
-        label: 'Slow Return',
-        className: 'bg-orange-500/10 text-orange-600 dark:text-orange-400'
-      };
-    }
-  };
-  const paybackTier = getPaybackTier(paybackYears);
-
-  // Carbon abatement (CO2_tons = (P_sz * eta_sun * delta_grid) / 2000)
-  const carbonAbatementTons = config.isMetric ? (systemSizeCapped * sunHours * gridEmissions) / 1000 : (systemSizeCapped * sunHours * gridEmissions) / 907.185;
-
-  // Carbon equivalents
-  const equivalentCars = carbonAbatementTons * 0.22;
-  const equivalentCoal = carbonAbatementTons * 0.96;
-  const equivalentForest = config.isMetric ? (carbonAbatementTons * 1.2 * 0.4047) : (carbonAbatementTons * 1.2);
+  const {
+    netSystemCost,
+    annualSavingsCapped,
+    paybackYears,
+    paybackTier,
+    carbonAbatementTons,
+    equivalentCars,
+    equivalentCoal,
+    equivalentForest
+  } = metrics;
 
   // Animation layout variants
   const containerVariants = {
