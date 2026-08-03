@@ -6,6 +6,16 @@ export interface MetricSource {
   lastVerified: string;
 }
 
+export function isValidSource(source: any): source is MetricSource {
+  return (
+    source !== null &&
+    typeof source === 'object' &&
+    typeof source.sourceName === 'string' &&
+    typeof source.sourceUrl === 'string' &&
+    typeof source.lastVerified === 'string'
+  );
+}
+
 export interface RegionEntry {
   countryCode: string;   // e.g. 'us'
   countryName: string;   // e.g. 'United States'
@@ -15,13 +25,13 @@ export interface RegionEntry {
   citySlug: string;      // e.g. 'los-angeles'
   cityName: string;      // e.g. 'Los Angeles'
 
-  // Sizing/rate parameters (using null for TODO/placeholder values)
+  // Sizing/rate parameters (using null for placeholder values)
   gridRate: number | null;
   sunHours: number | null;
   gridEmissions: number | null;
   costPerWatt: number | null;
 
-  // Incentives (using null for TODO/placeholder values)
+  // Incentives (using null for placeholder values)
   federalTaxCreditPct: number | null;
   stateRebate: number | null;
   utilityRebate: number | null;
