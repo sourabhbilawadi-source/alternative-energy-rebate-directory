@@ -32,8 +32,6 @@ export interface DbRebate {
 
 
 
-
-
 interface RebateCalculatorProps {
   key?: string;
   defaultGridRate: number;
