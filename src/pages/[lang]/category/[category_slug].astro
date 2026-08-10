@@ -6,6 +6,7 @@ import { useTranslations } from '../../../lib/i18n';
 import Analytics from '../../../components/Analytics.astro';
 import Navbar from '../../../components/Navbar.astro';
 import { COUNTRY_METADATA } from '../../../data/regions';
+import { generateFallbackPaths } from '../../../utils/paths';
 
 export async function getStaticPaths() {
   const langs = ['en-us', 'de-de', 'fr-fr'];
@@ -51,11 +52,7 @@ export async function getStaticPaths() {
       'federal-tax-incentive',
       'local-utility-rebate'
     ];
-    paths.push(
-      ...langs.flatMap(lang =>
-        fallbackCategories.map(category_slug => ({ params: { lang, category_slug } }))
-      )
-    );
+    paths.push(...generateFallbackPaths(langs, fallbackCategories, 'category_slug'));
   }
 
   return paths;
@@ -128,7 +125,7 @@ if (supabase) {
 }
 
 // Fallback category title if not found in database
-const displayCategory = matchedCategory || (category_slug ? category_slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Energy');
+const displayCategory = matchedCategory || (category_slug ? category_slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Energy');
 
 // Localized strings
 const l10n = {
