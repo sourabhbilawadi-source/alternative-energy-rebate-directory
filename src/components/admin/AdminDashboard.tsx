@@ -471,6 +471,10 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
     }
   };
 
+  const regionMap = useMemo(() => {
+    return new Map(regions.map(r => [String(r.id), r]));
+  }, [regions]);
+
   // Render Login Panel
   if (!isLoggedIn) {
     return (
@@ -542,10 +546,6 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
   const filteredRebates = selectedRegionId === 'all' 
     ? rebates 
     : rebates.filter(r => String(r.region_id) === String(selectedRegionId));
-
-  const regionMap = useMemo(() => {
-    return new Map(regions.map(r => [String(r.id), r]));
-  }, [regions]);
 
   return (
     <div className="space-y-8 pb-16">
