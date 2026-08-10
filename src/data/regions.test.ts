@@ -85,3 +85,16 @@ describe('Regions Data Validation', () => {
     });
   });
 });
+
+import { isValidSource } from './regions';
+
+describe('isValidSource', () => {
+  it('should return true for valid sources', () => {
+    expect(isValidSource({ sourceName: 'test', sourceUrl: 'http', lastVerified: 'test' })).toBe(true);
+  });
+  it('should return false for invalid sources', () => {
+    expect(isValidSource(null as any)).toBe(false);
+    expect(isValidSource(undefined)).toBe(false);
+    expect(isValidSource({} as any)).toBe(false);
+  });
+});
