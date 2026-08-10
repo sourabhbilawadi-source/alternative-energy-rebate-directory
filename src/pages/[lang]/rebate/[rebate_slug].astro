@@ -6,6 +6,7 @@ import { useTranslations } from '../../../lib/i18n';
 import Analytics from '../../../components/Analytics.astro';
 import Navbar from '../../../components/Navbar.astro';
 import { COUNTRY_METADATA } from '../../../data/regions';
+import { generateFallbackPaths } from '../../../utils/paths';
 
 export async function getStaticPaths() {
   const langs = ['en-us', 'de-de', 'fr-fr'];
@@ -38,11 +39,7 @@ export async function getStaticPaths() {
       'california-sgip-battery-rebate-los-angeles',
       'boiler-upgrade-scheme-grant-london'
     ];
-    for (const lang of langs) {
-      for (const rebate_slug of fallbackRebates) {
-        paths.push({ params: { lang, rebate_slug } });
-      }
-    }
+    paths.push(...generateFallbackPaths(langs, fallbackRebates, 'rebate_slug'));
   }
 
   return paths;
