@@ -472,6 +472,14 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
   };
 
   // Render Login Panel
+  const filteredRebates = selectedRegionId === 'all'
+    ? rebates
+    : rebates.filter(r => String(r.region_id) === String(selectedRegionId));
+
+  const regionMap = useMemo(() => {
+    return new Map(regions.map(r => [String(r.id), r]));
+  }, [regions]);
+
   if (!isLoggedIn) {
     return (
       <div className="max-w-md mx-auto my-12">
@@ -538,14 +546,6 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
       </div>
     );
   }
-
-  const filteredRebates = selectedRegionId === 'all' 
-    ? rebates 
-    : rebates.filter(r => String(r.region_id) === String(selectedRegionId));
-
-  const regionMap = useMemo(() => {
-    return new Map(regions.map(r => [String(r.id), r]));
-  }, [regions]);
 
   return (
     <div className="space-y-8 pb-16">
