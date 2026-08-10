@@ -125,7 +125,7 @@ if (supabase) {
 }
 
 // Fallback category title if not found in database
-const displayCategory = matchedCategory || (category_slug ? category_slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Energy');
+const displayCategory = matchedCategory || (category_slug ? category_slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Energy');
 
 // Localized strings
 const l10n = {

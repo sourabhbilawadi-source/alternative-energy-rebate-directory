@@ -150,7 +150,7 @@ export async function queryLocationSpecs(
       try {
         const ukEmissionsResponse = await fetch('https://api.carbonintensity.org.uk/intensity');
         if (ukEmissionsResponse.ok) {
-          const ukData = await ukEmissionsResponse.json();
+          const ukData = await ukEmissionsResponse.json() as any;
           const liveValueGrams = ukData.data?.[0]?.intensity?.actual || ukData.data?.[0]?.intensity?.forecast || 150;
           gridEmissions = liveValueGrams / 1000; // Convert gCO2/kWh to kgCO2/kWh
         } else {
