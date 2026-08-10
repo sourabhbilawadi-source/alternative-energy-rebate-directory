@@ -88,7 +88,7 @@ export async function queryLocationSpecs(
     if (!geoResponse.ok) throw new Error('OSM Geocoding request failed');
     const geoData = await geoResponse.json();
     
-    if (!geoData || geoData.length === 0) return null;
+    if (!geoData || !Array.isArray(geoData) || geoData.length === 0) return null;
     
     const lat = Number(geoData[0].lat);
     const lon = Number(geoData[0].lon);
@@ -120,7 +120,7 @@ export async function queryLocationSpecs(
       const solarUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=shortwave_radiation_sum&timezone=auto`;
       const solarResponse = await fetch(solarUrl);
       if (solarResponse.ok) {
-        const solarData = await solarResponse.json();
+        const solarData = await solarResponse.json() as any;
         const dailyRadiationSum = solarData.daily?.shortwave_radiation_sum || [];
         if (dailyRadiationSum.length > 0) {
           // Average MJ/m2 per day
