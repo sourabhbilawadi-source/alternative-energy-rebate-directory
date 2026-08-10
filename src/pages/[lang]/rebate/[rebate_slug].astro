@@ -6,6 +6,7 @@ import { useTranslations } from '../../../lib/i18n';
 import Analytics from '../../../components/Analytics.astro';
 import Navbar from '../../../components/Navbar.astro';
 import { COUNTRY_METADATA } from '../../../data/regions';
+import { formatValue } from '../../../utils/formatters';
 
 export async function getStaticPaths() {
   const langs = ['en-us', 'de-de', 'fr-fr'];
@@ -157,30 +158,6 @@ const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
   url: `${siteUrl}/${l}/rebate/${rebate_slug}`
 }));
 alternates.push({ hreflang: 'x-default', url: `${siteUrl}/en-us/rebate/${rebate_slug}` });
-
-// Currency and formatting helper
-function formatValue(value: number, type: string, countryCode: string) {
-  const code = countryCode.toLowerCase();
-  const symbol = (code === 'de' || code === 'fr' || code === 'ie' || code === 'nl')
-    ? '€'
-    : (code === 'gb' || code === 'uk')
-      ? '£'
-      : (code === 'jp')
-        ? '¥'
-        : (code === 'nz')
-          ? 'NZ$'
-          : '$';
-  if (type === 'percentage') {
-    return `${value}%`;
-  }
-  if (type === 'per_watt') {
-    return `${symbol}${value}/W`;
-  }
-  if (type === 'fixed') {
-    return `${symbol}${value}`;
-  }
-  return `${symbol}${value} ${type}`;
-}
 
 // Breadcrumbs Schema
 const breadcrumbSchema = {
