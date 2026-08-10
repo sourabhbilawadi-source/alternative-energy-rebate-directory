@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, SlidersHorizontal, MapPin, Zap, Tag, ArrowRight, Globe, Layers } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -215,8 +215,8 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
   };
 
   // Count matching rebates for each category (based on queries but independent of selectedCategory filter)
-  const getCategoryCount = (category: string) => {
-    let tempFiltered = rebates.filter((item) => {
+  const baseFilteredRebates = useMemo(() => {
+    return rebates.filter((item) => {
       const searchStr = `${item.authority_name} ${item.technology_category} ${item.region.city} ${item.region.state_province} ${item.region.postal_code}`.toLowerCase();
       const textMatches = searchStr.includes(query.toLowerCase());
       const postalMatches = postalQuery === '' || item.region.postal_code.toLowerCase().includes(postalQuery.toLowerCase().trim());
@@ -229,21 +229,39 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
 
       return textMatches && postalMatches && countryMatches;
     });
+  }, [rebates, query, postalQuery, selectedCountry]);
 
-    if (category === 'all') return tempFiltered.length;
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      all: 0,
+      solar: 0,
+      battery: 0,
+      'heat pump': 0,
+      utility: 0,
+      tax: 0,
+      rebate: 0
+    };
 
-    if (category === 'rebate') {
-      return tempFiltered.filter((item) => {
-        const catStr = `${item.technology_category} ${item.authority_name}`.toLowerCase();
-        return catStr.includes('rebate') || catStr.includes('grant') || catStr.includes('subsidy');
-      }).length;
+    for (const item of baseFilteredRebates) {
+      counts.all++;
+
+      const techCat = item.technology_category.toLowerCase();
+      const authName = item.authority_name.toLowerCase();
+
+      const catStr = `${techCat} ${authName}`;
+      if (catStr.includes('rebate') || catStr.includes('grant') || catStr.includes('subsidy')) {
+        counts.rebate++;
+      }
+
+      if (techCat.includes('solar') || authName.includes('solar')) counts.solar++;
+      if (techCat.includes('battery') || authName.includes('battery')) counts.battery++;
+      if (techCat.includes('heat pump') || authName.includes('heat pump')) counts['heat pump']++;
+      if (techCat.includes('utility') || authName.includes('utility')) counts.utility++;
+      if (techCat.includes('tax') || authName.includes('tax')) counts.tax++;
     }
 
-    return tempFiltered.filter((item) => {
-      return item.technology_category.toLowerCase().includes(category.toLowerCase()) ||
-             item.authority_name.toLowerCase().includes(category.toLowerCase());
-    }).length;
-  };
+    return counts;
+  }, [baseFilteredRebates]);
 
   // Animation variants
   const containerVariants = {
@@ -319,7 +337,7 @@ export default function SearchPortal({ initialQuery = '', lang, initialRebates =
         <div className="flex flex-wrap items-center gap-2">
           <SlidersHorizontal className="w-4 h-4 text-[var(--text-muted)] mr-2" />
           {categories.map((cat) => {
-            const count = getCategoryCount(cat);
+            const count = categoryCounts[cat] || 0;
             const isActive = selectedCategory === cat;
             return (
               <button
