@@ -32,30 +32,30 @@ const { Content } = await render(post);
 // Local translations for Blog Post detail
 const localT = {
   'en-us': {
-    backToBlog: '&larr; Back to Blog',
+    backToBlog: '← Back to Blog',
     publishedOn: 'Published on',
     draftLabel: 'Draft Post',
     relatedTitle: 'Related Solar Calculators',
     relatedDesc: 'Check local utility rates, solar incentives, and calculate your exact payback period using our interactive calculator for these regions:',
-    calcAction: 'Calculate Solar ROI &rarr;',
+    calcAction: 'Calculate Solar ROI →',
     metaTitleSuffix: '| IncentiveMapper Blog'
   },
   'de-de': {
-    backToBlog: '&larr; Zurück zum Blog',
+    backToBlog: '← Zurück zum Blog',
     publishedOn: 'Veröffentlicht am',
     draftLabel: 'Entwurf',
     relatedTitle: 'Passende Solarrechner',
     relatedDesc: 'Prüfen Sie die Stromtarife, Solarförderungen und berechnen Sie Ihre Amortisationszeit mit unserem interaktiven Rechner für diese Regionen:',
-    calcAction: 'Solar-ROI Berechnen &rarr;',
+    calcAction: 'Solar-ROI Berechnen →',
     metaTitleSuffix: '| IncentiveMapper Blog'
   },
   'fr-fr': {
-    backToBlog: '&larr; Retour au Blog',
+    backToBlog: '← Retour au Blog',
     publishedOn: 'Publié le',
     draftLabel: 'Brouillon',
     relatedTitle: 'Calculateurs Solaires Associés',
     relatedDesc: 'Vérifiez les tarifs d\'électricité locaux, les subventions solaires et calculez votre retour sur investissement pour ces régions :',
-    calcAction: 'Calculer le ROI Solaire &rarr;',
+    calcAction: 'Calculer le ROI Solaire →',
     metaTitleSuffix: '| IncentiveMapper Blog'
   }
 };
@@ -164,7 +164,7 @@ import ThemeFonts from '../../../components/ThemeFonts.astro';
     <!-- Back Button -->
     <div class="mb-8">
       <a href={`/${activeLang}/blog`} class="text-sm font-bold text-[var(--color-accent)] hover:underline flex items-center gap-1">
-        <span set:html={labels.backToBlog} />
+        <span>{labels.backToBlog}</span>
       </a>
     </div>
 
