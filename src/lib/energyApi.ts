@@ -61,6 +61,28 @@ interface CacheEntry {
 const locationCache = new Map<string, CacheEntry>();
 const CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour
 
+interface HttpCacheEntry {
+  data: any;
+  timestamp: number;
+}
+const httpCache = new Map<string, HttpCacheEntry>();
+
+async function fetchJsonWithCache(url: string, options?: RequestInit): Promise<{ ok: boolean; data?: any; status?: number }> {
+  const cached = httpCache.get(url);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return { ok: true, data: cached.data, status: 200 };
+  }
+
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    return { ok: false, status: response.status };
+  }
+
+  const data = await response.json();
+  httpCache.set(url, { data, timestamp: Date.now() });
+  return { ok: true, data, status: response.status };
+}
+
 export async function queryLocationSpecs(
   query: string, 
   countryHint: string = 'us'
@@ -79,14 +101,14 @@ export async function queryLocationSpecs(
     let countryRestr = countryHint.toLowerCase();
     if (countryRestr === 'uk') countryRestr = 'gb';
     const geocodeUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cleanQuery)}&countrycodes=${countryRestr}&format=json&limit=1`;
-    const geoResponse = await fetch(geocodeUrl, {
+    const geoResponse = await fetchJsonWithCache(geocodeUrl, {
       headers: {
         'User-Agent': 'IncentiveMapper-Alternative-Energy-Directory-v1.0'
       }
     });
 
     if (!geoResponse.ok) throw new Error('OSM Geocoding request failed');
-    const geoData = await geoResponse.json();
+    const geoData = geoResponse.data;
     
     if (!geoData || geoData.length === 0) return null;
     
@@ -118,9 +140,9 @@ export async function queryLocationSpecs(
     let sunHours = 1450; // Standard fallback
     try {
       const solarUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=shortwave_radiation_sum&timezone=auto`;
-      const solarResponse = await fetch(solarUrl);
+      const solarResponse = await fetchJsonWithCache(solarUrl);
       if (solarResponse.ok) {
-        const solarData = await solarResponse.json();
+        const solarData = solarResponse.data;
         const dailyRadiationSum = solarData.daily?.shortwave_radiation_sum || [];
         if (dailyRadiationSum.length > 0) {
           // Average MJ/m2 per day
@@ -148,9 +170,9 @@ export async function queryLocationSpecs(
     if (cleanCountryCode === 'uk') {
       // Live UK Carbon Intensity API
       try {
-        const ukEmissionsResponse = await fetch('https://api.carbonintensity.org.uk/intensity');
+        const ukEmissionsResponse = await fetchJsonWithCache('https://api.carbonintensity.org.uk/intensity');
         if (ukEmissionsResponse.ok) {
-          const ukData = await ukEmissionsResponse.json();
+          const ukData = ukEmissionsResponse.data;
           const liveValueGrams = ukData.data?.[0]?.intensity?.actual || ukData.data?.[0]?.intensity?.forecast || 150;
           gridEmissions = liveValueGrams / 1000; // Convert gCO2/kWh to kgCO2/kWh
         } else {
@@ -200,4 +222,5 @@ export async function queryLocationSpecs(
 // Export for testing
 export function _clearLocationCache() {
   locationCache.clear();
+  httpCache.clear();
 }
