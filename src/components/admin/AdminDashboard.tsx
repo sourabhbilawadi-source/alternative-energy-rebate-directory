@@ -154,6 +154,8 @@ export default function AdminDashboard({ lang }: AdminDashboardProps) {
   }, [isLoggedIn, isMockMode]);
 
   async function loadRecords() {
+    if (!isLoggedIn) return;
+
     let activeRegions: Region[] = [];
     let activeRebates: Rebate[] = [];
 
