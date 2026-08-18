@@ -86,7 +86,7 @@ export async function queryLocationSpecs(
     });
 
     if (!geoResponse.ok) throw new Error('OSM Geocoding request failed');
-    const geoData = await geoResponse.json();
+    const geoData: any = await geoResponse.json();
     
     if (!geoData || geoData.length === 0) return null;
     
@@ -114,60 +114,66 @@ export async function queryLocationSpecs(
     else if (countryLower.includes('new zealand') || countryLower === 'nz') countryCode = 'nz';
     else if (countryLower.includes('japan') || countryLower === 'nippon' || countryLower === 'jp') countryCode = 'jp';
 
-    // 2. Fetch Solar Insolation (MJ/m2) from Open-Meteo
-    let sunHours = 1450; // Standard fallback
-    try {
-      const solarUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=shortwave_radiation_sum&timezone=auto`;
-      const solarResponse = await fetch(solarUrl);
-      if (solarResponse.ok) {
-        const solarData = await solarResponse.json();
-        const dailyRadiationSum = solarData.daily?.shortwave_radiation_sum || [];
-        if (dailyRadiationSum.length > 0) {
-          // Average MJ/m2 per day
-          const sum = dailyRadiationSum.reduce((acc: number, val: number) => acc + val, 0);
-          const avgMj = sum / dailyRadiationSum.length;
-          
-          // Convert MJ/m2/day to kWh/m2/day (divided by 3.6)
-          const avgKwhPerDay = avgMj / 3.6;
-          
-          // Annual sun hours = daily peak sun hours * 365
-          sunHours = Math.round(avgKwhPerDay * 365);
-          
-          // Cap inside reasonable operational limits (800 - 2500)
-          sunHours = Math.max(800, Math.min(2500, sunHours));
-        }
-      }
-    } catch (err) {
-      console.warn('Failed to fetch solar hours from Open-Meteo, using default:', err);
-    }
-
-    // 3. Fetch Grid Emission Factor (kg CO2 / kWh)
-    let gridEmissions = 0.40; // Default
     const cleanCountryCode = countryCode === 'gb' ? 'uk' : countryCode;
-    
-    if (cleanCountryCode === 'uk') {
-      // Live UK Carbon Intensity API
+
+    let sunHours = 1450; // Standard fallback
+    let gridEmissions = 0.40; // Default
+
+    const fetchSolar = async () => {
       try {
-        const ukEmissionsResponse = await fetch('https://api.carbonintensity.org.uk/intensity');
-        if (ukEmissionsResponse.ok) {
-          const ukData = await ukEmissionsResponse.json();
-          const liveValueGrams = ukData.data?.[0]?.intensity?.actual || ukData.data?.[0]?.intensity?.forecast || 150;
-          gridEmissions = liveValueGrams / 1000; // Convert gCO2/kWh to kgCO2/kWh
-        } else {
-          gridEmissions = 0.15;
+        const solarUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=shortwave_radiation_sum&timezone=auto`;
+        const solarResponse = await fetch(solarUrl);
+        if (solarResponse.ok) {
+          const solarData: any = await solarResponse.json();
+          const dailyRadiationSum = solarData.daily?.shortwave_radiation_sum || [];
+          if (dailyRadiationSum.length > 0) {
+            // Average MJ/m2 per day
+            const sum = dailyRadiationSum.reduce((acc: number, val: number) => acc + val, 0);
+            const avgMj = sum / dailyRadiationSum.length;
+
+            // Convert MJ/m2/day to kWh/m2/day (divided by 3.6)
+            const avgKwhPerDay = avgMj / 3.6;
+
+            // Annual sun hours = daily peak sun hours * 365
+            sunHours = Math.round(avgKwhPerDay * 365);
+
+            // Cap inside reasonable operational limits (800 - 2500)
+            sunHours = Math.max(800, Math.min(2500, sunHours));
+          }
         }
       } catch (err) {
-        console.warn('Failed to query UK Carbon Intensity API:', err);
-        gridEmissions = 0.15;
+        console.warn('Failed to fetch solar hours from Open-Meteo, using default:', err);
       }
-    } else if (cleanCountryCode === 'us') {
-      // Match US state to EPA eGRID subregion map
-      const matchedState = Object.keys(US_STATE_EMISSIONS).find(s => state.toLowerCase().includes(s));
-      gridEmissions = matchedState ? US_STATE_EMISSIONS[matchedState] : US_STATE_EMISSIONS['california'];
-    } else {
-      // Other countries
-      gridEmissions = COUNTRY_DEFAULTS[cleanCountryCode]?.emissions || 0.40;
-    }
+    };
+
+    const fetchEmissions = async () => {
+      if (cleanCountryCode === 'uk') {
+        // Live UK Carbon Intensity API
+        try {
+          const ukEmissionsResponse = await fetch('https://api.carbonintensity.org.uk/intensity');
+          if (ukEmissionsResponse.ok) {
+            const ukData: any = await ukEmissionsResponse.json();
+            const liveValueGrams = ukData.data?.[0]?.intensity?.actual || ukData.data?.[0]?.intensity?.forecast || 150;
+            gridEmissions = liveValueGrams / 1000; // Convert gCO2/kWh to kgCO2/kWh
+          } else {
+            gridEmissions = 0.15;
+          }
+        } catch (err) {
+          console.warn('Failed to query UK Carbon Intensity API:', err);
+          gridEmissions = 0.15;
+        }
+      } else if (cleanCountryCode === 'us') {
+        // Match US state to EPA eGRID subregion map
+        const matchedState = Object.keys(US_STATE_EMISSIONS).find(s => state.toLowerCase().includes(s));
+        gridEmissions = matchedState ? US_STATE_EMISSIONS[matchedState] : US_STATE_EMISSIONS['california'];
+      } else {
+        // Other countries
+        gridEmissions = COUNTRY_DEFAULTS[cleanCountryCode]?.emissions || 0.40;
+      }
+    };
+
+    // Run independent API requests in parallel
+    await Promise.all([fetchSolar(), fetchEmissions()]);
 
     // 4. Resolve default rates
     const defaults = COUNTRY_DEFAULTS[cleanCountryCode] || COUNTRY_DEFAULTS['us'];
