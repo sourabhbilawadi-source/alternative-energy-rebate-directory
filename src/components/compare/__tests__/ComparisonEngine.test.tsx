@@ -1,18 +1,22 @@
+// @vitest-environment jsdom
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import ComparisonEngine from '../ComparisonEngine';
+import ComparisonEngine, { RawDatabaseRebate } from '../ComparisonEngine';
 
-// @vitest-environment jsdom
 import '@testing-library/jest-dom';
 
 // Mock framer-motion
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, className, layout, ...props }: any) => (
-      <div className={className} data-testid="motion-div" {...props}>
-        {children}
-      </div>
-    ),
+    div: ({ children, className, ...props }: any) => {
+      // remove unused layout prop explicitly if needed, but standard destructure handles it
+      const { layout, ...rest } = props;
+      return (
+        <div className={className} data-testid="motion-div" {...rest}>
+          {children}
+        </div>
+      );
+    },
   },
   AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
@@ -72,7 +76,7 @@ const mockDatabaseRebates = [
       postal_code: null
     }
   }
-];
+] as unknown as RawDatabaseRebate[];
 
 describe('ComparisonEngine', () => {
   beforeEach(() => {
@@ -118,7 +122,7 @@ describe('ComparisonEngine', () => {
     expect(screen.getByText('2500 sq ft')).toBeInTheDocument();
   });
 
-  it('changes selected regions and displays no rebate message if region has no rebates', () => {
+  it('changes selected regions and displays no rebate message if region has no rebates', async () => {
     render(<ComparisonEngine databaseRebates={mockDatabaseRebates} />);
 
     // Select a region that likely has no mocked database rebates
@@ -128,9 +132,11 @@ describe('ComparisonEngine', () => {
     // Change to 'new-york-city' (which shouldn't match our 'los-angeles' mock data)
     fireEvent.change(regionASelect, { target: { value: 'new-york-city' } });
 
-    // Wait for the UI to update
-    expect(screen.getAllByText('⚠️').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('No Rebate Data Available').length).toBeGreaterThan(0);
+    // Wait for the UI to update asynchronously
+    await waitFor(() => {
+      expect(screen.getAllByText('⚠️').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('No Rebate Data Available').length).toBeGreaterThan(0);
+    });
   });
 
   it('applies localization formatting with a different language prop', () => {
