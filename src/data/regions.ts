@@ -6,6 +6,10 @@ export interface MetricSource {
   lastVerified: string;
 }
 
+export const isValidSource = (source?: MetricSource): source is MetricSource => {
+  return source !== undefined && source.sourceName !== '' && source.sourceUrl !== '';
+};
+
 export interface RegionEntry {
   countryCode: string;   // e.g. 'us'
   countryName: string;   // e.g. 'United States'
