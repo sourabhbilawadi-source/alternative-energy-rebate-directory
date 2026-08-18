@@ -58,7 +58,7 @@ describe('AdminDashboard', () => {
   });
 
   it('handles database fetch error gracefully and logs to console', async () => {
-    const mockFrom = supabase.from as unknown as ReturnType<typeof vi.fn>;
+    const mockFrom = supabase!.from as unknown as ReturnType<typeof vi.fn>;
     const mockSelect = vi.fn().mockRejectedValue(new Error('Database connection failed'));
     mockFrom.mockReturnValue({ select: mockSelect });
 
