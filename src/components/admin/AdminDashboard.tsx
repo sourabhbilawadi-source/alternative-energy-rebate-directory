@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Building, 
-  MapPin, 
   Zap, 
   Trash2, 
   Edit3, 
@@ -10,7 +9,6 @@ import {
   LogOut, 
   Lock, 
   Globe, 
-  Tag, 
   Save, 
   X, 
   FileSpreadsheet, 
