@@ -272,8 +272,8 @@ import ThemeFonts from '../../../components/ThemeFonts.astro';
   </script>
 
   <!-- Structured Data -->
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(serviceSchema)} />
 
   
   <ThemeFonts />
