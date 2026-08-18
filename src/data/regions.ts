@@ -21,10 +21,10 @@ export interface RegionEntry {
   gridEmissions: number | null;
   costPerWatt: number | null;
 
-  // Incentives (using null for TODO/placeholder values)
-  federalTaxCreditPct: number | null;
-  stateRebate: number | null;
-  utilityRebate: number | null;
+  // Incentives
+  federalTaxCreditPct: number;
+  stateRebate: number;
+  utilityRebate: number;
 
   // Metric sources
   gridRateSource?: MetricSource;
@@ -35,6 +35,18 @@ export interface RegionEntry {
   stateRebateSource?: MetricSource;
   utilityRebateSource?: MetricSource;
 }
+
+
+// Helper to validate source values
+export const isValidSource = (source: any): source is MetricSource => {
+  return !!(
+    source &&
+    source.sourceName &&
+    source.sourceName.trim() !== '' &&
+    source.lastVerified &&
+    source.lastVerified.trim() !== ''
+  );
+};
 
 export const COUNTRY_METADATA: Record<string, { name: string; flag: string }> = {
   us: { name: 'United States', flag: '🇺🇸' },
@@ -418,8 +430,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.00,
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'us',
@@ -435,8 +447,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.00,
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'us',
@@ -452,8 +464,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.00,
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'us',
@@ -469,7 +481,7 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.00,
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
-    stateRebate: null,
+    stateRebate: 0,
     utilityRebate: 2500
   },
   {
@@ -486,7 +498,7 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.00,
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
-    stateRebate: null,
+    stateRebate: 0,
     utilityRebate: 2500
   },
   {
@@ -520,8 +532,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.00,
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'us',
@@ -537,8 +549,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.00,
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'us',
@@ -554,8 +566,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.00,
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'us',
@@ -571,8 +583,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.00,
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 2500
   },
   {
     countryCode: 'us',
@@ -588,8 +600,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.00,
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 2500
   },
   {
     countryCode: 'us',
@@ -605,8 +617,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.00,
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 1500,
+    utilityRebate: 2500
   },
   {
     countryCode: 'us',
@@ -622,8 +634,8 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 3.00,
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 1500,
+    utilityRebate: 2500
   },
   {
     countryCode: 'us',
@@ -657,7 +669,7 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
     stateRebate: 2500,
-    utilityRebate: null
+    utilityRebate: 500
   },
   {
     countryCode: 'us',
@@ -674,7 +686,7 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
     stateRebate: 1000,
-    utilityRebate: null
+    utilityRebate: 500
   },
 
   // --- United Kingdom ---
@@ -691,8 +703,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.15,
     costPerWatt: 3.20,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'uk',
@@ -707,8 +719,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.15,
     costPerWatt: 3.20,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'uk',
@@ -723,8 +735,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.15,
     costPerWatt: 3.20,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 2000
   },
   {
     countryCode: 'uk',
@@ -739,8 +751,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.15,
     costPerWatt: 3.20,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 2000
   },
   {
     countryCode: 'uk',
@@ -755,8 +767,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.15,
     costPerWatt: 3.20,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 2000
   },
 
   // --- Canada ---
@@ -774,7 +786,7 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 2.70,
     federalTaxCreditPct: 0.0,
     stateRebate: 5000,
-    utilityRebate: null
+    utilityRebate: 2000
   },
   {
     countryCode: 'ca',
@@ -790,7 +802,7 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 2.70,
     federalTaxCreditPct: 0.0,
     stateRebate: 5000,
-    utilityRebate: null
+    utilityRebate: 0
   },
   {
     countryCode: 'ca',
@@ -806,7 +818,7 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 2.70,
     federalTaxCreditPct: 0.0,
     stateRebate: 5000,
-    utilityRebate: null
+    utilityRebate: 0
   },
   {
     countryCode: 'ca',
@@ -822,7 +834,7 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 2.70,
     federalTaxCreditPct: 0.0,
     stateRebate: 5000,
-    utilityRebate: null
+    utilityRebate: 0
   },
   {
     countryCode: 'ca',
@@ -838,7 +850,7 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 2.70,
     federalTaxCreditPct: 0.0,
     stateRebate: 5000,
-    utilityRebate: null
+    utilityRebate: 0
   },
 
   // --- Australia ---
@@ -855,8 +867,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.68,
     costPerWatt: 1.90,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 500
   },
   {
     countryCode: 'au',
@@ -871,8 +883,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.68,
     costPerWatt: 1.90,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'au',
@@ -887,8 +899,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.68,
     costPerWatt: 1.90,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'au',
@@ -904,7 +916,7 @@ export const regionsData: RegionEntry[] = [
     costPerWatt: 1.90,
     federalTaxCreditPct: 0.0,
     stateRebate: 3500,
-    utilityRebate: null
+    utilityRebate: 0
   },
   {
     countryCode: 'au',
@@ -919,8 +931,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.68,
     costPerWatt: 1.90,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'au',
@@ -935,8 +947,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.70,
     costPerWatt: 1.80,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
 
   // --- Germany ---
@@ -953,8 +965,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.38,
     costPerWatt: 2.80,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'de',
@@ -969,8 +981,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.38,
     costPerWatt: 2.80,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'de',
@@ -985,8 +997,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.38,
     costPerWatt: 2.80,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'de',
@@ -1001,8 +1013,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.38,
     costPerWatt: 2.80,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 0,
+    utilityRebate: 0
   },
   {
     countryCode: 'de',
@@ -1017,8 +1029,8 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.38,
     costPerWatt: 2.80,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 1000,
+    utilityRebate: 500
   },
   {
     countryCode: 'de',
@@ -1033,7 +1045,7 @@ export const regionsData: RegionEntry[] = [
     gridEmissions: 0.38,
     costPerWatt: 2.80,
     federalTaxCreditPct: 0.0,
-    stateRebate: null,
-    utilityRebate: null
+    stateRebate: 1000,
+    utilityRebate: 0
   }
 ];
