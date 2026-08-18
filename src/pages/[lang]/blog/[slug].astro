@@ -22,7 +22,7 @@ export async function getStaticPaths() {
   return paths;
 }
 
-const { lang, slug } = Astro.params;
+const { lang } = Astro.params;
 const { post } = Astro.props;
 
 const activeLang = lang || 'en-us';

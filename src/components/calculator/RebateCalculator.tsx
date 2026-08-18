@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Sun, 
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from '../../lib/i18n';
 import { queryLocationSpecs } from '../../lib/energyApi';
-import type { RegionEntry, MetricSource } from '../../data/regions';
+import type { RegionEntry } from '../../data/regions';
 import { isValidSource } from '../../data/regions';
 import LeadCaptureCta from './LeadCaptureCta';
 import { getCountryConfig } from '../../utils/countryConfig';
