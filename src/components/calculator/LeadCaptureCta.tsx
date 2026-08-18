@@ -29,7 +29,7 @@ export default function LeadCaptureCta({ region, calculatorType }: LeadCaptureCt
     setIsVisible(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name.trim() || !email.trim()) return;
 
@@ -65,7 +65,7 @@ export default function LeadCaptureCta({ region, calculatorType }: LeadCaptureCt
         throw new Error('Server returned an error status.');
       }
 
-      const result = await response.json();
+      const result = await response.json() as any;
       if (result.status === 'success') {
         setStatus('success');
       } else {
