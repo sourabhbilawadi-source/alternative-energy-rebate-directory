@@ -21,7 +21,7 @@ export interface RegionEntry {
   gridEmissions: number | null;
   costPerWatt: number | null;
 
-  // Incentives
+  // Incentives (using null for TODO/placeholder values)
   federalTaxCreditPct: number;
   stateRebate: number;
   utilityRebate: number;
@@ -35,6 +35,18 @@ export interface RegionEntry {
   stateRebateSource?: MetricSource;
   utilityRebateSource?: MetricSource;
 }
+
+
+// Helper to validate source values
+export const isValidSource = (source: any): source is MetricSource => {
+  return !!(
+    source &&
+    source.sourceName &&
+    source.sourceName.trim() !== '' &&
+    source.lastVerified &&
+    source.lastVerified.trim() !== ''
+  );
+};
 
 export const COUNTRY_METADATA: Record<string, { name: string; flag: string }> = {
   us: { name: 'United States', flag: '🇺🇸' },
@@ -572,7 +584,7 @@ export const regionsData: RegionEntry[] = [
     federalTaxCreditPct: 0.3,
     federalTaxCreditSource: { sourceName: 'IRS.gov (Section 25D Termination)', sourceUrl: 'https://www.irs.gov/credits-deductions/residential-clean-energy-credit', lastVerified: '2026-06-24' },
     stateRebate: 0,
-    utilityRebate: 0
+    utilityRebate: 2000
   },
   {
     countryCode: 'us',
