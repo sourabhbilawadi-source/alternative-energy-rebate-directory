@@ -88,11 +88,11 @@ export async function queryLocationSpecs(
     if (!geoResponse.ok) throw new Error('OSM Geocoding request failed');
     const geoData = await geoResponse.json();
     
-    if (!geoData || geoData.length === 0) return null;
+    if (!geoData || (geoData as any[]).length === 0) return null;
     
-    const lat = Number(geoData[0].lat);
-    const lon = Number(geoData[0].lon);
-    const displayName = geoData[0].display_name || '';
+    const lat = Number((geoData as any[])[0].lat);
+    const lon = Number((geoData as any[])[0].lon);
+    const displayName = (geoData as any[])[0].display_name || '';
     
     // Parse geocoding display name to guess city, state, country
     const parts = displayName.split(',').map((p: string) => p.trim());
@@ -121,7 +121,7 @@ export async function queryLocationSpecs(
       const solarResponse = await fetch(solarUrl);
       if (solarResponse.ok) {
         const solarData = await solarResponse.json();
-        const dailyRadiationSum = solarData.daily?.shortwave_radiation_sum || [];
+        const dailyRadiationSum = (solarData as any).daily?.shortwave_radiation_sum || [];
         if (dailyRadiationSum.length > 0) {
           // Average MJ/m2 per day
           const sum = dailyRadiationSum.reduce((acc: number, val: number) => acc + val, 0);
@@ -151,7 +151,7 @@ export async function queryLocationSpecs(
         const ukEmissionsResponse = await fetch('https://api.carbonintensity.org.uk/intensity');
         if (ukEmissionsResponse.ok) {
           const ukData = await ukEmissionsResponse.json();
-          const liveValueGrams = ukData.data?.[0]?.intensity?.actual || ukData.data?.[0]?.intensity?.forecast || 150;
+          const liveValueGrams = (ukData as any).data?.[0]?.intensity?.actual || (ukData as any).data?.[0]?.intensity?.forecast || 150;
           gridEmissions = liveValueGrams / 1000; // Convert gCO2/kWh to kgCO2/kWh
         } else {
           gridEmissions = 0.15;
