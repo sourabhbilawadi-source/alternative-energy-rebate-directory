@@ -88,11 +88,11 @@ export async function queryLocationSpecs(
     if (!geoResponse.ok) throw new Error('OSM Geocoding request failed');
     const geoData = await geoResponse.json();
     
-    if (!geoData || (geoData as any[]).length === 0) return null;
+    if (!geoData || (geoData as Array<any>).length === 0) return null;
     
-    const lat = Number((geoData as any[])[0].lat);
-    const lon = Number((geoData as any[])[0].lon);
-    const displayName = (geoData as any[])[0].display_name || '';
+    const lat = Number((geoData as Array<any>)[0].lat);
+    const lon = Number((geoData as Array<any>)[0].lon);
+    const displayName = (geoData as Array<any>)[0].display_name || '';
     
     // Parse geocoding display name to guess city, state, country
     const parts = displayName.split(',').map((p: string) => p.trim());
@@ -121,7 +121,7 @@ export async function queryLocationSpecs(
       const solarResponse = await fetch(solarUrl);
       if (solarResponse.ok) {
         const solarData = await solarResponse.json();
-        const dailyRadiationSum = (solarData as any).daily?.shortwave_radiation_sum || [];
+        const dailyRadiationSum = (solarData as { daily?: { shortwave_radiation_sum?: number[] } }).daily?.shortwave_radiation_sum || [];
         if (dailyRadiationSum.length > 0) {
           // Average MJ/m2 per day
           const sum = dailyRadiationSum.reduce((acc: number, val: number) => acc + val, 0);

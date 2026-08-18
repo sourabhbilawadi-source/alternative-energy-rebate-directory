@@ -65,11 +65,11 @@ export default function LeadCaptureCta({ region, calculatorType }: LeadCaptureCt
         throw new Error('Server returned an error status.');
       }
 
-      const result = await response.json() as any;
-      if (result.status === 'success') {
+      const result = await response.json() as { status: string; message?: string; id?: string };
+      if (result.status === "success") {
         setStatus('success');
       } else {
-        throw new Error(result.message || 'Submission failed.');
+        throw new Error(result.message || "Submission failed.");
       }
     } catch (err: any) {
       console.error('Lead capture error:', err);
