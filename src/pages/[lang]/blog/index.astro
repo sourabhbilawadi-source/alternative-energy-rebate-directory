@@ -28,7 +28,7 @@ const localT = {
   'en-us': {
     title: 'IncentiveMapper Blog',
     subtitle: 'Stay informed with the latest insights on solar rebates, policy updates, and alternative energy calculations globally.',
-    readMore: 'Read Article &rarr;',
+    readMore: 'Read Article →',
     publishedOn: 'Published on',
     relatedRegions: 'Related Regions',
     backToDirectory: 'Back to Directory',
@@ -39,7 +39,7 @@ const localT = {
   'de-de': {
     title: 'IncentiveMapper Blog',
     subtitle: 'Bleiben Sie informiert über die neuesten Erkenntnisse zu Solarförderungen, Richtlinienänderungen und Berechnungen weltweit.',
-    readMore: 'Artikel lesen &rarr;',
+    readMore: 'Artikel lesen →',
     publishedOn: 'Veröffentlicht am',
     relatedRegions: 'Verwandte Regionen',
     backToDirectory: 'Zurück zum Verzeichnis',
@@ -50,7 +50,7 @@ const localT = {
   'fr-fr': {
     title: 'IncentiveMapper Blog',
     subtitle: 'Restez informé des dernières analyses sur les subventions solaires, les politiques énergétiques et les calculs de rendement.',
-    readMore: 'Lire l\'article &rarr;',
+    readMore: 'Lire l\'article →',
     publishedOn: 'Publié le',
     relatedRegions: 'Régions associées',
     backToDirectory: 'Retour à l\'annuaire',
@@ -197,7 +197,7 @@ const alternates = ['en-us', 'de-de', 'fr-fr'].map(l => ({
             <!-- Read More Link -->
             <div class="mt-auto">
               <a href={`/${activeLang}/blog/${post.id}`} class="text-sm font-bold text-[var(--color-accent)] group-hover:underline flex items-center gap-1">
-                <span set:html={labels.readMore} />
+                <span>{labels.readMore}</span>
               </a>
             </div>
           </div>
