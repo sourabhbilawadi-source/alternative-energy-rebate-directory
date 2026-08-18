@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import ComparisonEngine, { RawDatabaseRebate } from '../ComparisonEngine';
+import ComparisonEngine from '../ComparisonEngine';
+import type { RawDatabaseRebate } from '../ComparisonEngine';
 
 import '@testing-library/jest-dom';
 
