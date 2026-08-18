@@ -68,6 +68,17 @@ describe('supabase client', () => {
     vi.unstubAllEnvs();
   });
 
+  it('should not initialize if anon key contains your-key-here', async () => {
+    vi.stubEnv('PUBLIC_SUPABASE_URL', 'https://example.supabase.co');
+    vi.stubEnv('PUBLIC_SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.your-key-here');
+
+    const { supabase } = await import('./supabase');
+
+    expect(supabase).toBeNull();
+
+    vi.unstubAllEnvs();
+  });
+
   it('should strip trailing slash and /rest/v1 from URL', async () => {
     vi.stubEnv('PUBLIC_SUPABASE_URL', 'https://example.supabase.co/rest/v1/');
     vi.stubEnv('PUBLIC_SUPABASE_ANON_KEY', 'valid-key');
