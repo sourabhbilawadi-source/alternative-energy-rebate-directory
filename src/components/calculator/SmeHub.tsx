@@ -3,8 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Building, 
   Leaf, 
-  DollarSign, 
-  Zap, 
   Scale, 
   ShieldCheck, 
   TrendingUp, 
